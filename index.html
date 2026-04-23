@@ -410,7 +410,7 @@
         </div>
         <div id="free-slots-dash" class="free-slots-tip" style="display: none;"></div>
         <div class="mini-stats">
-            <div class="mini-card" style="border-color: var(--lucro);"><small>Lucro do Mês</small><b id="ds-lucro">R$ 0,00</b>
+            <div class="mini-card" style="border-color: var(--lucro);"><small>Lucro do Mês</small><b id="ds-lucro">R$ 0</b>
                 <div style="position:absolute; right:12px; top:12px; cursor:pointer" onclick="togglePriv()"><i data-lucide="eye" id="eye-icon" size="14"></i></div>
             </div>
             <div class="mini-card"><small>Ativos</small><b id="ds-ativos">0</b></div>
@@ -482,9 +482,9 @@
             </div>
         </div>
         <div class="mini-stats">
-            <div class="mini-card" style="border-color: var(--entrada);"><small>Entrada</small><b id="fin-total-ent">R$ 0,00</b></div>
-            <div class="mini-card" style="border-color: var(--saida);"><small>Saída</small><b id="fin-total-sai">R$ 0,00</b></div>
-            <div class="mini-card" style="border-color: var(--lucro);"><small>Lucro</small><b id="fin-total-luc">R$ 0,00</b></div>
+            <div class="mini-card" style="border-color: var(--entrada);"><small>Entrada</small><b id="fin-total-ent">R$ 0</b></div>
+            <div class="mini-card" style="border-color: var(--saida);"><small>Saída</small><b id="fin-total-sai">R$ 0</b></div>
+            <div class="mini-card" style="border-color: var(--lucro);"><small>Lucro</small><b id="fin-total-luc">R$ 0</b></div>
         </div>
         <div id="fin-hide-area" class="mini-card" style="height: 220px; border-radius:24px; padding:15px; margin-top:20px; margin-bottom:20px; position: relative;">
             <canvas id="finChart"></canvas>
@@ -587,7 +587,7 @@
     // =============================================
     // CONFIGURAÇÃO DO SISTEMA PREMIUM
     // =============================================
-    const STORAGE_KEY = 'OWERPLAY_FINAL_MASTER_V22';
+    const STORAGE_KEY = 'OWERPLAY_FINAL_MASTER_V23';
     const PREMIUM_STORAGE_KEY = 'OWERPLAY_PREMIUM_LICENSE';
     
     let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
@@ -789,7 +789,7 @@
         
         if (!isPremium && idx === -1 && db.clientes.length >= 10) {
             fecharModais();
-            showToast('❌ Limite de 10 clientes! Assine PREMIUM 💎', true);
+            // CORRIGIDO: Apenas mostra o modal PREMIUM, sem toast vermelho
             mostrarModalUpgrade();
             return;
         }
@@ -832,7 +832,7 @@
     function abrirNovoManual() {
         if(curTabId === 'tab-dash' || curTabId === 'tab-cli') { 
             if (!isPremium && db.clientes.length >= 10) {
-                showToast('❌ Limite de 10 clientes! Assine PREMIUM 💎', true);
+                // CORRIGIDO: Apenas abre o modal PREMIUM, sem toast vermelho
                 mostrarModalUpgrade();
                 return;
             }
@@ -935,6 +935,11 @@
         return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
     }
 
+    // FORMATAR VALOR SEM CENTAVOS
+    function formatarValor(valor) {
+        return `R$ ${Math.round(valor)}`;
+    }
+
     function atualizar() {
         const hojeISO = new Date().toISOString().split('T')[0];
         const termo = (document.getElementById('search-main')?.value || '').toLowerCase();
@@ -966,7 +971,7 @@
                 </div>`;
         } else if(curTabId==='tab-srv') {
             db.servidores.forEach((s,i)=> {
-                document.getElementById('grid-srv').innerHTML+=`<div class="item-card" style="border: 1.5px solid var(--saida)"><b>${s.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Custo: R$ ${parseFloat(s.custo).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('srv', ${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('srv', ${i})"><i data-lucide="trash-2"></i></button></div></div>`;
+                document.getElementById('grid-srv').innerHTML+=`<div class="item-card" style="border: 1.5px solid var(--saida)"><b>${s.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Custo: ${formatarValor(s.custo)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('srv', ${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('srv', ${i})"><i data-lucide="trash-2"></i></button></div></div>`;
             });
         }
 
@@ -981,17 +986,16 @@
                 </div>`;
         } else if(curTabId==='tab-pla') {
             db.planos.forEach((p,i)=> {
-                document.getElementById('grid-pla').innerHTML+=`<div class="item-card" style="border: 1.5px solid var(--entrada)"><b>${p.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Venda: R$ ${parseFloat(p.val).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('pla', ${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('pla', ${i})"><i data-lucide="trash-2"></i></button></div></div>`;
+                document.getElementById('grid-pla').innerHTML+=`<div class="item-card" style="border: 1.5px solid var(--entrada)"><b>${p.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Venda: ${formatarValor(p.val)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('pla', ${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('pla', ${i})"><i data-lucide="trash-2"></i></button></div></div>`;
             });
         }
 
-        // CLIENTES - CORRIGIDO: Mostra botão quando há servidor e plano cadastrados
+        // CLIENTES
         if(db.clientes.length===0 && curTabId==='tab-cli') {
             const temServidor = db.servidores.length > 0;
             const temPlano = db.planos.length > 0;
             
             if (temServidor && temPlano) {
-                // Tem tudo pronto para cadastrar cliente
                 document.getElementById('grid-cli').innerHTML=`
                     <div class="welcome-state">
                         <div class="welcome-icon"><i data-lucide="users" size="32"></i></div>
@@ -1000,7 +1004,6 @@
                         <button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Cliente</button>
                     </div>`;
             } else {
-                // Falta servidor ou plano
                 const faltando = [];
                 if (!temServidor) faltando.push('<strong>Servidor</strong>');
                 if (!temPlano) faltando.push('<strong>Plano</strong>');
@@ -1140,7 +1143,7 @@
             
             const dsLucro = document.getElementById('ds-lucro');
             const dsAtivos = document.getElementById('ds-ativos');
-            if(dsLucro) dsLucro.innerText = db.priv ? '••••' : `R$ ${lucM.toFixed(2)}`;
+            if(dsLucro) dsLucro.innerText = db.priv ? '••••' : formatarValor(lucM);
             if(dsAtivos) dsAtivos.innerText = proc.filter(p => p.st !== "vencido").length;
             
             if(curTabId==='tab-fin') {
@@ -1152,9 +1155,10 @@
                 let entT10=0, saiT10=0;
                 transacoesConsideradas.forEach(t => { entT10+=t.pVal; saiT10+=t.sVal; });
                 
-                if(finEnt) finEnt.innerText = db.priv ? '••' : `R$ ${entT10.toFixed(2)}`;
-                if(finSai) finSai.innerText = db.priv ? '••' : `R$ ${saiT10.toFixed(2)}`;
-                if(finLuc) finLuc.innerText = db.priv ? '••' : `R$ ${(entT10-saiT10).toFixed(2)}`;
+                // VALORES SEM CENTAVOS
+                if(finEnt) finEnt.innerText = db.priv ? '••' : formatarValor(entT10);
+                if(finSai) finSai.innerText = db.priv ? '••' : formatarValor(saiT10);
+                if(finLuc) finLuc.innerText = db.priv ? '••' : formatarValor(entT10-saiT10);
                 
                 if(isPremium && !db.priv) renderFin(entT10, saiT10, entT10-saiT10);
                 
@@ -1163,7 +1167,7 @@
                 
                 transacoesParaMostrar.forEach((t, i) => { 
                     const realIdx = db.transacoes.indexOf(t);
-                    gridFin.innerHTML+=`<div class="item-card" style="border: 1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex'; document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})}; document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin', ${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv ? '••' : 'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv ? '••' : 'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv ? '••' : 'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;
+                    gridFin.innerHTML+=`<div class="item-card" style="border: 1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex'; document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})}; document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin', ${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv ? '••' : formatarValor(t.pVal)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv ? '••' : formatarValor(t.sVal)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv ? '••' : formatarValor(t.pVal-t.sVal)}</span></div></div></div>`;
                 });
                 
                 if (!isPremium && db.transacoes.length > 10) {
@@ -1248,4 +1252,4 @@
     atualizarUIPremium();
 </script>
 </body>
-</html> 
+</html>
