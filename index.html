@@ -75,7 +75,13 @@
         .item-card { position: relative; overflow: hidden; }
 
         .premium-badge { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; margin-left: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--premium-glow); }
-        .upgrade-btn { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
+        .upgrade-btn {
+            background: linear-gradient(135deg, var(--premium-color), #A78BFA);
+            color: white; border: none; padding: 13px 18px; border-radius: 14px;
+            font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%;
+            margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s;
+            text-align: center; letter-spacing: 0.3px;
+        }
         .upgrade-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5); }
         .plan-card { background: linear-gradient(135deg, #1e2438, #161b2c); border: 2px solid var(--premium-color); border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1); }
         .plan-price-container { display: flex; align-items: baseline; justify-content: flex-end; gap: 2px; }
@@ -143,6 +149,16 @@
         .modal label { display: block; font-size: 0.7rem; color: var(--text-dim); margin: 10px 0 5px; text-transform: uppercase; font-weight: 800; }
         .modal input, .modal select, .modal textarea { width: 100%; background: var(--bg); border: 1.5px solid var(--border); padding: 12px; border-radius: 12px; color: white; outline: none; margin-bottom: 4px; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; }
         .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; margin-top: 12px; cursor: pointer; font-size: 0.85rem; }
+        
+        /* Botão Kiwify */
+        .btn-kiwify {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border: none; padding: 13px 18px; border-radius: 14px;
+            font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%;
+            margin-top: 8px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: 0.3s;
+            text-align: center; letter-spacing: 0.3px;
+        }
+        .btn-kiwify:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); }
 
         .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
         .btn-confirm { background: var(--saida); flex: 1; padding: 14px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; }
@@ -219,10 +235,47 @@
     </div>
 </main>
 
-<!-- MODAIS (ORIGINAIS CORRETOS) -->
+<!-- MODAIS -->
 <div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width: 340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" onclick="enviarMsgTipo('cobranca')"><div class="msg-menu-icon" style="background: rgba(251, 113, 133, 0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('renovacao')"><div class="msg-menu-icon" style="background: rgba(56, 189, 248, 0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('promocao')"><div class="msg-menu-icon" style="background: rgba(16, 185, 129, 0.15);">🎉</div><div class="msg-menu-info"><b>Promoção</b><span>Ofertas e novidades</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 10px;" onclick="fecharModais()">Cancelar</button></div></div>
 <div class="overlay" id="modal-config-msg"><div class="modal" style="max-width: 380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><label>🎉 Promoção</label><textarea id="cfg-msg-promocao" rows="3"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button></div></div>
-<div class="overlay" id="modal-upgrade"><div class="modal" style="max-width: 340px; padding: 20px;"><div style="text-align: center; margin-bottom: 15px;"><i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i><h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3><p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p></div><div class="plan-card" style="padding: 14px; margin-bottom: 14px;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4><div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div></div><p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês ou R$ 199/ano</p><div style="margin: 12px 0;"><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div><div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div></div></div><div id="upgrade-code-section" style="margin-top: 12px;"><label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label><div style="display: flex; gap: 6px;"><input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;"><button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button></div></div><button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button><button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button></div></div>
+
+<!-- MODAL PREMIUM COM DOIS BOTÕES -->
+<div class="overlay" id="modal-upgrade">
+    <div class="modal" style="max-width: 340px; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i>
+            <h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3>
+            <p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p>
+        </div>
+        <div class="plan-card" style="padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4>
+                <div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div>
+            </div>
+            <p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês ou R$ 199/ano</p>
+            <div style="margin: 12px 0;">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div>
+                <div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div>
+            </div>
+        </div>
+        <div id="upgrade-code-section" style="margin-top: 12px;">
+            <label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;">
+                <button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button>
+            </div>
+        </div>
+        <!-- DOIS BOTÕES -->
+        <button class="btn-kiwify" onclick="abrirKiwify()">🛒 Assinar Premium</button>
+        <button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button>
+        <button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button>
+    </div>
+</div>
+
 <div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome"><label>WhatsApp</label><input type="number" id="c-wpp" placeholder="Ex: 5511999998888"><small style="font-size:0.55rem; color:var(--text-dim); display:block; margin-top:-2px; margin-bottom:10px">Apenas números (DDI+DDD+NÚMERO)</small><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Servidor</label><select id="c-srv"></select><button class="btn-save" onclick="salvarCli()">Salvar</button></div></div>
 <div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome"><label>Preço</label><input type="number" id="p-val"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
 <div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome"><label>Custo</label><input type="number" id="s-custo"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
@@ -253,7 +306,6 @@
     function atualizarBannerBackup() { const b = document.getElementById('backup-alert-banner'); if (b) b.style.display = deveMostrarAlertaBackup() ? 'flex' : 'none'; }
 
     let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
-    // 🔐 ÚNICA ALTERAÇÃO: Código master gigante
     const CODIGO_MASTER = 'OWERPLAY-PREMIUM-ATIVACAO-EXCLUSIVA-2024-LICENCA-XK92-MNB4-PQ71-WS38-FH47-DJ20-VN83-LM55-AQ19-ZX76-TY34-BC88-KP90-RR25-WE11-SD44-FV22-GH66';
     const CODIGOS_PREMIUM_VALIDOS = [
         CODIGO_MASTER,
@@ -281,6 +333,7 @@
     function atualizarTooltipVagas() { if (isPremium) { document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none'); return; } const vagas = 10 - db.clientes.length; let msg; if (vagas > 0) { msg = `<strong>${vagas} cliente${vagas>1?'s':''} gratuito${vagas>1?'s':''}</strong> disponíve${vagas>1?'is':'l'}`; msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`; } else { msg = `Limite de <strong>10 clientes</strong> atingido`; msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`; } document.querySelectorAll('.free-slots-tip').forEach(el => { el.innerHTML = msg; el.style.display = 'block'; }); }
     function ativarCodigoPremium() { const cod = document.getElementById('pro-code-input').value.toUpperCase().trim(); if (CODIGOS_PREMIUM_VALIDOS.includes(cod)) { isPremium = true; localStorage.setItem(PREMIUM_STORAGE_KEY, 'true'); fecharModais(); showToast('✅ Plano PREMIUM ativado! 💎', false); atualizarUIPremium(); atualizar(); } else { showToast('❌ Código inválido!', true); } }
     function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.")}`); showToast('Redirecionando para WhatsApp...'); }
+    function abrirKiwify() { window.open('https://pay.kiwify.com.br/a26p/'); }
     function abrirConfigMsgComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO; document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO; document.getElementById('cfg-msg-promocao').value = db.configMsgPromocao || MSG_PROMOCAO_PADRAO; abrirModalComHistorico('modal-config-msg'); }
     function copiarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } copiarTokenComToast(); confirmarBackupFeito(); }
     function restaurarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } abrirModalComHistorico('modal-token'); }
