@@ -554,7 +554,8 @@
 
 <div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome"><label>Preço</label><input type="number" id="p-val"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
 <div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome"><label>Custo</label><input type="number" id="s-custo"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
-<div class="overlay" id="modal-config-msg"><div class="modal"><h3>Configurar Mensagem</h3><p style="font-size:0.6rem; color:var(--text-dim); margin-bottom:10px">Use: {nome}, {vencimento}, {valor}</p><textarea id="cfg-msg-texto" rows="6"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar</button></div></div>
+<!-- MODAL CONFIG MENSAGEM ATUALIZADO -->
+<div class="overlay" id="modal-config-msg"><div class="modal"><h3>Configurar Mensagem</h3><p style="font-size:0.6rem; color:var(--text-dim); margin-bottom:10px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><textarea id="cfg-msg-texto" rows="6"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar</button></div></div>
 <div class="overlay" id="modal-renew"><div class="modal"><h3>Renovar</h3><input type="hidden" id="renew-idx">
     <button class="btn-save" onclick="calcularPrevia30()">Calcular +30 Dias</button>
     <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:15px;">
@@ -597,21 +598,19 @@
     
     let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
     
-    // =============================================
-    // 🔐 CÓDIGOS PREMIUM (10 CÓDIGOS ÚNICOS + TESTE)
-    // =============================================
+    // 🔐 CÓDIGOS PREMIUM
     const CODIGOS_PREMIUM_VALIDOS = [
-        'PREMIUM-2024',      // Código de teste (admin)
-        'OWER-A7B3-C9D1',    // Código 01
-        'OWER-E2F4-G6H8',    // Código 02
-        'OWER-J1K5-L3M7',    // Código 03
-        'OWER-N9P2-Q4R6',    // Código 04
-        'OWER-S8T1-U5V3',    // Código 05
-        'OWER-W7X9-Y2Z4',    // Código 06
-        'OWER-B5D8-F1H3',    // Código 07
-        'OWER-K6M2-P9R5',    // Código 08
-        'OWER-T4V7-X1Z8',    // Código 09
-        'OWER-C3G9-J6N4',    // Código 10
+        'PREMIUM-2024',
+        'OWER-A7B3-C9D1',
+        'OWER-E2F4-G6H8',
+        'OWER-J1K5-L3M7',
+        'OWER-N9P2-Q4R6',
+        'OWER-S8T1-U5V3',
+        'OWER-W7X9-Y2Z4',
+        'OWER-B5D8-F1H3',
+        'OWER-K6M2-P9R5',
+        'OWER-T4V7-X1Z8',
+        'OWER-C3G9-J6N4',
     ];
     
     let db = carregarDadosProtegidos() || { 
@@ -905,11 +904,23 @@
         }
     }
 
+    // FUNÇÃO COBRAR CLIENTE ATUALIZADA COM {sobrenome}
     function cobrarCliente(i) {
         if (!isPremium) { mostrarModalUpgrade(); return; }
         const c = db.clientes[i];
         const dataFmt = c.venc.split("-").reverse().join("/");
-        let m = db.configMsg.replace("{nome}", c.nome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
+        
+        // Extrai nome e sobrenome
+        const partesNome = c.nome.trim().split(' ');
+        const primeiroNome = partesNome[0];
+        const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : '';
+        
+        let m = db.configMsg
+            .replace("{nome}", primeiroNome)
+            .replace("{sobrenome}", sobrenome)
+            .replace("{vencimento}", dataFmt)
+            .replace("{valor}", c.pVal.toFixed(2));
+        
         window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(m)}`);
     }
 
