@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>OwerPlay Gestor</title>
     
     <!-- ÍCONE PARA TELA INICIAL (PWA) -->
@@ -25,7 +25,12 @@
             --premium-glow: 0 0 15px rgba(139, 92, 246, 0.5);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; touch-action: pan-y; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); 
+            height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; 
+            touch-action: pan-y; position: fixed; width: 100%; top: 0; left: 0;
+            -webkit-overflow-scrolling: touch; overscroll-behavior: none;
+        }
 
         nav { 
             width: 100%; height: 75px; background: #070a13; border-radius: 20px 20px 0 0; 
@@ -39,40 +44,25 @@
         .menu-item.active i, .menu-item.active svg { opacity: 1 !important; color: var(--primary) !important; transform: translateY(-2px); filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.8)) !important; }
         .menu-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 22px; height: 3px; background: var(--primary); border-radius: 0 0 4px 4px; }
 
-        main { flex: 1; padding: 18px; overflow-y: auto; padding-bottom: 150px; position: relative; z-index: 10; }
+        main { flex: 1; padding: 18px; overflow-y: auto; padding-bottom: 100px; position: relative; z-index: 10; -webkit-overflow-scrolling: touch; }
         .tab-content { display: none; }
         .active-tab { display: block; animation: slideFade 0.3s ease-out; }
         @keyframes slideFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .app-brand { font-size: 1.1rem; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
-        
-        .version-tag {
-            font-size: 0.55rem;
-            color: var(--text-dim);
-            opacity: 0.5;
-            font-weight: 400;
-            letter-spacing: 0;
-            margin-left: 4px;
-        }
+        .version-tag { font-size: 0.55rem; color: var(--text-dim); opacity: 0.5; font-weight: 400; letter-spacing: 0; margin-left: 4px; }
         
         .backup-alert-banner {
             background: linear-gradient(135deg, rgba(251, 113, 133, 0.15), rgba(251, 113, 133, 0.05));
-            border: 1px solid rgba(251, 113, 133, 0.3);
-            border-radius: 14px;
-            padding: 12px 14px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            animation: pulse 2s infinite;
+            border: 1px solid rgba(251, 113, 133, 0.3); border-radius: 14px;
+            padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: flex-start;
+            gap: 8px; animation: pulse 2s infinite;
         }
-        
         @keyframes pulse {
             0% { border-color: rgba(251, 113, 133, 0.3); }
             50% { border-color: rgba(251, 113, 133, 0.7); }
             100% { border-color: rgba(251, 113, 133, 0.3); }
         }
-        
         .backup-alert-icon { color: var(--saida); min-width: 20px; margin-top: 1px; }
         .backup-alert-content { flex: 1; }
         .backup-alert-content p { font-size: 0.65rem; color: var(--text); line-height: 1.4; margin-bottom: 8px; font-weight: 500; }
@@ -83,8 +73,7 @@
         .btn-backup-secondary { background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--border); }
         
         .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active {
-            transform: scale(0.96) !important;
-            transition: transform 0.1s ease !important;
+            transform: scale(0.96) !important; transition: transform 0.1s ease !important;
         }
         
         .item-card { transition: all 0.2s ease; touch-action: pan-y; }
@@ -122,7 +111,6 @@
             padding: 16px; margin-bottom: 16px;
             box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1);
         }
-
         .plan-price-container { display: flex; align-items: baseline; justify-content: flex-end; gap: 2px; }
         .plan-price-small { font-size: 1.1rem; font-weight: 600; color: var(--premium-color); }
         .plan-price-big { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
@@ -230,7 +218,6 @@
         }
         .diamond-icon { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.8)); }
         
-        /* MENU DE MENSAGENS */
         .msg-menu-item {
             display: flex; align-items: center; gap: 10px; padding: 14px;
             background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 8px;
@@ -365,7 +352,7 @@
     </div>
 </main>
 
-<!-- MODAL DE ESCOLHA DE MENSAGEM (WhatsApp) -->
+<!-- MODAL DE ESCOLHA DE MENSAGEM -->
 <div class="overlay" id="modal-msg-chooser">
     <div class="modal" style="max-width: 340px;">
         <h3>📩 Enviar mensagem</h3>
@@ -388,21 +375,14 @@
     </div>
 </div>
 
-<!-- MODAL DE CONFIGURAÇÃO DE MENSAGENS (ATUALIZADO PARA 3) -->
+<!-- MODAL DE CONFIGURAÇÃO DE MENSAGENS -->
 <div class="overlay" id="modal-config-msg">
     <div class="modal" style="max-width: 380px;">
         <h3>Configurar Mensagens</h3>
         <p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p>
-        
-        <label>💰 Cobrança</label>
-        <textarea id="cfg-msg-cobranca" rows="3"></textarea>
-        
-        <label>🔄 Renovação</label>
-        <textarea id="cfg-msg-renovacao" rows="3"></textarea>
-        
-        <label>🎉 Promoção</label>
-        <textarea id="cfg-msg-promocao" rows="3"></textarea>
-        
+        <label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea>
+        <label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea>
+        <label>🎉 Promoção</label><textarea id="cfg-msg-promocao" rows="3"></textarea>
         <button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button>
     </div>
 </div>
@@ -418,11 +398,7 @@
         <div class="plan-card" style="padding: 14px; margin-bottom: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4>
-                <div class="plan-price-container">
-                    <span class="plan-price-small">R$</span>
-                    <span class="plan-price-big">19</span>
-                    <span class="plan-price-cents">,90</span>
-                </div>
+                <div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div>
             </div>
             <p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês ou R$ 199/ano</p>
             <div style="margin: 12px 0;">
@@ -484,8 +460,32 @@
     const PREMIUM_STORAGE_KEY = 'OWERPLAY_PREMIUM_LICENSE';
     const BACKUP_ALERT_KEY = 'OWERPLAY_BACKUP_ALERT_DISMISSED';
     
-    // Índice do cliente que está enviando mensagem
     let clienteMsgAtual = null;
+    
+    // =============================================
+    // CORREÇÃO DO BUG DE ROLAGEM (TELA CORTADA)
+    // =============================================
+    document.body.addEventListener('touchmove', function(e) {
+        if (e.target.closest('main')) return;
+        if (e.target.closest('.overlay')) return;
+        e.preventDefault();
+    }, { passive: false });
+    
+    // Impede scroll acidental ao focar em inputs
+    document.addEventListener('focusin', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 300);
+        }
+    });
+    
+    // Corrige posição ao fechar teclado
+    document.addEventListener('focusout', function() {
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 100);
+    });
     
     function salvarDadosProtegidos(dados) {
         try {
@@ -538,7 +538,6 @@
         'OWER-K6M2-P9R5', 'OWER-T4V7-X1Z8', 'OWER-C3G9-J6N4',
     ];
     
-    // Mensagens padrão
     const MSG_COBRANCA_PADRAO = "Olá {nome}! 👋 Passando para lembrar que seu acesso vence dia {vencimento}. O valor para renovação é de R$ {valor}. Como deseja pagar?";
     const MSG_RENOVACAO_PADRAO = "Olá {nome}! ✅ Sua renovação foi confirmada! Novo vencimento: {vencimento}. Obrigado pela confiança!";
     const MSG_PROMOCAO_PADRAO = "Olá {nome}! 🎉 Temos uma oferta especial para você! Entre em contato para saber mais.";
@@ -570,9 +569,6 @@
         abrirModalComHistorico('modal-upgrade');
     }
     
-    // =============================================
-    // NOVO: Sistema de 3 mensagens
-    // =============================================
     function abrirMsgChooser(i) {
         if (!isPremium) { mostrarModalUpgrade(); return; }
         clienteMsgAtual = i;
@@ -586,34 +582,19 @@
         const partesNome = c.nome.trim().split(' ');
         const primeiroNome = partesNome[0];
         const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : '';
-        
         let mensagem = '';
         if (tipo === 'cobranca') {
-            mensagem = (db.configMsg || MSG_COBRANCA_PADRAO)
-                .replace("{nome}", primeiroNome)
-                .replace("{sobrenome}", sobrenome)
-                .replace("{vencimento}", dataFmt)
-                .replace("{valor}", c.pVal.toFixed(2));
+            mensagem = (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", primeiroNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
         } else if (tipo === 'renovacao') {
-            mensagem = (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO)
-                .replace("{nome}", primeiroNome)
-                .replace("{sobrenome}", sobrenome)
-                .replace("{vencimento}", dataFmt)
-                .replace("{valor}", c.pVal.toFixed(2));
+            mensagem = (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", primeiroNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
         } else if (tipo === 'promocao') {
-            mensagem = (db.configMsgPromocao || MSG_PROMOCAO_PADRAO)
-                .replace("{nome}", primeiroNome)
-                .replace("{sobrenome}", sobrenome);
+            mensagem = (db.configMsgPromocao || MSG_PROMOCAO_PADRAO).replace("{nome}", primeiroNome).replace("{sobrenome}", sobrenome);
         }
-        
         fecharModais();
         window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(mensagem)}`);
         clienteMsgAtual = null;
     }
     
-    // =============================================
-    // FUNÇÕES DE VERIFICAÇÃO PREMIUM
-    // =============================================
     function atualizarUIPremium() {
         const planTexts = document.querySelectorAll('[id^="plan-text-"]');
         planTexts.forEach(el => { if (el) el.textContent = isPremium ? 'PREMIUM' : 'FREE'; });
@@ -625,245 +606,77 @@
         if (tokenBadge) tokenBadge.style.display = isPremium ? 'none' : 'inline';
         const chartOverlay = document.getElementById('chart-premium-overlay');
         if (chartOverlay) chartOverlay.style.display = isPremium ? 'none' : 'flex';
-        atualizarBannerBackup();
-        atualizarTooltipVagas();
+        atualizarBannerBackup(); atualizarTooltipVagas();
         lucide.createIcons();
     }
     
     function atualizarTooltipVagas() {
         if (isPremium) { document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none'); return; }
-        const vagasRestantes = 10 - db.clientes.length;
-        let msg;
-        if (vagasRestantes > 0) {
-            msg = `<strong>${vagasRestantes} cliente${vagasRestantes > 1 ? 's' : ''} gratuito${vagasRestantes > 1 ? 's' : ''}</strong> disponíve${vagasRestantes > 1 ? 'is' : 'l'}`;
-            msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`;
-        } else {
-            msg = `Limite de <strong>10 clientes</strong> atingido`;
-            msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`;
-        }
+        const vagasRestantes = 10 - db.clientes.length; let msg;
+        if (vagasRestantes > 0) { msg = `<strong>${vagasRestantes} cliente${vagasRestantes>1?'s':''} gratuito${vagasRestantes>1?'s':''}</strong> disponíve${vagasRestantes>1?'is':'l'}`; msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`; }
+        else { msg = `Limite de <strong>10 clientes</strong> atingido`; msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`; }
         document.querySelectorAll('.free-slots-tip').forEach(el => { el.innerHTML = msg; el.style.display = 'block'; });
     }
     
     function ativarCodigoPremium() {
         const codigo = document.getElementById('pro-code-input').value.toUpperCase().trim();
-        if (CODIGOS_PREMIUM_VALIDOS.includes(codigo)) {
-            isPremium = true;
-            localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
-            fecharModais();
-            showToast('✅ Plano PREMIUM ativado! 💎', false);
-            atualizarUIPremium(); atualizar();
-        } else { showToast('❌ Código inválido!', true); }
+        if (CODIGOS_PREMIUM_VALIDOS.includes(codigo)) { isPremium = true; localStorage.setItem(PREMIUM_STORAGE_KEY, 'true'); fecharModais(); showToast('✅ Plano PREMIUM ativado! 💎', false); atualizarUIPremium(); atualizar(); }
+        else { showToast('❌ Código inválido!', true); }
     }
     
-    function simularCompraPremium() {
-        window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.")}`);
-        showToast('Redirecionando para WhatsApp...');
-    }
-    
-    function abrirConfigMsgComValidacao() {
-        if (!isPremium) { mostrarModalUpgrade(); return; }
-        document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO;
-        document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO;
-        document.getElementById('cfg-msg-promocao').value = db.configMsgPromocao || MSG_PROMOCAO_PADRAO;
-        abrirModalComHistorico('modal-config-msg');
-    }
-    
-    function copiarTokenComValidacao() {
-        if (!isPremium) { mostrarModalUpgrade(); return; }
-        copiarTokenComToast(); confirmarBackupFeito();
-    }
-    
-    function restaurarTokenComValidacao() {
-        if (!isPremium) { mostrarModalUpgrade(); return; }
-        abrirModalComHistorico('modal-token');
-    }
-    
-    function salvarSrvComValidacao() {
-        if (!isPremium && db.servidores.length >= 1) {
-            const idx = parseInt(document.getElementById('edit-idx-srv').value);
-            if (idx === -1) { fecharModais(); mostrarModalUpgrade(); return; }
-        }
-        salvarSrv();
-    }
+    function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.")}`); showToast('Redirecionando para WhatsApp...'); }
+    function abrirConfigMsgComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO; document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO; document.getElementById('cfg-msg-promocao').value = db.configMsgPromocao || MSG_PROMOCAO_PADRAO; abrirModalComHistorico('modal-config-msg'); }
+    function copiarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } copiarTokenComToast(); confirmarBackupFeito(); }
+    function restaurarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } abrirModalComHistorico('modal-token'); }
+    function salvarSrvComValidacao() { if (!isPremium && db.servidores.length >= 1) { const idx = parseInt(document.getElementById('edit-idx-srv').value); if (idx === -1) { fecharModais(); mostrarModalUpgrade(); return; } } salvarSrv(); }
 
-    // =============================================
-    // FUNÇÕES DO SISTEMA
-    // =============================================
     function persistir() { salvarDadosProtegidos(db); atualizar(); }
     function fecharModais() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
     function togglePriv() { db.priv = !db.priv; persistir(); }
-    function showToast(msg, isAlert = false) { 
-        const t = document.getElementById("toast"); 
-        t.innerText = msg; t.className = isAlert ? "show alert" : "show"; 
-        setTimeout(() => { t.className = ""; }, 3000); 
-    }
+    function showToast(msg, isAlert = false) { const t = document.getElementById("toast"); t.innerText = msg; t.className = isAlert ? "show alert" : "show"; setTimeout(() => { t.className = ""; }, 3000); }
 
-    function showTab(id, el) { 
-        curTabId = id;
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
-        document.querySelectorAll('.menu-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active-tab');
-        if(el) el.classList.add('active'); 
-        else document.querySelector(`[data-tab="${id}"]`).classList.add('active');
-        atualizarUIPremium(); atualizar(); 
-    }
+    function showTab(id, el) { curTabId = id; document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab')); document.querySelectorAll('.menu-item').forEach(n => n.classList.remove('active')); document.getElementById(id).classList.add('active-tab'); if(el) el.classList.add('active'); else document.querySelector(`[data-tab="${id}"]`).classList.add('active'); atualizarUIPremium(); atualizar(); }
 
-    function copiarTokenComToast() {
-        const compact = {
-            c: db.clientes.map(i => ({n: i.nome, w: i.wpp, v: i.venc, p: i.pNome, pv: i.pVal, s: i.sNome, sv: i.sVal})),
-            p: db.planos.map(i => ({n: i.nome, v: i.val})),
-            s: db.servidores.map(i => ({n: i.nome, c: i.custo})),
-            t: db.transacoes.map(i => ({c: i.cli, p: i.pVal, s: i.sVal, d: i.data})),
-            m: db.configMsg, mr: db.configMsgRenovacao, mp: db.configMsgPromocao
-        };
-        const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
-        navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado! Salve em local seguro."));
-    }
+    function copiarTokenComToast() { const compact = { c: db.clientes.map(i=>({n:i.nome,w:i.wpp,v:i.venc,p:i.pNome,pv:i.pVal,s:i.sNome,sv:i.sVal})), p: db.planos.map(i=>({n:i.nome,v:i.val})), s: db.servidores.map(i=>({n:i.nome,c:i.custo})), t: db.transacoes.map(i=>({c:i.cli,p:i.pVal,s:i.sVal,d:i.data})), m: db.configMsg, mr: db.configMsgRenovacao, mp: db.configMsgPromocao }; const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact)))); navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado! Salve em local seguro.")); }
 
-    function confirmarToken() {
-        try {
-            const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value))));
-            if(raw.c) {
-                db.clientes = raw.c.map(i => ({nome: i.n, wpp: i.w, venc: i.v, pNome: i.p, pVal: i.pv, sNome: i.s, sVal: i.sv}));
-                db.planos = raw.p.map(i => ({nome: i.n, val: i.v}));
-                db.servidores = raw.s.map(i => ({nome: i.n, custo: i.c}));
-                db.transacoes = raw.t.map(i => ({cli: i.c, pVal: i.p, sVal: i.s, data: i.d}));
-                db.configMsg = raw.m || db.configMsg;
-                db.configMsgRenovacao = raw.mr || db.configMsgRenovacao;
-                db.configMsgPromocao = raw.mp || db.configMsgPromocao;
-            } else if(raw.clientes) { db = raw; }
-            persistir(); fecharModais(); showToast("Restaurado!");
-        } catch(e) { showToast("Código Inválido!", true); }
-    }
+    function confirmarToken() { try { const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value)))); if(raw.c) { db.clientes = raw.c.map(i=>({nome:i.n,wpp:i.w,venc:i.v,pNome:i.p,pVal:i.pv,sNome:i.s,sVal:i.sv})); db.planos = raw.p.map(i=>({nome:i.n,val:i.v})); db.servidores = raw.s.map(i=>({nome:i.n,custo:i.c})); db.transacoes = raw.t.map(i=>({cli:i.c,pVal:i.p,sVal:i.s,data:i.d})); db.configMsg = raw.m || db.configMsg; db.configMsgRenovacao = raw.mr || db.configMsgRenovacao; db.configMsgPromocao = raw.mp || db.configMsgPromocao; } else if(raw.clientes) { db = raw; } persistir(); fecharModais(); showToast("Restaurado!"); } catch(e) { showToast("Código Inválido!", true); } }
 
-    function salvarCli() {
-        const n=document.getElementById('c-nome').value, v=document.getElementById('c-venc').value, 
-              pIdx=document.getElementById('c-plano').value, sIdx=document.getElementById('c-srv').value, 
-              idx=parseInt(document.getElementById('edit-idx-cli').value);
-        if(!n || !v || pIdx==="" || sIdx==="") return;
-        if (!isPremium && idx === -1 && db.clientes.length >= 10) {
-            fecharModais(); showToast('❌ Limite de 10 clientes! Assine PREMIUM 💎', true); mostrarModalUpgrade(); return;
-        }
-        const d={nome:n, wpp:document.getElementById('c-wpp').value, venc:v, pNome:db.planos[pIdx].nome, pVal:parseFloat(db.planos[pIdx].val), sNome:db.servidores[sIdx].nome, sVal:parseFloat(db.servidores[sIdx].custo)};
-        if(idx===-1) { db.clientes.push(d); db.transacoes.push({ cli:n, pVal:d.pVal, sVal:d.sVal, data: new Date().toISOString().slice(0,7) }); } 
-        else db.clientes[idx]=d;
-        fecharModais(); persistir();
-    }
-    function salvarPla() { const n=document.getElementById('p-nome').value, v=document.getElementById('p-val').value, idx=parseInt(document.getElementById('edit-idx-pla').value); if(n) { if(idx===-1) db.planos.push({nome:n, val:v}); else db.planos[idx]={nome:n, val:v}; fecharModais(); persistir(); } }
-    function salvarSrv() { const n=document.getElementById('s-nome').value, c=document.getElementById('s-custo').value, idx=parseInt(document.getElementById('edit-idx-srv').value); if(n) { if(idx===-1) db.servidores.push({nome:n, custo:c}); else db.servidores[idx]={nome:n, custo:c}; fecharModais(); persistir(); } }
+    function salvarCli() { const n=document.getElementById('c-nome').value, v=document.getElementById('c-venc').value, pIdx=document.getElementById('c-plano').value, sIdx=document.getElementById('c-srv').value, idx=parseInt(document.getElementById('edit-idx-cli').value); if(!n||!v||pIdx===""||sIdx==="") return; if (!isPremium && idx===-1 && db.clientes.length>=10) { fecharModais(); mostrarModalUpgrade(); return; } const d={nome:n,wpp:document.getElementById('c-wpp').value,venc:v,pNome:db.planos[pIdx].nome,pVal:parseFloat(db.planos[pIdx].val),sNome:db.servidores[sIdx].nome,sVal:parseFloat(db.servidores[sIdx].custo)}; if(idx===-1) { db.clientes.push(d); db.transacoes.push({cli:n,pVal:d.pVal,sVal:d.sVal,data:new Date().toISOString().slice(0,7)}); } else db.clientes[idx]=d; fecharModais(); persistir(); }
+    function salvarPla() { const n=document.getElementById('p-nome').value, v=document.getElementById('p-val').value, idx=parseInt(document.getElementById('edit-idx-pla').value); if(n) { if(idx===-1) db.planos.push({nome:n,val:v}); else db.planos[idx]={nome:n,val:v}; fecharModais(); persistir(); } }
+    function salvarSrv() { const n=document.getElementById('s-nome').value, c=document.getElementById('s-custo').value, idx=parseInt(document.getElementById('edit-idx-srv').value); if(n) { if(idx===-1) db.servidores.push({nome:n,custo:c}); else db.servidores[idx]={nome:n,custo:c}; fecharModais(); persistir(); } }
 
-    function abrirNovoManual() {
-        if(curTabId === 'tab-dash' || curTabId === 'tab-cli') { 
-            if (!isPremium && db.clientes.length >= 10) { showToast('❌ Limite de 10 clientes! Assine PREMIUM 💎', true); mostrarModalUpgrade(); return; }
-            document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; 
-            document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli');
-        } else if(curTabId === 'tab-pla') { 
-            document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; 
-            document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla');
-        } else if(curTabId === 'tab-srv') { 
-            if (!isPremium && db.servidores.length >= 1) { mostrarModalUpgrade(); return; }
-            document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; 
-            document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv');
-        }
-    }
-
-    function editarItem(tipo, i) {
-        if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); }
-        else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); }
-        else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); }
-    }
-
-    function salvarConfigMsg() { 
-        if (!isPremium) { mostrarModalUpgrade(); return; }
-        db.configMsg = document.getElementById('cfg-msg-cobranca').value; 
-        db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value;
-        db.configMsgPromocao = document.getElementById('cfg-msg-promocao').value;
-        persistir(); fecharModais(); showToast("Mensagens salvas!"); 
-    }
-
-    function confirmarExclusao(tipo, i) {
-        document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm');
-        document.getElementById('btn-do-delete').onclick = function() {
-            if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1);
-            showToast('Excluído!', true); persistir(); fecharModais();
-        };
-    }
-
-    function filtrarStatus(s) { filtroAtual = (filtroAtual === s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) document.getElementById('chip-'+s).classList.add('active'); atualizar(); }
-    function getIniciais(nome) { if (!nome) return '?'; const partes = nome.trim().split(' '); if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase(); return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase(); }
+    function abrirNovoManual() { if(curTabId==='tab-dash'||curTabId==='tab-cli') { if (!isPremium&&db.clientes.length>=10) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(curTabId==='tab-pla') { document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(curTabId==='tab-srv') { if (!isPremium&&db.servidores.length>=1) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
+    function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
+    function salvarConfigMsg() { if (!isPremium) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; db.configMsgPromocao = document.getElementById('cfg-msg-promocao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
+    function confirmarExclusao(tipo,i) { document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm'); document.getElementById('btn-do-delete').onclick = function() { if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1); showToast('Excluído!', true); persistir(); fecharModais(); }; }
+    function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) document.getElementById('chip-'+s).classList.add('active'); atualizar(); }
+    function getIniciais(nome) { if(!nome) return '?'; const partes = nome.trim().split(' '); if(partes.length===1) return partes[0].substring(0,2).toUpperCase(); return (partes[0][0]+partes[partes.length-1][0]).toUpperCase(); }
 
     function atualizar() {
         const hojeISO = new Date().toISOString().split('T')[0];
         const termo = (document.getElementById('search-main')?.value || '').toLowerCase();
-        const planoSelect = document.getElementById('c-plano');
-        const srvSelect = document.getElementById('c-srv');
-        if (planoSelect) planoSelect.innerHTML = db.planos.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
-        if (srvSelect) srvSelect.innerHTML = db.servidores.map((s,i)=>`<option value="${i}">${s.nome}</option>`).join('');
+        const planoSelect = document.getElementById('c-plano'), srvSelect = document.getElementById('c-srv');
+        if(planoSelect) planoSelect.innerHTML = db.planos.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
+        if(srvSelect) srvSelect.innerHTML = db.servidores.map((s,i)=>`<option value="${i}">${s.nome}</option>`).join('');
         ['grid-home','grid-cli','grid-pla','grid-srv','grid-fin'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML=''; });
         const fab = document.getElementById('main-fab');
-        if (fab) { const temDados = db.clientes.length > 0 || (curTabId==='tab-pla') || (curTabId==='tab-srv'); const podeCadastrarCliente = (curTabId==='tab-cli' || curTabId==='tab-dash') && db.servidores.length > 0 && db.planos.length > 0; fab.style.display = (curTabId !== 'tab-fin' && (temDados || podeCadastrarCliente)) ? 'flex' : 'none'; }
+        if(fab) { const temDados = db.clientes.length>0||(curTabId==='tab-pla')||(curTabId==='tab-srv'); const podeCadastrarCliente = (curTabId==='tab-cli'||curTabId==='tab-dash')&&db.servidores.length>0&&db.planos.length>0; fab.style.display = (curTabId!=='tab-fin'&&(temDados||podeCadastrarCliente))?'flex':'none'; }
+        if(db.servidores.length===0&&curTabId==='tab-srv') { document.getElementById('grid-srv').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="database" size="32"></i></div><h3>Cadastre seu Servidor</h3><p>Adicione seu servidor de origem para gerenciar seus custos operacionais e vincular aos clientes.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Servidor</button></div>`; }
+        else if(curTabId==='tab-srv') { db.servidores.forEach((s,i)=>{ document.getElementById('grid-srv').innerHTML+=`<div class="item-card" style="border:1.5px solid var(--saida)"><b>${s.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Custo: R$ ${parseFloat(s.custo).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('srv',${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('srv',${i})"><i data-lucide="trash-2"></i></button></div></div>`; }); }
+        if(db.planos.length===0&&curTabId==='tab-pla') { document.getElementById('grid-pla').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="package" size="32"></i></div><h3>Crie seus Planos</h3><p>Defina categorias de venda com nome e valor para oferecer aos seus clientes de forma organizada.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Criar Plano</button></div>`; }
+        else if(curTabId==='tab-pla') { db.planos.forEach((p,i)=>{ document.getElementById('grid-pla').innerHTML+=`<div class="item-card" style="border:1.5px solid var(--entrada)"><b>${p.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Venda: R$ ${parseFloat(p.val).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('pla',${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('pla',${i})"><i data-lucide="trash-2"></i></button></div></div>`; }); }
+        if(db.clientes.length===0&&curTabId==='tab-cli') { const temServidor=db.servidores.length>0,temPlano=db.planos.length>0; if(temServidor&&temPlano){ document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="users" size="32"></i></div><h3>Pronto para começar!</h3><p>Tudo configurado. Cadastre seu primeiro cliente agora.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Cliente</button></div>`; } else { const faltando=[]; if(!temServidor) faltando.push('<strong>Servidor</strong>'); if(!temPlano) faltando.push('<strong>Plano</strong>'); document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="users" size="32"></i></div><h3>Nenhum cliente</h3><p>Cadastre primeiro ${faltando.join(' e ')}.</p></div>`; } }
 
-        if(db.servidores.length===0 && curTabId==='tab-srv') { document.getElementById('grid-srv').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="database" size="32"></i></div><h3>Cadastre seu Servidor</h3><p>Adicione seu servidor de origem para gerenciar seus custos operacionais e vincular aos clientes.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Servidor</button></div>`; }
-        else if(curTabId==='tab-srv') { db.servidores.forEach((s,i)=> { document.getElementById('grid-srv').innerHTML+=`<div class="item-card" style="border: 1.5px solid var(--saida)"><b>${s.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Custo: R$ ${parseFloat(s.custo).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('srv', ${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('srv', ${i})"><i data-lucide="trash-2"></i></button></div></div>`; }); }
-
-        if(db.planos.length===0 && curTabId==='tab-pla') { document.getElementById('grid-pla').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="package" size="32"></i></div><h3>Crie seus Planos</h3><p>Defina categorias de venda com nome e valor para oferecer aos seus clientes de forma organizada.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Criar Plano</button></div>`; }
-        else if(curTabId==='tab-pla') { db.planos.forEach((p,i)=> { document.getElementById('grid-pla').innerHTML+=`<div class="item-card" style="border: 1.5px solid var(--entrada)"><b>${p.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Venda: R$ ${parseFloat(p.val).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('pla', ${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('pla', ${i})"><i data-lucide="trash-2"></i></button></div></div>`; }); }
-
-        if(db.clientes.length===0 && curTabId==='tab-cli') { 
-            const temServidor = db.servidores.length > 0, temPlano = db.planos.length > 0;
-            if (temServidor && temPlano) { document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="users" size="32"></i></div><h3>Pronto para começar!</h3><p>Tudo configurado. Cadastre seu primeiro cliente agora.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Cliente</button></div>`; }
-            else { const faltando = []; if (!temServidor) faltando.push('<strong>Servidor</strong>'); if (!temPlano) faltando.push('<strong>Plano</strong>'); document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="users" size="32"></i></div><h3>Nenhum cliente</h3><p>Cadastre primeiro ${faltando.join(' e ')}.</p></div>`; }
-        }
-
-        let proc = db.clientes.map((c, i) => {
-            const hoje = new Date(); hoje.setHours(0,0,0,0);
-            const partesData = c.venc.split('-'); const dv = new Date(parseInt(partesData[0]), parseInt(partesData[1])-1, parseInt(partesData[2])); dv.setHours(0,0,0,0);
-            const diffMs = dv.getTime() - hoje.getTime(); const diff = Math.round(diffMs / (1000*60*60*24));
-            let st="ativo", stC="card-border-ativo", stT="Ativo", stB="var(--lucro)", peso=2;
-            if(diff<0){st="vencido";stC="card-border-vencido";stT="Vencido";stB="var(--saida)";peso=3;}
-            else if(diff===0){st="vencido";stC="card-border-vencido";stT="Hoje";stB="var(--saida)";peso=3;}
-            else if(diff===1){st="alerta";stC="card-border-alerta";stT="Amanhã";stB="var(--alerta)";peso=1;}
-            return {...c, id: i, st, stC, stT, stB, peso};
-        });
-
-        const countVenc = proc.filter(p => p.st==="vencido").length, countAlert = proc.filter(p => p.st==="alerta").length;
-        const bVenc = document.getElementById('badge-vencido'), bAlert = document.getElementById('badge-alerta');
+        let proc = db.clientes.map((c,i) => { const hoje = new Date(); hoje.setHours(0,0,0,0); const partesData = c.venc.split('-'); const dv = new Date(parseInt(partesData[0]),parseInt(partesData[1])-1,parseInt(partesData[2])); dv.setHours(0,0,0,0); const diffMs = dv.getTime()-hoje.getTime(); const diff = Math.round(diffMs/(1000*60*60*24)); let st="ativo",stC="card-border-ativo",stT="Ativo",stB="var(--lucro)",peso=2; if(diff<0){st="vencido";stC="card-border-vencido";stT="Vencido";stB="var(--saida)";peso=3;} else if(diff===0){st="vencido";stC="card-border-vencido";stT="Hoje";stB="var(--saida)";peso=3;} else if(diff===1){st="alerta";stC="card-border-alerta";stT="Amanhã";stB="var(--alerta)";peso=1;} return {...c,id:i,st,stC,stT,stB,peso}; });
+        const countVenc = proc.filter(p=>p.st==="vencido").length, countAlert = proc.filter(p=>p.st==="alerta").length;
+        const bVenc=document.getElementById('badge-vencido'),bAlert=document.getElementById('badge-alerta');
         if(bVenc){ if(countVenc>0){bVenc.innerText=countVenc;bVenc.style.display='flex';}else bVenc.style.display='none'; }
         if(bAlert){ if(countAlert>0){bAlert.innerText=countAlert;bAlert.style.display='flex';}else bAlert.style.display='none'; }
         proc.sort((a,b)=>a.peso-b.peso);
 
-        proc.forEach((c) => {
-            if(curTabId==='tab-cli'||curTabId==='tab-dash'){
-                if(termo && !c.nome.toLowerCase().includes(termo)) return;
-                if(curTabId==='tab-dash'&&!filtroAtual&&c.st==='vencido') return;
-                if(filtroAtual&&c.st!==filtroAtual) return;
-                const iniciais = getIniciais(c.nome);
-                const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`;
-                if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; 
-                else document.getElementById('grid-cli').innerHTML+=card;
-            }
-        });
+        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ if(termo&&!c.nome.toLowerCase().includes(termo)) return; if(curTabId==='tab-dash'&&!filtroAtual&&c.st==='vencido') return; if(filtroAtual&&c.st!==filtroAtual) return; const iniciais = getIniciais(c.nome); const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
 
-        if(curTabId==='tab-fin'||curTabId==='tab-dash'){
-            let entT=0,saiT=0,lucM=0; const mesAtual = hojeISO.slice(0,7);
-            db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);});
-            const dsLucro=document.getElementById('ds-lucro'),dsAtivos=document.getElementById('ds-ativos');
-            if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`;
-            if(dsAtivos)dsAtivos.innerText=proc.filter(p=>p.st!=="vencido").length;
-            if(curTabId==='tab-fin'){
-                const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc');
-                let transacoesConsideradas=isPremium?db.transacoes:db.transacoes.slice(-10);
-                let entT10=0,saiT10=0; transacoesConsideradas.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;});
-                if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`;
-                if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`;
-                if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`;
-                if(isPremium&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10);
-                const gridFin=document.getElementById('grid-fin');
-                let transacoesParaMostrar=isPremium?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse();
-                transacoesParaMostrar.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;});
-                if(!isPremium&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;}
-            }
-        }
+        if(curTabId==='tab-fin'||curTabId==='tab-dash'){ let entT=0,saiT=0,lucM=0; const mesAtual=hojeISO.slice(0,7); db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);}); const dsLucro=document.getElementById('ds-lucro'),dsAtivos=document.getElementById('ds-ativos'); if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`; if(dsAtivos)dsAtivos.innerText=proc.filter(p=>p.st!=="vencido").length; if(curTabId==='tab-fin'){ const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc'); let transacoesConsideradas=isPremium?db.transacoes:db.transacoes.slice(-10); let entT10=0,saiT10=0; transacoesConsideradas.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;}); if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`; if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`; if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`; if(isPremium&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10); const gridFin=document.getElementById('grid-fin'); let transacoesParaMostrar=isPremium?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse(); transacoesParaMostrar.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;}); if(!isPremium&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;} } }
         lucide.createIcons(); atualizarUIPremium(); atualizarTooltipVagas(); atualizarBannerBackup();
     }
 
