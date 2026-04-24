@@ -24,11 +24,27 @@
             --premium-glow: 0 0 15px rgba(139, 92, 246, 0.5);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        /* Fundo externo mais escuro para desktop */
+        html { background: #050810; }
+        
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); 
             height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; 
             touch-action: pan-y; position: fixed; width: 100%; top: 0; left: 0;
             -webkit-overflow-scrolling: touch; overscroll-behavior: none;
+        }
+        
+        /* AJUSTE PARA DESKTOP: Centraliza o app em telas maiores */
+        @media (min-width: 500px) {
+            body {
+                max-width: 450px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 1px solid var(--border);
+                border-right: 1px solid var(--border);
+                box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            }
         }
 
         nav { 
@@ -37,6 +53,10 @@
             display: flex; justify-content: space-around; align-items: center; position: fixed; bottom: 0; z-index: 9999; padding-bottom: 5px; 
             box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
         }
+        @media (min-width: 500px) {
+            nav { max-width: 450px; left: 50%; transform: translateX(-50%); }
+        }
+        
         .menu-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); cursor: pointer; font-size: 0.65rem; font-weight: 600; transition: 0.3s; position: relative; height: 100%; justify-content: center; }
         .menu-item i, .menu-item svg { width: 22px !important; height: 22px !important; opacity: 0.6; transition: 0.3s ease; stroke-width: 1.5px !important; }
         .menu-item.active { color: var(--text); }
@@ -136,6 +156,9 @@
         .btn-more-fin { position: absolute; top: 15px; right: 15px; color: var(--text-dim); background: none; border: none; cursor: pointer; padding: 5px; opacity: 0.6; }
 
         .fab { position: fixed; bottom: 95px; right: 25px; width: 54px; height: 54px; background: var(--primary); border-radius: 18px; display: none; align-items: center; justify-content: center; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.4); z-index: 5000; border: none; cursor: pointer; transition: 0.2s; }
+        @media (min-width: 500px) {
+            .fab { right: calc(50% - 225px + 25px); }
+        }
 
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal { background: var(--card); width: 100%; max-width: 350px; padding: 22px; border-radius: 24px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
@@ -219,7 +242,7 @@
     </div>
 </main>
 
-<!-- MODAIS (mantidos iguais ao último código funcional) -->
+<!-- MODAIS (mantidos exatamente iguais) -->
 <div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width: 340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" onclick="enviarMsgTipo('cobranca')"><div class="msg-menu-icon" style="background: rgba(251, 113, 133, 0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('renovacao')"><div class="msg-menu-icon" style="background: rgba(56, 189, 248, 0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('promocao')"><div class="msg-menu-icon" style="background: rgba(16, 185, 129, 0.15);">🎉</div><div class="msg-menu-info"><b>Promoção</b><span>Ofertas e novidades</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 10px;" onclick="fecharModais()">Cancelar</button></div></div>
 <div class="overlay" id="modal-config-msg"><div class="modal" style="max-width: 380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><label>🎉 Promoção</label><textarea id="cfg-msg-promocao" rows="3"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button></div></div>
 <div class="overlay" id="modal-upgrade"><div class="modal" style="max-width: 340px; padding: 20px;"><div style="text-align: center; margin-bottom: 15px;"><i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i><h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3><p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p></div><div class="plan-card" style="padding: 14px; margin-bottom: 14px;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4><div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div></div><p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês ou R$ 199/ano</p><div style="margin: 12px 0;"><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div><div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div></div></div><div id="upgrade-code-section" style="margin-top: 12px;"><label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label><div style="display: flex; gap: 6px;"><input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;"><button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button></div></div><button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button><button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button></div></div>
@@ -324,7 +347,7 @@
         
         const hoje = new Date();
         const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        const countNovos = db.clientes.filter(c => { const dataCadastro = new Date(c.dataCadastro || '2000-01-01'); return dataCadastro >= primeiroDiaMes; }).length;
+        const countNovos = db.clientes.filter(c => { const dc = new Date(c.dataCadastro || '2000-01-01'); return dc >= primeiroDiaMes; }).length;
         
         const bAtivo=document.getElementById('badge-ativo'),bHoje=document.getElementById('badge-hoje'),bVenc=document.getElementById('badge-vencido'),bAlert=document.getElementById('badge-alerta');
         if(bAtivo){ if(countAtivos>0){bAtivo.innerText=countAtivos;bAtivo.style.display='flex';}else bAtivo.style.display='none'; }
@@ -333,26 +356,8 @@
         if(bAlert){ if(countAlert>0){bAlert.innerText=countAlert;bAlert.style.display='flex';}else bAlert.style.display='none'; }
         proc.sort((a,b)=>a.peso-b.peso);
 
-        // BUSCA CORRIGIDA: se tem termo de busca, ignora o filtro de chip e mostra todos
         const buscaAtiva = termo.length > 0;
-        
-        proc.forEach((c)=>{ 
-            if(curTabId==='tab-cli'||curTabId==='tab-dash'){
-                // Se tem busca ativa, filtra apenas pelo nome (ignora chips)
-                if(buscaAtiva) {
-                    if(!c.nome.toLowerCase().includes(termo)) return;
-                } else {
-                    // Sem busca, usa o filtro de chip normalmente
-                    if(filtroAtual==='hoje'&&c.st!=='hoje') return;
-                    if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return;
-                    if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return;
-                }
-                const iniciais = getIniciais(c.nome); 
-                const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; 
-                if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; 
-                else document.getElementById('grid-cli').innerHTML+=card; 
-            } 
-        });
+        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
 
         if(curTabId==='tab-fin'||curTabId==='tab-dash'){ let entT=0,saiT=0,lucM=0; const mesAtual=hojeISO.slice(0,7); db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);}); const dsLucro=document.getElementById('ds-lucro'),dsNovos=document.getElementById('ds-novos'); if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`; if(dsNovos)dsNovos.innerText=countNovos; if(curTabId==='tab-fin'){ const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc'); let tC=isPremium?db.transacoes:db.transacoes.slice(-10); let entT10=0,saiT10=0; tC.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;}); if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`; if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`; if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`; if(isPremium&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10); const gridFin=document.getElementById('grid-fin'); let tPM=isPremium?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse(); tPM.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;}); if(!isPremium&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;} } }
         lucide.createIcons(); atualizarUIPremium(); atualizarTooltipVagas(); atualizarBannerBackup();
