@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OwerPlay Gestor v1.0</title>
+    <title>OwerPlay Gestor</title>
+    
+    <!-- ÍCONE PARA TELA INICIAL (PWA) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'%3EOW%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'%3EOW%3C/text%3E%3C/svg%3E">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -47,7 +55,6 @@
             margin-left: 4px;
         }
         
-        /* BANNER DE ALERTA DE BACKUP */
         .backup-alert-banner {
             background: linear-gradient(135deg, rgba(251, 113, 133, 0.15), rgba(251, 113, 133, 0.05));
             border: 1px solid rgba(251, 113, 133, 0.3);
@@ -520,7 +527,6 @@
             </div>
         </div>
         
-        <!-- BANNER DE ALERTA DE BACKUP (PREMIUM) -->
         <div id="backup-alert-banner" class="backup-alert-banner" style="display: none;">
             <div class="backup-alert-icon">
                 <i data-lucide="alert-triangle" size="20"></i>
@@ -569,7 +575,7 @@
     </div>
 </main>
 
-<!-- MODAL PREMIUM - REDIMENSIONADO E SIMÉTRICO -->
+<!-- Modal de Upgrade PREMIUM -->
 <div class="overlay" id="modal-upgrade">
     <div class="modal" style="max-width: 340px; padding: 20px;">
         <div style="text-align: center; margin-bottom: 15px;">
@@ -733,22 +739,15 @@
     let touchStartX = 0;
     let touchStartY = 0;
 
-    // =============================================
-    // CORRIGIDO: Ao abrir modal, adiciona entrada no histórico
-    // Ao clicar "voltar", remove o modal em vez de sair do app
-    // =============================================
     function abrirModalComHistorico(modalId) {
         const modal = document.getElementById(modalId);
         if (!modal) return;
         modal.style.display = 'flex';
-        // Adiciona uma entrada no histórico
         history.pushState({ modalOpen: true, modalId: modalId }, '');
     }
     
-    // Fecha o modal quando o usuário clica em "voltar" no navegador
     window.addEventListener('popstate', function(event) {
         if (event.state && event.state.modalOpen) {
-            // Fecha todos os modais abertos
             fecharModais();
         }
     });
