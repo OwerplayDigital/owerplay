@@ -47,7 +47,75 @@
             margin-left: 4px;
         }
         
-        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active {
+        /* BANNER DE ALERTA DE BACKUP */
+        .backup-alert-banner {
+            background: linear-gradient(135deg, rgba(251, 113, 133, 0.15), rgba(251, 113, 133, 0.05));
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { border-color: rgba(251, 113, 133, 0.3); }
+            50% { border-color: rgba(251, 113, 133, 0.7); }
+            100% { border-color: rgba(251, 113, 133, 0.3); }
+        }
+        
+        .backup-alert-icon {
+            color: var(--saida);
+            min-width: 20px;
+            margin-top: 1px;
+        }
+        
+        .backup-alert-content {
+            flex: 1;
+        }
+        
+        .backup-alert-content p {
+            font-size: 0.65rem;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .backup-alert-content p strong {
+            color: var(--saida);
+        }
+        
+        .backup-alert-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-backup {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .btn-backup-primary {
+            background: var(--saida);
+            color: white;
+        }
+        
+        .btn-backup-secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active {
             transform: scale(0.96) !important;
             transition: transform 0.1s ease !important;
         }
@@ -109,17 +177,17 @@
             background: linear-gradient(135deg, var(--premium-color), #A78BFA);
             color: white;
             border: none;
-            padding: 15px 20px;
-            border-radius: 15px;
+            padding: 13px 18px;
+            border-radius: 14px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 12px;
             box-shadow: var(--premium-glow);
             transition: 0.3s;
             text-align: center;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         
         .upgrade-btn:hover {
@@ -130,9 +198,9 @@
         .plan-card {
             background: linear-gradient(135deg, #1e2438, #161b2c);
             border: 2px solid var(--premium-color);
-            border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 20px;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 16px;
             box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1);
         }
 
@@ -144,13 +212,13 @@
         }
         
         .plan-price-small {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--premium-color);
         }
         
         .plan-price-big {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--premium-color), #C4B5FD);
             -webkit-background-clip: text;
@@ -160,11 +228,11 @@
         }
         
         .plan-price-cents {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--premium-color);
             align-self: flex-start;
-            margin-top: 3px;
+            margin-top: 2px;
         }
 
         .plan-header {
@@ -334,11 +402,11 @@
         .fab { position: fixed; bottom: 95px; right: 25px; width: 54px; height: 54px; background: var(--primary); border-radius: 18px; display: none; align-items: center; justify-content: center; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.4); z-index: 5000; border: none; cursor: pointer; transition: 0.2s; }
 
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal { background: var(--card); width: 100%; max-width: 360px; padding: 25px; border-radius: 28px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
-        .modal h3 { margin-bottom: 15px; font-weight: 800; }
-        .modal label { display: block; font-size: 0.7rem; color: var(--text-dim); margin: 12px 0 6px; text-transform: uppercase; font-weight: 800; }
-        .modal input, .modal select, .modal textarea { width: 100%; background: var(--bg); border: 1.5px solid var(--border); padding: 14px; border-radius: 12px; color: white; outline: none; margin-bottom: 5px; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; }
-        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; margin-top: 15px; cursor: pointer; }
+        .modal { background: var(--card); width: 100%; max-width: 350px; padding: 22px; border-radius: 24px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
+        .modal h3 { margin-bottom: 12px; font-weight: 800; font-size: 1.1rem; }
+        .modal label { display: block; font-size: 0.7rem; color: var(--text-dim); margin: 10px 0 5px; text-transform: uppercase; font-weight: 800; }
+        .modal input, .modal select, .modal textarea { width: 100%; background: var(--bg); border: 1.5px solid var(--border); padding: 12px; border-radius: 12px; color: white; outline: none; margin-bottom: 4px; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; }
+        .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; margin-top: 12px; cursor: pointer; font-size: 0.85rem; }
 
         .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
         .btn-confirm { background: var(--saida); flex: 1; padding: 14px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; }
@@ -451,6 +519,25 @@
                 <span id="plan-text-fin">FREE</span>
             </div>
         </div>
+        
+        <!-- BANNER DE ALERTA DE BACKUP (PREMIUM) -->
+        <div id="backup-alert-banner" class="backup-alert-banner" style="display: none;">
+            <div class="backup-alert-icon">
+                <i data-lucide="alert-triangle" size="20"></i>
+            </div>
+            <div class="backup-alert-content">
+                <p><strong>⚠️ ALERTA!</strong> Seus dados estão salvos apenas neste navegador. Se você limpar os dados, trocar de celular ou desinstalar o app, <strong>perderá TODOS os clientes, planos e finanças!</strong></p>
+                <div class="backup-alert-actions">
+                    <button class="btn-backup btn-backup-primary" onclick="copiarTokenComToast()">
+                        <i data-lucide="download" size="12"></i> Fazer Backup Agora
+                    </button>
+                    <button class="btn-backup btn-backup-secondary" onclick="confirmarBackupFeito()">
+                        ✅ Já fiz o backup
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <div class="fin-card-top">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
                 <i data-lucide="shield-check" style="color:var(--lucro)"></i>
@@ -482,50 +569,49 @@
     </div>
 </main>
 
-<!-- Modal de Upgrade PREMIUM -->
+<!-- MODAL PREMIUM - REDIMENSIONADO E SIMÉTRICO -->
 <div class="overlay" id="modal-upgrade">
-    <div class="modal" style="max-width: 380px;">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 60px; height: 60px; margin-bottom: 8px;"></i>
-            <h3 style="font-size: 1.3rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 5px;">OWERPLAY PREMIUM</h3>
-            <p style="color: var(--text-dim); font-size: 0.75rem;">Desbloqueie todo o poder do seu gestor</p>
+    <div class="modal" style="max-width: 340px; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i>
+            <h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3>
+            <p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p>
         </div>
         
-        <div class="plan-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h4 style="font-size: 1.1rem; font-weight: 700;">Plano PREMIUM</h4>
+        <div class="plan-card" style="padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4>
                 <div class="plan-price-container">
                     <span class="plan-price-small">R$</span>
                     <span class="plan-price-big">19</span>
                     <span class="plan-price-cents">,90</span>
                 </div>
             </div>
-            <p style="color: var(--text-dim); font-size: 0.65rem; margin-bottom: 15px; text-align: right;">/mês ou R$ 199/ano</p>
+            <p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês ou R$ 199/ano</p>
             
-            <div style="margin: 15px 0;">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 16px;"></i><span style="font-size: 0.75rem;">Clientes ilimitados</span></div>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 16px;"></i><span style="font-size: 0.75rem;">Servidores ilimitados</span></div>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 16px;"></i><span style="font-size: 0.75rem;">Backup e restauração de tokens</span></div>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 16px;"></i><span style="font-size: 0.75rem;">Mensagens personalizadas</span></div>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 16px;"></i><span style="font-size: 0.75rem;">Gráficos e relatórios avançados</span></div>
-                <div style="display: flex; gap: 10px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 16px;"></i><span style="font-size: 0.75rem;">Histórico financeiro completo</span></div>
+            <div style="margin: 12px 0;">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Mensagens personalizadas</span></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div>
+                <div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div>
             </div>
         </div>
         
-        <div id="upgrade-code-section" style="margin-top: 15px;">
-            <label style="font-size: 0.65rem;">Já tem um código PREMIUM?</label>
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 12px;">
-                <button class="btn-save" style="margin: 0; width: auto; padding: 12px 18px; background: var(--premium-color);" onclick="ativarCodigoPremium()">Ativar</button>
+        <div id="upgrade-code-section" style="margin-top: 12px;">
+            <label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;">
+                <button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button>
             </div>
-            <p style="font-size: 0.5rem; color: var(--text-dim); margin-top: 5px;">Código de teste: PREMIUM-2024</p>
         </div>
         
         <button class="upgrade-btn" onclick="simularCompraPremium()">
             Assinar via WhatsApp
         </button>
         
-        <button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 12px;" onclick="fecharModais()">
+        <button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">
             Talvez depois
         </button>
     </div>
@@ -554,7 +640,6 @@
 
 <div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome"><label>Preço</label><input type="number" id="p-val"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
 <div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome"><label>Custo</label><input type="number" id="s-custo"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
-<!-- MODAL CONFIG MENSAGEM ATUALIZADO -->
 <div class="overlay" id="modal-config-msg"><div class="modal"><h3>Configurar Mensagem</h3><p style="font-size:0.6rem; color:var(--text-dim); margin-bottom:10px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><textarea id="cfg-msg-texto" rows="6"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar</button></div></div>
 <div class="overlay" id="modal-renew"><div class="modal"><h3>Renovar</h3><input type="hidden" id="renew-idx">
     <button class="btn-save" onclick="calcularPrevia30()">Calcular +30 Dias</button>
@@ -575,6 +660,7 @@
     const STORAGE_KEY = 'OWERPLAY_FINAL_MASTER_V22';
     const BACKUP_KEY = 'OWERPLAY_FINAL_BACKUP_V22';
     const PREMIUM_STORAGE_KEY = 'OWERPLAY_PREMIUM_LICENSE';
+    const BACKUP_ALERT_KEY = 'OWERPLAY_BACKUP_ALERT_DISMISSED';
     
     function salvarDadosProtegidos(dados) {
         try {
@@ -594,6 +680,29 @@
             try { return JSON.parse(dados); } catch(e) { return null; }
         }
         return null;
+    }
+    
+    function deveMostrarAlertaBackup() {
+        if (!isPremium) return false;
+        const dismissed = localStorage.getItem(BACKUP_ALERT_KEY);
+        if (!dismissed) return true;
+        const dismissedDate = new Date(parseInt(dismissed));
+        const now = new Date();
+        const daysDiff = (now - dismissedDate) / (1000 * 60 * 60 * 24);
+        return daysDiff >= 7;
+    }
+    
+    function confirmarBackupFeito() {
+        localStorage.setItem(BACKUP_ALERT_KEY, Date.now().toString());
+        document.getElementById('backup-alert-banner').style.display = 'none';
+        showToast('✅ Backup confirmado! Lembre-se de salvar o token em local seguro.');
+    }
+    
+    function atualizarBannerBackup() {
+        const banner = document.getElementById('backup-alert-banner');
+        if (banner) {
+            banner.style.display = deveMostrarAlertaBackup() ? 'flex' : 'none';
+        }
     }
     
     let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
@@ -625,6 +734,34 @@
     let touchStartY = 0;
 
     // =============================================
+    // CORRIGIDO: Ao abrir modal, adiciona entrada no histórico
+    // Ao clicar "voltar", remove o modal em vez de sair do app
+    // =============================================
+    function abrirModalComHistorico(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.style.display = 'flex';
+        // Adiciona uma entrada no histórico
+        history.pushState({ modalOpen: true, modalId: modalId }, '');
+    }
+    
+    // Fecha o modal quando o usuário clica em "voltar" no navegador
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.modalOpen) {
+            // Fecha todos os modais abertos
+            fecharModais();
+        }
+    });
+    
+    function mostrarModalUpgrade() {
+        if (isPremium) {
+            showToast('Você já é PREMIUM! 💎');
+            return;
+        }
+        abrirModalComHistorico('modal-upgrade');
+    }
+    
+    // =============================================
     // FUNÇÕES DE VERIFICAÇÃO PREMIUM
     // =============================================
     function atualizarUIPremium() {
@@ -646,6 +783,7 @@
         const chartOverlay = document.getElementById('chart-premium-overlay');
         if (chartOverlay) chartOverlay.style.display = isPremium ? 'none' : 'flex';
         
+        atualizarBannerBackup();
         atualizarTooltipVagas();
         lucide.createIcons();
     }
@@ -673,14 +811,6 @@
         });
     }
     
-    function mostrarModalUpgrade() {
-        if (isPremium) {
-            showToast('Você já é PREMIUM! 💎');
-            return;
-        }
-        document.getElementById('modal-upgrade').style.display = 'flex';
-    }
-    
     function ativarCodigoPremium() {
         const codigo = document.getElementById('pro-code-input').value.toUpperCase().trim();
         
@@ -705,16 +835,19 @@
         if (!isPremium) { mostrarModalUpgrade(); return; }
         document.getElementById('cfg-msg-texto').value = db.configMsg;
         document.getElementById('modal-config-msg').style.display = 'flex';
+        abrirModalComHistorico('modal-config-msg');
     }
     
     function copiarTokenComValidacao() {
         if (!isPremium) { mostrarModalUpgrade(); return; }
         copiarTokenComToast();
+        confirmarBackupFeito();
     }
     
     function restaurarTokenComValidacao() {
         if (!isPremium) { mostrarModalUpgrade(); return; }
         document.getElementById('modal-token').style.display = 'flex';
+        abrirModalComHistorico('modal-token');
     }
     
     function salvarSrvComValidacao() {
@@ -777,7 +910,7 @@
             m: db.configMsg
         };
         const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
-        navigator.clipboard.writeText(token).then(()=>showToast("Token Copiado!"));
+        navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado! Salve em local seguro."));
     }
 
     function confirmarToken() {
@@ -859,13 +992,15 @@
             document.getElementById('c-nome').value=""; 
             document.getElementById('c-wpp').value=""; 
             document.getElementById('c-venc').value=""; 
-            document.getElementById('modal-cli').style.display='flex'; 
+            document.getElementById('modal-cli').style.display='flex';
+            abrirModalComHistorico('modal-cli');
         }
         else if(curTabId === 'tab-pla') { 
             document.getElementById('edit-idx-pla').value="-1"; 
             document.getElementById('p-nome').value=""; 
             document.getElementById('p-val').value=""; 
-            document.getElementById('modal-pla').style.display='flex'; 
+            document.getElementById('modal-pla').style.display='flex';
+            abrirModalComHistorico('modal-pla');
         }
         else if(curTabId === 'tab-srv') { 
             if (!isPremium && db.servidores.length >= 1) {
@@ -875,7 +1010,8 @@
             document.getElementById('edit-idx-srv').value="-1"; 
             document.getElementById('s-nome').value=""; 
             document.getElementById('s-custo').value=""; 
-            document.getElementById('modal-srv').style.display='flex'; 
+            document.getElementById('modal-srv').style.display='flex';
+            abrirModalComHistorico('modal-srv');
         }
     }
 
@@ -886,41 +1022,39 @@
             document.getElementById('c-nome').value=c.nome; 
             document.getElementById('c-wpp').value=c.wpp; 
             document.getElementById('c-venc').value=c.venc; 
-            document.getElementById('modal-cli').style.display='flex'; 
+            document.getElementById('modal-cli').style.display='flex';
+            abrirModalComHistorico('modal-cli');
         }
         else if(tipo==='pla'){ 
             const p=db.planos[i]; 
             document.getElementById('edit-idx-pla').value=i; 
             document.getElementById('p-nome').value=p.nome; 
             document.getElementById('p-val').value=p.val; 
-            document.getElementById('modal-pla').style.display='flex'; 
+            document.getElementById('modal-pla').style.display='flex';
+            abrirModalComHistorico('modal-pla');
         }
         else if(tipo==='srv'){ 
             const s=db.servidores[i]; 
             document.getElementById('edit-idx-srv').value=i; 
             document.getElementById('s-nome').value=s.nome; 
             document.getElementById('s-custo').value=s.custo; 
-            document.getElementById('modal-srv').style.display='flex'; 
+            document.getElementById('modal-srv').style.display='flex';
+            abrirModalComHistorico('modal-srv');
         }
     }
 
-    // FUNÇÃO COBRAR CLIENTE ATUALIZADA COM {sobrenome}
     function cobrarCliente(i) {
         if (!isPremium) { mostrarModalUpgrade(); return; }
         const c = db.clientes[i];
         const dataFmt = c.venc.split("-").reverse().join("/");
-        
-        // Extrai nome e sobrenome
         const partesNome = c.nome.trim().split(' ');
         const primeiroNome = partesNome[0];
         const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : '';
-        
         let m = db.configMsg
             .replace("{nome}", primeiroNome)
             .replace("{sobrenome}", sobrenome)
             .replace("{vencimento}", dataFmt)
             .replace("{valor}", c.pVal.toFixed(2));
-        
         window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(m)}`);
     }
 
@@ -932,6 +1066,7 @@
 
     function confirmarExclusao(tipo, i) {
         document.getElementById('modal-confirm').style.display='flex';
+        abrirModalComHistorico('modal-confirm');
         document.getElementById('btn-do-delete').onclick = function() {
             if(tipo==='cli') db.clientes.splice(i,1); 
             else if(tipo==='pla') db.planos.splice(i,1); 
@@ -1089,7 +1224,7 @@
                     </div>
                     <div class="card-actions">
                         <button class="btn-icon" style="color:#22c55e" onclick="cobrarCliente(${c.id})"><i data-lucide="message-circle"></i></button>
-                        <button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}'; document.getElementById('modal-renew').style.display='flex'"><i data-lucide="refresh-cw"></i></button>
+                        <button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}'; document.getElementById('modal-renew').style.display='flex'; abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button>
                         <button class="btn-icon btn-edit" onclick="editarItem('cli', ${c.id})"><i data-lucide="pencil"></i></button>
                         <button class="btn-icon btn-del" onclick="confirmarExclusao('cli', ${c.id})"><i data-lucide="trash-2"></i></button>
                     </div>
@@ -1135,7 +1270,7 @@
                 
                 transacoesParaMostrar.forEach((t, i) => { 
                     const realIdx = db.transacoes.indexOf(t);
-                    gridFin.innerHTML+=`<div class="item-card" style="border: 1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex'; document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})}; document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin', ${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv ? '••' : 'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv ? '••' : 'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv ? '••' : 'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;
+                    gridFin.innerHTML+=`<div class="item-card" style="border: 1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex'; abrirModalComHistorico('modal-opt-fin'); document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})}; document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin', ${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv ? '••' : 'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv ? '••' : 'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv ? '••' : 'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;
                 });
                 
                 if (!isPremium && db.transacoes.length > 10) {
@@ -1152,6 +1287,7 @@
         lucide.createIcons();
         atualizarUIPremium();
         atualizarTooltipVagas();
+        atualizarBannerBackup();
     }
 
     function renderFin(e, s, l) { 
@@ -1171,7 +1307,8 @@
         document.getElementById('edit-fin-idx').value=idx; 
         document.getElementById('ef-entrada').value=t.pVal; 
         document.getElementById('ef-saida').value=t.sVal; 
-        document.getElementById('modal-edit-fin').style.display='flex'; 
+        document.getElementById('modal-edit-fin').style.display='flex';
+        abrirModalComHistorico('modal-edit-fin');
     }
     
     function salvarEditFin() { 
