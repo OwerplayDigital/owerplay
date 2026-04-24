@@ -569,7 +569,7 @@
 
 <script>
     // =============================================
-    // SISTEMA DE PROTEÇÃO ANTI-PERDA DE DADOS (BACKUP DUPLO)
+    // SISTEMA DE PROTEÇÃO ANTI-PERDA DE DADOS
     // =============================================
     const STORAGE_KEY = 'OWERPLAY_FINAL_MASTER_V22';
     const BACKUP_KEY = 'OWERPLAY_FINAL_BACKUP_V22';
@@ -597,7 +597,22 @@
     
     let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
     
-    const CODIGOS_PREMIUM_VALIDOS = ['PREMIUM-2024', 'OWERPLAY-PREMIUM', 'PREMIUM-MASTER'];
+    // =============================================
+    // 🔐 CÓDIGOS PREMIUM (10 CÓDIGOS ÚNICOS + TESTE)
+    // =============================================
+    const CODIGOS_PREMIUM_VALIDOS = [
+        'PREMIUM-2024',      // Código de teste (admin)
+        'OWER-A7B3-C9D1',    // Código 01
+        'OWER-E2F4-G6H8',    // Código 02
+        'OWER-J1K5-L3M7',    // Código 03
+        'OWER-N9P2-Q4R6',    // Código 04
+        'OWER-S8T1-U5V3',    // Código 05
+        'OWER-W7X9-Y2Z4',    // Código 06
+        'OWER-B5D8-F1H3',    // Código 07
+        'OWER-K6M2-P9R5',    // Código 08
+        'OWER-T4V7-X1Z8',    // Código 09
+        'OWER-C3G9-J6N4',    // Código 10
+    ];
     
     let db = carregarDadosProtegidos() || { 
         clientes: [], planos: [], servidores: [], transacoes: [], priv: false,
@@ -678,7 +693,7 @@
             atualizarUIPremium();
             atualizar();
         } else {
-            showToast('❌ Código inválido! Use: PREMIUM-2024', true);
+            showToast('❌ Código inválido!', true);
         }
     }
     
@@ -716,7 +731,7 @@
     }
 
     // =============================================
-    // FUNÇÕES DO SISTEMA (ORIGINAIS)
+    // FUNÇÕES DO SISTEMA (ORIGINAIS - INTACTAS)
     // =============================================
     function persistir() { 
         salvarDadosProtegidos(db);
