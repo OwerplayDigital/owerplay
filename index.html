@@ -75,13 +75,7 @@
         .item-card { position: relative; overflow: hidden; }
 
         .premium-badge { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; margin-left: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--premium-glow); }
-        .upgrade-btn {
-            background: linear-gradient(135deg, var(--premium-color), #A78BFA);
-            color: white; border: none; padding: 13px 18px; border-radius: 14px;
-            font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%;
-            margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s;
-            text-align: center; letter-spacing: 0.3px;
-        }
+        .upgrade-btn { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
         .upgrade-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5); }
         .plan-card { background: linear-gradient(135deg, #1e2438, #161b2c); border: 2px solid var(--premium-color); border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1); }
         .plan-price-container { display: flex; align-items: baseline; justify-content: flex-end; gap: 2px; }
@@ -150,13 +144,7 @@
         .modal input, .modal select, .modal textarea { width: 100%; background: var(--bg); border: 1.5px solid var(--border); padding: 12px; border-radius: 12px; color: white; outline: none; margin-bottom: 4px; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; }
         .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; margin-top: 12px; cursor: pointer; font-size: 0.85rem; }
         
-        .btn-kiwify {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white; border: none; padding: 13px 18px; border-radius: 14px;
-            font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%;
-            margin-top: 8px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: 0.3s;
-            text-align: center; letter-spacing: 0.3px;
-        }
+        .btn-kiwify { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 8px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
         .btn-kiwify:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); }
 
         .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
@@ -177,14 +165,7 @@
         .msg-menu-info { flex: 1; }
         .msg-menu-info b { font-size: 0.8rem; display: block; margin-bottom: 2px; }
         .msg-menu-info span { font-size: 0.6rem; color: var(--text-dim); }
-        
-        /* Estilo para o contador de dias */
-        .dias-restantes {
-            font-size: 0.6rem;
-            font-weight: 600;
-            opacity: 0.9;
-            margin-left: 4px;
-        }
+        .dias-restantes { font-size: 0.6rem; font-weight: 600; opacity: 0.9; margin-left: 4px; }
     </style>
 </head>
 <body onclick="if(event.target.classList.contains('overlay')) fecharModais()">
@@ -205,10 +186,7 @@
     <div id="tab-dash" class="tab-content active-tab">
         <div class="plan-header">
             <h2 class="app-brand" style="margin-bottom: 0;">OWERPLAY GESTOR <span class="version-tag">v1.0</span></h2>
-            <div class="current-plan-badge" onclick="mostrarModalUpgrade()">
-                <span id="plan-text-dash">FREE</span>
-                <span id="dias-restantes-dash" class="dias-restantes" style="display:none;"></span>
-            </div>
+            <div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-dash">FREE</span><span id="dias-restantes-dash" class="dias-restantes" style="display:none;"></span></div>
         </div>
         <div id="free-slots-dash" class="free-slots-tip" style="display: none;"></div>
         <div class="mini-stats">
@@ -251,33 +229,9 @@
 
 <div class="overlay" id="modal-upgrade">
     <div class="modal" style="max-width: 340px; padding: 20px;">
-        <div style="text-align: center; margin-bottom: 15px;">
-            <i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i>
-            <h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3>
-            <p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p>
-        </div>
-        <div class="plan-card" style="padding: 14px; margin-bottom: 14px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4>
-                <div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">34</span><span class="plan-price-cents">,90</span></div>
-            </div>
-            <p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/ano</p>
-            <div style="margin: 12px 0;">
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div>
-                <div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div>
-            </div>
-        </div>
-        <div id="upgrade-code-section" style="margin-top: 12px;">
-            <label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label>
-            <div style="display: flex; gap: 6px;">
-                <input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;">
-                <button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button>
-            </div>
-        </div>
+        <div style="text-align: center; margin-bottom: 15px;"><i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i><h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3><p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p></div>
+        <div class="plan-card" style="padding: 14px; margin-bottom: 14px;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4><div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">34</span><span class="plan-price-cents">,90</span></div></div><p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/ano</p><div style="margin: 12px 0;"><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div><div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div></div></div>
+        <div id="upgrade-code-section" style="margin-top: 12px;"><label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label><div style="display: flex; gap: 6px;"><input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;"><button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button></div></div>
         <button class="btn-kiwify" onclick="abrirKiwify()">🛒 Assinar Premium</button>
         <button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button>
         <button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button>
@@ -296,9 +250,9 @@
 
 <script>
     // =============================================
-    // CONFIGURAÇÃO JSONBIN.IO
+    // CONFIGURAÇÃO JSONBIN.IO (NOVO BIN ID)
     // =============================================
-    const JSONBIN_BIN_ID = '69ec1dca36566621a8ebfdbd';
+    const JSONBIN_BIN_ID = '69ec4032aaba882197361318';
     const JSONBIN_API_KEY = '$2a$10$hPThmNbRFc4LJU8Lb39NOufogEbkwaSTJIJV4m3CCTqODEzgcP.y2';
     const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`;
     
@@ -377,40 +331,26 @@
             const codigos = data.record.codigos || [];
             const codigoEncontrado = codigos.find(c => c.codigo.toUpperCase() === codigo);
             
-            if (!codigoEncontrado) {
-                showToast('❌ Código inválido!', true);
-                return;
-            }
+            if (!codigoEncontrado) { showToast('❌ Código inválido!', true); return; }
             
             const dataExpiracao = new Date(codigoEncontrado.expiracao);
             const agora = new Date();
-            
-            if (agora > dataExpiracao) {
-                showToast('❌ Este código já expirou!', true);
-                return;
-            }
+            if (agora > dataExpiracao) { showToast('❌ Este código já expirou!', true); return; }
             
             isPremium = true;
             localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
-            
-            const expiraEm30Dias = new Date();
-            expiraEm30Dias.setDate(expiraEm30Dias.getDate() + 30);
+            const expiraEm30Dias = new Date(); expiraEm30Dias.setDate(expiraEm30Dias.getDate() + 30);
             localStorage.setItem(PREMIUM_EXPIRY_KEY, expiraEm30Dias.toISOString().split('T')[0]);
             
             fecharModais();
             showToast('✅ Plano PREMIUM ativado por 30 dias! 💎', false);
-            atualizarUIPremium();
-            atualizar();
-            
+            atualizarUIPremium(); atualizar();
         } catch (error) {
-            console.error('Erro:', error);
             showToast('❌ Erro ao verificar código. Tente novamente.', true);
         }
     }
     
-    function ativarCodigoPremium() {
-        ativarCodigoPremiumOnline();
-    }
+    function ativarCodigoPremium() { ativarCodigoPremiumOnline(); }
     
     const MSG_COBRANCA_PADRAO = "Olá {nome}! 👋 Passando para lembrar que seu acesso vence dia {vencimento}. O valor para renovação é de R$ {valor}. Como deseja pagar?";
     const MSG_RENOVACAO_PADRAO = "Olá {nome}! ✅ Sua renovação foi confirmada! Novo vencimento: {vencimento}. Obrigado pela confiança!";
@@ -436,8 +376,7 @@
         const mb = document.getElementById('msg-premium-badge'); if (mb) mb.style.display = isPremium ? 'none' : 'inline';
         const tb = document.getElementById('token-premium-badge'); if (tb) tb.style.display = isPremium ? 'none' : 'inline';
         const co = document.getElementById('chart-premium-overlay'); if (co) co.style.display = isPremium ? 'none' : 'flex';
-        atualizarContadorDias();
-        atualizarBannerBackup(); atualizarTooltipVagas(); lucide.createIcons(); 
+        atualizarContadorDias(); atualizarBannerBackup(); atualizarTooltipVagas(); lucide.createIcons(); 
     }
     function atualizarTooltipVagas() { if (isPremium) { document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none'); return; } const vagas = 10 - db.clientes.length; let msg; if (vagas > 0) { msg = `<strong>${vagas} cliente${vagas>1?'s':''} gratuito${vagas>1?'s':''}</strong> disponíve${vagas>1?'is':'l'}`; msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`; } else { msg = `Limite de <strong>10 clientes</strong> atingido`; msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`; } document.querySelectorAll('.free-slots-tip').forEach(el => { el.innerHTML = msg; el.style.display = 'block'; }); }
     function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 34,90/ano.")}`); showToast('Redirecionando para WhatsApp...'); }
