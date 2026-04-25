@@ -82,33 +82,21 @@
             50% { border-color: rgba(139, 92, 246, 0.8); }
             100% { border-color: rgba(139, 92, 246, 0.4); }
         }
-        .premium-expiry-banner .expiry-icon {
-            font-size: 1.2rem;
-            min-width: 24px;
-            text-align: center;
-        }
-        .premium-expiry-banner .expiry-text {
-            flex: 1;
-            font-size: 0.65rem;
-            color: var(--text);
-            line-height: 1.4;
-        }
-        .premium-expiry-banner .expiry-text strong {
-            color: var(--premium-color);
-        }
-        .premium-expiry-banner .expiry-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 700;
-            font-size: 0.6rem;
-            cursor: pointer;
-            background: var(--premium-color);
-            color: white;
-            white-space: nowrap;
+        .premium-expiry-banner .expiry-icon { font-size: 1.2rem; min-width: 24px; text-align: center; }
+        .premium-expiry-banner .expiry-text { flex: 1; font-size: 0.65rem; color: var(--text); line-height: 1.4; }
+        .premium-expiry-banner .expiry-text strong { color: var(--premium-color); }
+        .premium-expiry-banner .expiry-btn { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.6rem; cursor: pointer; background: var(--premium-color); color: white; white-space: nowrap; }
+        
+        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
+        textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active,
+        select:-webkit-autofill, select:-webkit-autofill:hover, select:-webkit-autofill:focus, select:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px var(--bg) inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+            caret-color: white !important;
         }
         
-        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active { transform: scale(0.96) !important; transition: transform 0.1s ease !important; }
+        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active, .batch-send-btn:active { transform: scale(0.96) !important; transition: transform 0.1s ease !important; }
         .item-card { transition: all 0.2s ease; touch-action: pan-y; }
         .item-card:active { background: rgba(22, 27, 44, 0.8); box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
         .client-avatar { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #8B5CF6); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: white; text-transform: uppercase; margin-right: 10px; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
@@ -118,7 +106,6 @@
 
         .premium-badge { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; margin-left: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--premium-glow); }
         .upgrade-btn { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
-        .upgrade-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5); }
         .plan-card { background: linear-gradient(135deg, #1e2438, #161b2c); border: 2px solid var(--premium-color); border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1); }
         .plan-price-container { display: flex; align-items: baseline; justify-content: flex-end; gap: 2px; }
         .plan-price-small { font-size: 1.1rem; font-weight: 600; color: var(--premium-color); }
@@ -143,10 +130,17 @@
 
         .search-container { margin-bottom: 12px; }
         .search-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); padding: 11px 20px; border-radius: 100px; color: white; outline: none; font-size: 0.8rem; }
-        .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 20px; }
+        .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
         .chip { padding: 10px 4px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-dim); font-size: 0.55rem; font-weight: 700; text-align: center; cursor: pointer; text-transform: uppercase; position: relative; overflow: visible; }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         .chip-badge { position: absolute; top: -6px; right: -4px; min-width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.5rem; color: white; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none; z-index: 5; }
+
+        .batch-send-btn {
+            display: none; width: 100%; padding: 10px; background: linear-gradient(135deg, var(--entrada), #0ea5e9);
+            color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 0.7rem;
+            cursor: pointer; margin-bottom: 12px; text-align: center; letter-spacing: 0.3px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
 
         .welcome-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 25px; background: rgba(22, 27, 44, 0.3); border: 2px dashed var(--border); border-radius: 30px; text-align: center; margin-top: 10px; }
         .welcome-icon { width: 70px; height: 70px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1)); color: var(--primary); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(99, 102, 241, 0.2); }
@@ -187,7 +181,6 @@
         .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; margin-top: 12px; cursor: pointer; font-size: 0.85rem; }
         
         .btn-kiwify { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 8px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
-        .btn-kiwify:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); }
 
         .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
         .btn-confirm { background: var(--saida); flex: 1; padding: 14px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; }
@@ -240,13 +233,14 @@
             <div class="mini-card" style="border-color: var(--lucro);"><small>Lucro do Mês</small><b id="ds-lucro">R$ 0,00</b><div style="position:absolute; right:12px; top:12px; cursor:pointer" onclick="togglePriv()"><i data-lucide="eye" id="eye-icon" size="14"></i></div></div>
             <div class="mini-card" style="border-color: var(--primary);"><small>Novos Clientes</small><b id="ds-novos">0</b></div>
         </div>
-        <div class="search-container"><input type="text" id="search-main" class="search-input" placeholder="Buscar por nome..." oninput="atualizar()"></div>
+        <div class="search-container"><input type="text" id="search-main" class="search-input" placeholder="Buscar por nome..." oninput="atualizar()" autocomplete="off"></div>
         <div class="filter-chips">
             <div class="chip" id="chip-ativo" onclick="filtrarStatus('ativo')">Ativos <div id="badge-ativo" class="chip-badge" style="background:var(--lucro)">0</div></div>
             <div class="chip" id="chip-hoje" onclick="filtrarStatus('hoje')">Hoje <div id="badge-hoje" class="chip-badge" style="background:var(--saida)">0</div></div>
             <div class="chip" id="chip-alerta" onclick="filtrarStatus('alerta')">A Vencer <div id="badge-alerta" class="chip-badge" style="background:var(--alerta)">0</div></div>
             <div class="chip" id="chip-vencido" onclick="filtrarStatus('vencido')">Vencidos <div id="badge-vencido" class="chip-badge" style="background:var(--saida)">0</div></div>
         </div>
+        <button class="batch-send-btn" id="batch-send-btn" onclick="abrirEnvioLote()">📢 Enviar mensagem para estes clientes</button>
         <div id="grid-home" class="item-grid"></div>
     </div>
 
@@ -254,6 +248,7 @@
         <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">CLIENTES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-cli">FREE</span><span id="dias-restantes-cli" class="dias-restantes" style="display:none;"></span></div></div>
         <div id="free-slots-cli" class="free-slots-tip" style="display: none;"></div>
         <div class="config-btn-slim" onclick="abrirConfigMsgComValidacao()"><i data-lucide="message-square-text" size="14"></i><b>Configurar Cobrança</b><span class="premium-badge" id="msg-premium-badge">PREMIUM</span></div>
+        <button class="batch-send-btn" id="batch-send-btn-cli" onclick="abrirEnvioLote()">📢 Enviar mensagem para estes clientes</button>
         <div id="grid-cli" class="item-grid"></div>
     </div>
     
@@ -271,34 +266,31 @@
 </main>
 
 <!-- MODAIS -->
-<div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width: 340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" onclick="enviarMsgTipo('cobranca')"><div class="msg-menu-icon" style="background: rgba(251, 113, 133, 0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('renovacao')"><div class="msg-menu-icon" style="background: rgba(56, 189, 248, 0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('promocao')"><div class="msg-menu-icon" style="background: rgba(16, 185, 129, 0.15);">🎉</div><div class="msg-menu-info"><b>Promoção</b><span>Ofertas e novidades</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 10px;" onclick="fecharModais()">Cancelar</button></div></div>
-<div class="overlay" id="modal-config-msg"><div class="modal" style="max-width: 380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><label>🎉 Promoção</label><textarea id="cfg-msg-promocao" rows="3"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button></div></div>
+<div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width: 340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" onclick="enviarMsgTipo('cobranca')"><div class="msg-menu-icon" style="background: rgba(251, 113, 133, 0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('renovacao')"><div class="msg-menu-icon" style="background: rgba(56, 189, 248, 0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 10px;" onclick="fecharModais()">Cancelar</button></div></div>
+<div class="overlay" id="modal-config-msg"><div class="modal" style="max-width: 380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button></div></div>
 
 <div class="overlay" id="modal-upgrade">
     <div class="modal" style="max-width: 340px; padding: 20px;">
         <div style="text-align: center; margin-bottom: 15px;"><i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i><h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3><p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p></div>
         <div class="plan-card" style="padding: 14px; margin-bottom: 14px;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4><div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div></div><p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês</p><div style="margin: 12px 0;"><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div><div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div></div></div>
-        <div id="upgrade-code-section" style="margin-top: 12px;"><label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label><div style="display: flex; gap: 6px;"><input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;"><button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button></div></div>
+        <div id="upgrade-code-section" style="margin-top: 12px;"><label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label><div style="display: flex; gap: 6px;"><input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;" autocomplete="off"><button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button></div></div>
         <button class="btn-kiwify" onclick="abrirKiwify()">🛒 Assinar Premium</button>
         <button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button>
         <button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button>
     </div>
 </div>
 
-<div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome"><label>WhatsApp</label><input type="number" id="c-wpp" placeholder="Ex: 5511999998888"><small style="font-size:0.55rem; color:var(--text-dim); display:block; margin-top:-2px; margin-bottom:10px">Apenas números (DDI+DDD+NÚMERO)</small><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Servidor</label><select id="c-srv"></select><button class="btn-save" onclick="salvarCli()">Salvar</button></div></div>
-<div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome"><label>Preço</label><input type="number" id="p-val"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
-<div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome"><label>Custo</label><input type="number" id="s-custo"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
+<div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome" autocomplete="off"><label>WhatsApp</label><input type="number" id="c-wpp" placeholder="Ex: 5511999998888" autocomplete="off"><small style="font-size:0.55rem; color:var(--text-dim); display:block; margin-top:-2px; margin-bottom:10px">Apenas números (DDI+DDD+NÚMERO)</small><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Servidor</label><select id="c-srv"></select><button class="btn-save" onclick="salvarCli()">Salvar</button></div></div>
+<div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome" autocomplete="off"><label>Preço</label><input type="number" id="p-val" autocomplete="off"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
+<div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome" autocomplete="off"><label>Custo</label><input type="number" id="s-custo" autocomplete="off"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
 <div class="overlay" id="modal-renew"><div class="modal"><h3>Renovar</h3><input type="hidden" id="renew-idx"><button class="btn-save" onclick="calcularPrevia30()">Calcular +30 Dias</button><div style="margin-top:15px; border-top:1px solid var(--border); padding-top:15px;"><label>Nova Data:</label><input type="date" id="renew-custom-date"><button class="btn-save" style="background:var(--lucro); margin-top:10px;" onclick="confirmarRenovacaoFinal()">Confirmar</button></div></div></div>
 <div class="overlay" id="modal-opt-fin"><div class="modal" style="text-align:center"><h3>Opções</h3><div class="confirm-btns"><button class="btn-save" id="btn-opt-edit" style="background:var(--alerta); margin-top:0">Editar</button><button class="btn-save" id="btn-opt-del" style="background:var(--saida); margin-top:0">Excluir</button></div></div></div>
-<div class="overlay" id="modal-edit-fin"><div class="modal"><h3>Editar Venda</h3><input type="hidden" id="edit-fin-idx"><label>Venda</label><input type="number" id="ef-entrada"><label>Custo</label><input type="number" id="ef-saida"><button class="btn-save" onclick="salvarEditFin()">Salvar</button></div></div>
+<div class="overlay" id="modal-edit-fin"><div class="modal"><h3>Editar Venda</h3><input type="hidden" id="edit-fin-idx"><label>Venda</label><input type="number" id="ef-entrada" autocomplete="off"><label>Custo</label><input type="number" id="ef-saida" autocomplete="off"><button class="btn-save" onclick="salvarEditFin()">Salvar</button></div></div>
 <div class="overlay" id="modal-confirm"><div class="modal" style="text-align:center"><i data-lucide="trash-2" color="var(--saida)" size="48"></i><h3>Excluir?</h3><p style="color:var(--text-dim); font-size:0.8rem">Esta ação é permanente.</p><div class="confirm-btns"><button class="btn-cancel" onclick="fecharModais()">Não</button><button class="btn-confirm" id="btn-do-delete">Sim</button></div></div></div>
-<div class="overlay" id="modal-token"><div class="modal"><h3>Restaurar</h3><textarea id="token-input" rows="8" style="width:100%; background:var(--bg); color:white; border-radius:15px; padding:15px; border:1.5px solid var(--border); outline:none;"></textarea><button class="btn-save" onclick="confirmarToken()">Aplicar</button></div></div>
+<div class="overlay" id="modal-token"><div class="modal"><h3>Restaurar</h3><textarea id="token-input" rows="8" style="width:100%; background:var(--bg); color:white; border-radius:15px; padding:15px; border:1.5px solid var(--border); outline:none;" autocomplete="off"></textarea><button class="btn-save" onclick="confirmarToken()">Aplicar</button></div></div>
 <div class="overlay" id="modal-pos-renovacao"><div class="modal" style="max-width: 340px; text-align: center;"><i data-lucide="check-circle" style="color: var(--lucro); width: 48px; height: 48px; margin-bottom: 12px;"></i><h3>Renovado com sucesso!</h3><p style="font-size: 0.75rem; color: var(--text-dim); margin: 10px 0 20px;">Deseja enviar uma mensagem de renovação para <strong id="pos-renovacao-nome"></strong>?</p><div class="confirm-btns"><button class="btn-save" style="background: #22c55e; flex: 1;" onclick="enviarMsgRenovacaoAgora()">📩 Enviar WhatsApp</button><button class="btn-cancel" style="flex: 1;" onclick="fecharModais()">Agora não</button></div></div></div>
 
 <script>
-    // =============================================
-    // CONFIGURAÇÃO JSONBIN.IO (NOVO BIN ID)
-    // =============================================
     const JSONBIN_BIN_ID = '69ec4032aaba882197361318';
     const JSONBIN_API_KEY = '$2a$10$hPThmNbRFc4LJU8Lb39NOufogEbkwaSTJIJV4m3CCTqODEzgcP.y2';
     const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`;
@@ -311,6 +303,8 @@
     let clienteMsgAtual = null;
     let clientePosRenovacao = null;
     let novaDataPosRenovacao = null;
+    let loteClientes = [];
+    let loteIndex = 0;
 
     document.body.addEventListener('touchmove', function(e) { if (e.target.closest('main')) return; if (e.target.closest('.overlay')) return; e.preventDefault(); }, { passive: false });
     document.addEventListener('focusin', function(e) { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { setTimeout(() => { window.scrollTo(0, 0); }, 300); } });
@@ -352,12 +346,8 @@
         const dias = getDiasRestantes();
         const contadores = document.querySelectorAll('.dias-restantes');
         contadores.forEach(el => {
-            if (isPremium && dias > 0) {
-                el.textContent = `• ${dias} dia${dias > 1 ? 's' : ''}`;
-                el.style.display = 'inline';
-            } else {
-                el.style.display = 'none';
-            }
+            if (isPremium && dias > 0) { el.textContent = `• ${dias} dia${dias > 1 ? 's' : ''}`; el.style.display = 'inline'; }
+            else { el.style.display = 'none'; }
         });
     }
     
@@ -365,67 +355,43 @@
         const banner = document.getElementById('premium-expiry-banner');
         const texto = document.getElementById('expiry-banner-text');
         if (!banner || !texto) return;
-        
-        if (!isPremium) {
-            banner.style.display = 'none';
-            return;
-        }
-        
+        if (!isPremium) { banner.style.display = 'none'; return; }
         const dias = getDiasRestantes();
-        
         if (dias <= 1 && dias > 0) {
             banner.style.display = 'flex';
-            texto.innerHTML = dias === 0 
-                ? '<strong>Premium expira hoje!</strong> Faça backup dos seus dados agora.'
-                : '<strong>Premium expira amanhã!</strong> Faça backup enquanto ainda tem acesso.';
-        } else {
-            banner.style.display = 'none';
-        }
+            texto.innerHTML = dias === 0 ? '<strong>Premium expira hoje!</strong> Faça backup dos seus dados agora.' : '<strong>Premium expira amanhã!</strong> Faça backup enquanto ainda tem acesso.';
+        } else { banner.style.display = 'none'; }
     }
     
     async function ativarCodigoPremiumOnline() {
         const codigo = document.getElementById('pro-code-input').value.toUpperCase().trim();
         if (!codigo) { showToast('❌ Digite um código!', true); return; }
-        
         showToast('🔍 Verificando código...', false);
-        
         try {
-            const response = await fetch(JSONBIN_URL, {
-                headers: { 'X-Master-Key': JSONBIN_API_KEY }
-            });
-            
+            const response = await fetch(JSONBIN_URL, { headers: { 'X-Master-Key': JSONBIN_API_KEY } });
             if (!response.ok) throw new Error('Erro na conexão');
-            
             const data = await response.json();
             const codigos = data.record.codigos || [];
             const codigoEncontrado = codigos.find(c => c.codigo.toUpperCase() === codigo);
-            
             if (!codigoEncontrado) { showToast('❌ Código inválido!', true); return; }
-            
             const dataExpiracao = new Date(codigoEncontrado.expiracao);
-            const agora = new Date();
-            if (agora > dataExpiracao) { showToast('❌ Este código já expirou!', true); return; }
-            
+            if (new Date() > dataExpiracao) { showToast('❌ Este código já expirou!', true); return; }
             isPremium = true;
             localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
             const expiraEm30Dias = new Date(); expiraEm30Dias.setDate(expiraEm30Dias.getDate() + 30);
             localStorage.setItem(PREMIUM_EXPIRY_KEY, expiraEm30Dias.toISOString().split('T')[0]);
-            
             fecharModais();
             showToast('✅ Plano PREMIUM ativado por 30 dias! 💎', false);
             atualizarUIPremium(); atualizar();
-        } catch (error) {
-            showToast('❌ Erro ao verificar código. Tente novamente.', true);
-        }
+        } catch (error) { showToast('❌ Erro ao verificar código. Tente novamente.', true); }
     }
     
     function ativarCodigoPremium() { ativarCodigoPremiumOnline(); }
     
     const MSG_COBRANCA_PADRAO = "Olá {nome}! 👋 Passando para lembrar que seu acesso vence dia {vencimento}. O valor para renovação é de R$ {valor}. Como deseja pagar?";
     const MSG_RENOVACAO_PADRAO = "Olá {nome}! ✅ Sua renovação foi confirmada! Novo vencimento: {vencimento}. Obrigado pela confiança!";
-    const MSG_PROMOCAO_PADRAO = "Olá {nome}! 🎉 Temos uma oferta especial para você! Entre em contato para saber mais.";
 
-    let db = carregarDadosProtegidos() || { clientes: [], planos: [], servidores: [], transacoes: [], priv: false, configMsg: MSG_COBRANCA_PADRAO, configMsgRenovacao: MSG_RENOVACAO_PADRAO, configMsgPromocao: MSG_PROMOCAO_PADRAO };
+    let db = carregarDadosProtegidos() || { clientes: [], planos: [], servidores: [], transacoes: [], priv: false, configMsg: MSG_COBRANCA_PADRAO, configMsgRenovacao: MSG_RENOVACAO_PADRAO };
     let curTabId = 'tab-dash', chartObj = null, filtroAtual = null;
     const tabsOrder = ['tab-dash', 'tab-cli', 'tab-pla', 'tab-srv', 'tab-fin'];
     let touchStartX = 0, touchStartY = 0;
@@ -435,13 +401,88 @@
     function mostrarModalUpgrade() { if (isPremium) { showToast('Você já é PREMIUM! 💎'); return; } abrirModalComHistorico('modal-upgrade'); }
     function abrirMsgChooser(i) { if (!isPremium) { mostrarModalUpgrade(); return; } clienteMsgAtual = i; abrirModalComHistorico('modal-msg-chooser'); }
     function enviarMsgTipo(tipo) { if (clienteMsgAtual === null) return; const c = db.clientes[clienteMsgAtual]; enviarMsgCliente(c, tipo); fecharModais(); clienteMsgAtual = null; }
-    function enviarMsgCliente(c, tipo) { const dataFmt = c.venc.split("-").reverse().join("/"); const partesNome = c.nome.trim().split(' '); const pNome = partesNome[0]; const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : ''; let msg = ''; if (tipo === 'cobranca') { msg = (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2)); } else if (tipo === 'renovacao') { msg = (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2)); } else if (tipo === 'promocao') { msg = (db.configMsgPromocao || MSG_PROMOCAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome); } window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`); }
-    function enviarMsgRenovacaoAgora() { if (clientePosRenovacao === null) return; const c = db.clientes[clientePosRenovacao]; const dataFmt = (novaDataPosRenovacao || c.venc).split("-").reverse().join("/"); const partesNome = c.nome.trim().split(' '); const pNome = partesNome[0]; const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : ''; let msg = (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2)); fecharModais(); window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`); clientePosRenovacao = null; novaDataPosRenovacao = null; }
+    
+    function montarMensagem(c, tipo) {
+        const dataFmt = c.venc.split("-").reverse().join("/");
+        const partesNome = c.nome.trim().split(' ');
+        const pNome = partesNome[0];
+        const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : '';
+        if (tipo === 'cobranca') {
+            return (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
+        } else {
+            return (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
+        }
+    }
+    
+    function enviarMsgCliente(c, tipo) {
+        const msg = montarMensagem(c, tipo);
+        window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`);
+    }
+    
+    function enviarMsgRenovacaoAgora() {
+        if (clientePosRenovacao === null) return;
+        const c = db.clientes[clientePosRenovacao];
+        const msg = montarMensagem(c, 'renovacao');
+        fecharModais();
+        window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`);
+        clientePosRenovacao = null; novaDataPosRenovacao = null;
+    }
+
+    function abrirEnvioLote() {
+        if (!isPremium) { mostrarModalUpgrade(); return; }
+        const termo = (document.getElementById('search-main')?.value || '').toLowerCase();
+        loteClientes = [];
+        db.clientes.forEach((c, i) => {
+            const hoje = new Date(); hoje.setHours(0,0,0,0);
+            const partesData = c.venc.split('-');
+            const dv = new Date(parseInt(partesData[0]),parseInt(partesData[1])-1,parseInt(partesData[2]));
+            dv.setHours(0,0,0,0);
+            const diff = Math.round((dv.getTime()-hoje.getTime())/(1000*60*60*24));
+            let st = "ativo";
+            if(diff<0) st="vencido"; else if(diff===0) st="hoje"; else if(diff===1) st="alerta";
+            if (termo && !c.nome.toLowerCase().includes(termo)) return;
+            if (filtroAtual && st !== filtroAtual) return;
+            if (!filtroAtual && curTabId==='tab-dash' && (st==='vencido'||st==='hoje')) return;
+            loteClientes.push({...c, id: i});
+        });
+        if (loteClientes.length === 0) { showToast('Nenhum cliente encontrado!', true); return; }
+        const modalEl = document.getElementById('modal-pos-renovacao');
+        modalEl.querySelector('h3').innerText = '📢 Envio em Lote';
+        modalEl.querySelector('p').innerHTML = `Enviar para <strong>${loteClientes.length} cliente${loteClientes.length>1?'s':''}</strong>?<br><small>Uma aba por cliente.</small>`;
+        modalEl.querySelector('.confirm-btns').innerHTML = `
+            <button class="btn-save" style="background:#22c55e;flex:1" onclick="iniciarEnvioLote('cobranca')">💰 Cobrança</button>
+            <button class="btn-save" style="background:var(--entrada);flex:1" onclick="iniciarEnvioLote('renovacao')">🔄 Renovação</button>
+            <button class="btn-cancel" style="flex:1" onclick="fecharModais()">Cancelar</button>
+        `;
+        abrirModalComHistorico('modal-pos-renovacao');
+    }
+    
+    function iniciarEnvioLote(tipo) {
+        fecharModais();
+        loteIndex = 0;
+        enviarProximoLote(tipo);
+        setTimeout(() => {
+            const modalEl = document.getElementById('modal-pos-renovacao');
+            modalEl.querySelector('h3').innerText = 'Renovado com sucesso!';
+            modalEl.querySelector('p').innerHTML = 'Deseja enviar uma mensagem de renovação para <strong id="pos-renovacao-nome"></strong>?';
+            modalEl.querySelector('.confirm-btns').innerHTML = `
+                <button class="btn-save" style="background:#22c55e;flex:1" onclick="enviarMsgRenovacaoAgora()">📩 Enviar WhatsApp</button>
+                <button class="btn-cancel" style="flex:1" onclick="fecharModais()">Agora não</button>
+            `;
+        }, 500);
+    }
+    
+    function enviarProximoLote(tipo) {
+        if (loteIndex >= loteClientes.length) { showToast(`✅ ${loteClientes.length} mensagens abertas!`); loteClientes = []; return; }
+        enviarMsgCliente(loteClientes[loteIndex], tipo);
+        loteIndex++;
+        if (loteIndex < loteClientes.length) { showToast(`📩 ${loteIndex}/${loteClientes.length} - Próximo...`); setTimeout(() => enviarProximoLote(tipo), 2000); }
+    }
 
     function atualizarUIPremium() { 
         verificarExpiracaoPremium();
-        const pts = document.querySelectorAll('[id^="plan-text-"]'); pts.forEach(el => { if (el) el.textContent = isPremium ? 'PREMIUM' : 'FREE'; });
-        const pbs = document.querySelectorAll('.current-plan-badge'); pbs.forEach(el => { if (isPremium) el.classList.add('premium'); else el.classList.remove('premium'); });
+        document.querySelectorAll('[id^="plan-text-"]').forEach(el => { if (el) el.textContent = isPremium ? 'PREMIUM' : 'FREE'; });
+        document.querySelectorAll('.current-plan-badge').forEach(el => { if (isPremium) el.classList.add('premium'); else el.classList.remove('premium'); });
         const mb = document.getElementById('msg-premium-badge'); if (mb) mb.style.display = isPremium ? 'none' : 'inline';
         const tb = document.getElementById('token-premium-badge'); if (tb) tb.style.display = isPremium ? 'none' : 'inline';
         const co = document.getElementById('chart-premium-overlay'); if (co) co.style.display = isPremium ? 'none' : 'flex';
@@ -450,10 +491,10 @@
     function atualizarTooltipVagas() { if (isPremium) { document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none'); return; } const vagas = 10 - db.clientes.length; let msg; if (vagas > 0) { msg = `<strong>${vagas} cliente${vagas>1?'s':''} gratuito${vagas>1?'s':''}</strong> disponíve${vagas>1?'is':'l'}`; msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`; } else { msg = `Limite de <strong>10 clientes</strong> atingido`; msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`; } document.querySelectorAll('.free-slots-tip').forEach(el => { el.innerHTML = msg; el.style.display = 'block'; }); }
     function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.")}`); showToast('Redirecionando para WhatsApp...'); }
     function abrirKiwify() { window.open('https://pay.kiwify.com.br/a26pAg3'); }
-    function abrirConfigMsgComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO; document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO; document.getElementById('cfg-msg-promocao').value = db.configMsgPromocao || MSG_PROMOCAO_PADRAO; abrirModalComHistorico('modal-config-msg'); }
+    function abrirConfigMsgComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO; document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO; abrirModalComHistorico('modal-config-msg'); }
     function copiarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } copiarTokenComToast(); confirmarBackupFeito(); }
     function restaurarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } abrirModalComHistorico('modal-token'); }
-    function salvarSrvComValidacao() { if (!isPremium && db.servidores.length >= 1) { const idx = parseInt(document.getElementById('edit-idx-srv').value); if (idx === -1) { fecharModais(); mostrarModalUpgrade(); return; } } salvarSrv(); }
+    function salvarSrvComValidacao() { if (!isPremium && db.servidores.length >= 1) { if (parseInt(document.getElementById('edit-idx-srv').value) === -1) { fecharModais(); mostrarModalUpgrade(); return; } } salvarSrv(); }
 
     function persistir() { salvarDadosProtegidos(db); atualizar(); }
     function fecharModais() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
@@ -461,15 +502,15 @@
     function showToast(msg, isAlert = false) { const t = document.getElementById("toast"); t.innerText = msg; t.className = isAlert ? "show alert" : "show"; setTimeout(() => { t.className = ""; }, 3000); }
     function showTab(id, el) { curTabId = id; document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab')); document.querySelectorAll('.menu-item').forEach(n => n.classList.remove('active')); document.getElementById(id).classList.add('active-tab'); if(el) el.classList.add('active'); else document.querySelector(`[data-tab="${id}"]`).classList.add('active'); atualizarUIPremium(); atualizar(); }
 
-    function copiarTokenComToast() { const compact = { c: db.clientes.map(i=>({n:i.nome,w:i.wpp,v:i.venc,p:i.pNome,pv:i.pVal,s:i.sNome,sv:i.sVal})), p: db.planos.map(i=>({n:i.nome,v:i.val})), s: db.servidores.map(i=>({n:i.nome,c:i.custo})), t: db.transacoes.map(i=>({c:i.cli,p:i.pVal,s:i.sVal,d:i.data})), m: db.configMsg, mr: db.configMsgRenovacao, mp: db.configMsgPromocao }; const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact)))); navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado!")); }
-    function confirmarToken() { try { const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value)))); if(raw.c) { db.clientes = raw.c.map(i=>({nome:i.n,wpp:i.w,venc:i.v,pNome:i.p,pVal:i.pv,sNome:i.s,sVal:i.sv})); db.planos = raw.p.map(i=>({nome:i.n,val:i.v})); db.servidores = raw.s.map(i=>({nome:i.n,custo:i.c})); db.transacoes = raw.t.map(i=>({cli:i.c,pVal:i.p,sVal:i.s,data:i.d})); db.configMsg = raw.m || db.configMsg; db.configMsgRenovacao = raw.mr || db.configMsgRenovacao; db.configMsgPromocao = raw.mp || db.configMsgPromocao; } else if(raw.clientes) { db = raw; } persistir(); fecharModais(); showToast("Restaurado!"); } catch(e) { showToast("Código Inválido!", true); } }
+    function copiarTokenComToast() { const compact = { c: db.clientes.map(i=>({n:i.nome,w:i.wpp,v:i.venc,p:i.pNome,pv:i.pVal,s:i.sNome,sv:i.sVal})), p: db.planos.map(i=>({n:i.nome,v:i.val})), s: db.servidores.map(i=>({n:i.nome,c:i.custo})), t: db.transacoes.map(i=>({c:i.cli,p:i.pVal,s:i.sVal,d:i.data})), m: db.configMsg, mr: db.configMsgRenovacao }; const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact)))); navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado!")); }
+    function confirmarToken() { try { const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value)))); if(raw.c) { db.clientes = raw.c.map(i=>({nome:i.n,wpp:i.w,venc:i.v,pNome:i.p,pVal:i.pv,sNome:i.s,sVal:i.sv})); db.planos = raw.p.map(i=>({nome:i.n,val:i.v})); db.servidores = raw.s.map(i=>({nome:i.n,custo:i.c})); db.transacoes = raw.t.map(i=>({cli:i.c,pVal:i.p,sVal:i.s,data:i.d})); db.configMsg = raw.m || db.configMsg; db.configMsgRenovacao = raw.mr || db.configMsgRenovacao; } else if(raw.clientes) { db = raw; } persistir(); fecharModais(); showToast("Restaurado!"); } catch(e) { showToast("Código Inválido!", true); } }
 
     function salvarCli() { const n=document.getElementById('c-nome').value, v=document.getElementById('c-venc').value, pIdx=document.getElementById('c-plano').value, sIdx=document.getElementById('c-srv').value, idx=parseInt(document.getElementById('edit-idx-cli').value); if(!n||!v||pIdx===""||sIdx==="") return; if (!isPremium && idx===-1 && db.clientes.length>=10) { fecharModais(); mostrarModalUpgrade(); return; } const d={nome:n,wpp:document.getElementById('c-wpp').value,venc:v,pNome:db.planos[pIdx].nome,pVal:parseFloat(db.planos[pIdx].val),sNome:db.servidores[sIdx].nome,sVal:parseFloat(db.servidores[sIdx].custo),dataCadastro:new Date().toISOString().split('T')[0]}; if(idx===-1) { db.clientes.push(d); db.transacoes.push({cli:n,pVal:d.pVal,sVal:d.sVal,data:new Date().toISOString().slice(0,7)}); } else { db.clientes[idx].nome=d.nome; db.clientes[idx].wpp=d.wpp; db.clientes[idx].venc=d.venc; db.clientes[idx].pNome=d.pNome; db.clientes[idx].pVal=d.pVal; db.clientes[idx].sNome=d.sNome; db.clientes[idx].sVal=d.sVal; } fecharModais(); persistir(); }
     function salvarPla() { const n=document.getElementById('p-nome').value, v=document.getElementById('p-val').value, idx=parseInt(document.getElementById('edit-idx-pla').value); if(n) { if(idx===-1) db.planos.push({nome:n,val:v}); else db.planos[idx]={nome:n,val:v}; fecharModais(); persistir(); } }
     function salvarSrv() { const n=document.getElementById('s-nome').value, c=document.getElementById('s-custo').value, idx=parseInt(document.getElementById('edit-idx-srv').value); if(n) { if(idx===-1) db.servidores.push({nome:n,custo:c}); else db.servidores[idx]={nome:n,custo:c}; fecharModais(); persistir(); } }
     function abrirNovoManual() { if(curTabId==='tab-dash'||curTabId==='tab-cli') { if (!isPremium&&db.clientes.length>=10) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(curTabId==='tab-pla') { document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(curTabId==='tab-srv') { if (!isPremium&&db.servidores.length>=1) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
     function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
-    function salvarConfigMsg() { if (!isPremium) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; db.configMsgPromocao = document.getElementById('cfg-msg-promocao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
+    function salvarConfigMsg() { if (!isPremium) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
     function confirmarExclusao(tipo,i) { document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm'); document.getElementById('btn-do-delete').onclick = function() { if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1); showToast('Excluído!', true); persistir(); fecharModais(); }; }
     function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) document.getElementById('chip-'+s).classList.add('active'); atualizar(); }
     function getIniciais(nome) { if(!nome) return '?'; const partes = nome.trim().split(' '); if(partes.length===1) return partes[0].substring(0,2).toUpperCase(); return (partes[0][0]+partes[partes.length-1][0]).toUpperCase(); }
@@ -506,6 +547,14 @@
         if(bVenc){ if(countVenc>0){bVenc.innerText=countVenc;bVenc.style.display='flex';}else bVenc.style.display='none'; }
         if(bAlert){ if(countAlert>0){bAlert.innerText=countAlert;bAlert.style.display='flex';}else bAlert.style.display='none'; }
         proc.sort((a,b)=>a.peso-b.peso);
+
+        const batchBtns = document.querySelectorAll('.batch-send-btn');
+        const qtdFiltrada = filtroAtual ? proc.filter(p => p.st === filtroAtual).length : (curTabId==='tab-dash' ? proc.filter(p => p.st==='ativo' || p.st==='alerta').length : proc.length);
+        const mostrarBatch = isPremium && ((filtroAtual && qtdFiltrada > 0) || (termo && qtdFiltrada > 0));
+        batchBtns.forEach(btn => {
+            btn.style.display = mostrarBatch ? 'block' : 'none';
+            if (mostrarBatch) btn.innerText = `📢 Enviar mensagem para ${qtdFiltrada} cliente${qtdFiltrada>1?'s':''} (${filtroAtual || 'filtro'})`;
+        });
 
         const buscaAtiva = termo.length > 0;
         proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
