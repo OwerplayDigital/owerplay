@@ -177,6 +177,14 @@
         .msg-menu-info { flex: 1; }
         .msg-menu-info b { font-size: 0.8rem; display: block; margin-bottom: 2px; }
         .msg-menu-info span { font-size: 0.6rem; color: var(--text-dim); }
+        
+        /* Estilo para o contador de dias */
+        .dias-restantes {
+            font-size: 0.6rem;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-left: 4px;
+        }
     </style>
 </head>
 <body onclick="if(event.target.classList.contains('overlay')) fecharModais()">
@@ -197,7 +205,10 @@
     <div id="tab-dash" class="tab-content active-tab">
         <div class="plan-header">
             <h2 class="app-brand" style="margin-bottom: 0;">OWERPLAY GESTOR <span class="version-tag">v1.0</span></h2>
-            <div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-dash">FREE</span></div>
+            <div class="current-plan-badge" onclick="mostrarModalUpgrade()">
+                <span id="plan-text-dash">FREE</span>
+                <span id="dias-restantes-dash" class="dias-restantes" style="display:none;"></span>
+            </div>
         </div>
         <div id="free-slots-dash" class="free-slots-tip" style="display: none;"></div>
         <div class="mini-stats">
@@ -215,17 +226,17 @@
     </div>
 
     <div id="tab-cli" class="tab-content">
-        <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">CLIENTES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-cli">FREE</span></div></div>
+        <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">CLIENTES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-cli">FREE</span><span id="dias-restantes-cli" class="dias-restantes" style="display:none;"></span></div></div>
         <div id="free-slots-cli" class="free-slots-tip" style="display: none;"></div>
         <div class="config-btn-slim" onclick="abrirConfigMsgComValidacao()"><i data-lucide="message-square-text" size="14"></i><b>Configurar Cobrança</b><span class="premium-badge" id="msg-premium-badge">PREMIUM</span></div>
         <div id="grid-cli" class="item-grid"></div>
     </div>
     
-    <div id="tab-pla" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">PLANOS</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-pla">FREE</span></div></div><div id="grid-pla" class="item-grid"></div></div>
-    <div id="tab-srv" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">SERVIDORES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-srv">FREE</span></div></div><div id="grid-srv" class="item-grid"></div></div>
+    <div id="tab-pla" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">PLANOS</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-pla">FREE</span><span id="dias-restantes-pla" class="dias-restantes" style="display:none;"></span></div></div><div id="grid-pla" class="item-grid"></div></div>
+    <div id="tab-srv" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">SERVIDORES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-srv">FREE</span><span id="dias-restantes-srv" class="dias-restantes" style="display:none;"></span></div></div><div id="grid-srv" class="item-grid"></div></div>
 
     <div id="tab-fin" class="tab-content">
-        <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">FINANCEIRO</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-fin">FREE</span></div></div>
+        <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">FINANCEIRO</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-fin">FREE</span><span id="dias-restantes-fin" class="dias-restantes" style="display:none;"></span></div></div>
         <div id="backup-alert-banner" class="backup-alert-banner" style="display: none;"><div class="backup-alert-icon"><i data-lucide="alert-triangle" size="20"></i></div><div class="backup-alert-content"><p><strong>⚠️ ALERTA!</strong> Seus dados estão salvos apenas neste navegador. Se você limpar os dados, trocar de celular ou desinstalar o app, <strong>perderá TODOS os clientes, planos e finanças!</strong></p><div class="backup-alert-actions"><button class="btn-backup btn-backup-primary" onclick="copiarTokenComToast()"><i data-lucide="download" size="12"></i> Fazer Backup Agora</button><button class="btn-backup btn-backup-secondary" onclick="confirmarBackupFeito()">✅ Já fiz o backup</button></div></div></div>
         <div class="fin-card-top"><div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;"><i data-lucide="shield-check" style="color:var(--lucro)"></i><b style="font-size:0.85rem; color:var(--lucro); display: flex; align-items: center;">TOKEN DE SEGURANÇA BACKUP <span class="premium-badge" id="token-premium-badge" style="margin-left: 10px;">PREMIUM</span></b></div><p style="font-size:0.65rem; color:var(--text-dim); margin-bottom:15px">Gere seu token para criar uma cópia de segurança e garantir a proteção dos seus dados.</p><div style="display:flex; gap:10px;"><button class="btn-save" style="margin:0; flex:1; background:var(--lucro)" onclick="copiarTokenComValidacao()">Copiar Token</button><button class="btn-save" style="margin:0; flex:1; background:var(--border)" onclick="restaurarTokenComValidacao()">Restaurar</button></div></div>
         <div class="mini-stats"><div class="mini-card" style="border-color: var(--entrada);"><small>Entrada</small><b id="fin-total-ent">R$ 0,00</b></div><div class="mini-card" style="border-color: var(--saida);"><small>Saída</small><b id="fin-total-sai">R$ 0,00</b></div><div class="mini-card" style="border-color: var(--lucro);"><small>Lucro</small><b id="fin-total-luc">R$ 0,00</b></div></div>
@@ -238,7 +249,6 @@
 <div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width: 340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" onclick="enviarMsgTipo('cobranca')"><div class="msg-menu-icon" style="background: rgba(251, 113, 133, 0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('renovacao')"><div class="msg-menu-icon" style="background: rgba(56, 189, 248, 0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('promocao')"><div class="msg-menu-icon" style="background: rgba(16, 185, 129, 0.15);">🎉</div><div class="msg-menu-info"><b>Promoção</b><span>Ofertas e novidades</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 10px;" onclick="fecharModais()">Cancelar</button></div></div>
 <div class="overlay" id="modal-config-msg"><div class="modal" style="max-width: 380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><label>🎉 Promoção</label><textarea id="cfg-msg-promocao" rows="3"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button></div></div>
 
-<!-- MODAL PREMIUM COM DOIS BOTÕES -->
 <div class="overlay" id="modal-upgrade">
     <div class="modal" style="max-width: 340px; padding: 20px;">
         <div style="text-align: center; margin-bottom: 15px;">
@@ -249,9 +259,9 @@
         <div class="plan-card" style="padding: 14px; margin-bottom: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4>
-                <div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div>
+                <div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">34</span><span class="plan-price-cents">,90</span></div>
             </div>
-            <p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês ou R$ 199/ano</p>
+            <p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/ano</p>
             <div style="margin: 12px 0;">
                 <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div>
                 <div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div>
@@ -268,7 +278,6 @@
                 <button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button>
             </div>
         </div>
-        <!-- DOIS BOTÕES -->
         <button class="btn-kiwify" onclick="abrirKiwify()">🛒 Assinar Premium</button>
         <button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button>
         <button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button>
@@ -286,9 +295,17 @@
 <div class="overlay" id="modal-pos-renovacao"><div class="modal" style="max-width: 340px; text-align: center;"><i data-lucide="check-circle" style="color: var(--lucro); width: 48px; height: 48px; margin-bottom: 12px;"></i><h3>Renovado com sucesso!</h3><p style="font-size: 0.75rem; color: var(--text-dim); margin: 10px 0 20px;">Deseja enviar uma mensagem de renovação para <strong id="pos-renovacao-nome"></strong>?</p><div class="confirm-btns"><button class="btn-save" style="background: #22c55e; flex: 1;" onclick="enviarMsgRenovacaoAgora()">📩 Enviar WhatsApp</button><button class="btn-cancel" style="flex: 1;" onclick="fecharModais()">Agora não</button></div></div></div>
 
 <script>
+    // =============================================
+    // CONFIGURAÇÃO JSONBIN.IO
+    // =============================================
+    const JSONBIN_BIN_ID = '69ec1dca36566621a8ebfdbd';
+    const JSONBIN_API_KEY = '$2a$10$hPThmNbRFc4LJU8Lb39NOufogEbkwaSTJIJV4m3CCTqODEzgcP.y2';
+    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`;
+    
     const STORAGE_KEY = 'OWERPLAY_FINAL_MASTER_V22';
     const BACKUP_KEY = 'OWERPLAY_FINAL_BACKUP_V22';
     const PREMIUM_STORAGE_KEY = 'OWERPLAY_PREMIUM_LICENSE';
+    const PREMIUM_EXPIRY_KEY = 'OWERPLAY_PREMIUM_EXPIRY';
     const BACKUP_ALERT_KEY = 'OWERPLAY_BACKUP_ALERT_DISMISSED';
     let clienteMsgAtual = null;
     let clientePosRenovacao = null;
@@ -305,12 +322,96 @@
     function atualizarBannerBackup() { const b = document.getElementById('backup-alert-banner'); if (b) b.style.display = deveMostrarAlertaBackup() ? 'flex' : 'none'; }
 
     let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
-    const CODIGO_MASTER = 'OWERPLAY-PREMIUM-ATIVACAO-EXCLUSIVA-2024-LICENCA-XK92-MNB4-PQ71-WS38-FH47-DJ20-VN83-LM55-AQ19-ZX76-TY34-BC88-KP90-RR25-WE11-SD44-FV22-GH66';
-    const CODIGOS_PREMIUM_VALIDOS = [
-        CODIGO_MASTER,
-        'OWER-A7B3-C9D1','OWER-E2F4-G6H8','OWER-J1K5-L3M7','OWER-N9P2-Q4R6','OWER-S8T1-U5V3',
-        'OWER-W7X9-Y2Z4','OWER-B5D8-F1H3','OWER-K6M2-P9R5','OWER-T4V7-X1Z8','OWER-C3G9-J6N4',
-    ];
+    
+    function verificarExpiracaoPremium() {
+        if (!isPremium) return;
+        const dataExpiracao = localStorage.getItem(PREMIUM_EXPIRY_KEY);
+        if (dataExpiracao) {
+            const agora = new Date();
+            const expira = new Date(dataExpiracao);
+            if (agora >= expira) {
+                isPremium = false;
+                localStorage.removeItem(PREMIUM_STORAGE_KEY);
+                localStorage.removeItem(PREMIUM_EXPIRY_KEY);
+                showToast('⏰ Seu período PREMIUM expirou! Renove para continuar.', true);
+            }
+        }
+    }
+    
+    function getDiasRestantes() {
+        const dataExpiracao = localStorage.getItem(PREMIUM_EXPIRY_KEY);
+        if (!dataExpiracao) return 0;
+        const agora = new Date();
+        const expira = new Date(dataExpiracao);
+        const diff = Math.ceil((expira - agora) / (1000 * 60 * 60 * 24));
+        return diff > 0 ? diff : 0;
+    }
+    
+    function atualizarContadorDias() {
+        const dias = getDiasRestantes();
+        const contadores = document.querySelectorAll('.dias-restantes');
+        contadores.forEach(el => {
+            if (isPremium && dias > 0) {
+                el.textContent = `• ${dias} dia${dias > 1 ? 's' : ''}`;
+                el.style.display = 'inline';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    }
+    
+    async function ativarCodigoPremiumOnline() {
+        const codigo = document.getElementById('pro-code-input').value.toUpperCase().trim();
+        if (!codigo) { showToast('❌ Digite um código!', true); return; }
+        
+        showToast('🔍 Verificando código...', false);
+        
+        try {
+            const response = await fetch(JSONBIN_URL, {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            
+            if (!response.ok) throw new Error('Erro na conexão');
+            
+            const data = await response.json();
+            const codigos = data.record.codigos || [];
+            const codigoEncontrado = codigos.find(c => c.codigo.toUpperCase() === codigo);
+            
+            if (!codigoEncontrado) {
+                showToast('❌ Código inválido!', true);
+                return;
+            }
+            
+            const dataExpiracao = new Date(codigoEncontrado.expiracao);
+            const agora = new Date();
+            
+            if (agora > dataExpiracao) {
+                showToast('❌ Este código já expirou!', true);
+                return;
+            }
+            
+            isPremium = true;
+            localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
+            
+            const expiraEm30Dias = new Date();
+            expiraEm30Dias.setDate(expiraEm30Dias.getDate() + 30);
+            localStorage.setItem(PREMIUM_EXPIRY_KEY, expiraEm30Dias.toISOString().split('T')[0]);
+            
+            fecharModais();
+            showToast('✅ Plano PREMIUM ativado por 30 dias! 💎', false);
+            atualizarUIPremium();
+            atualizar();
+            
+        } catch (error) {
+            console.error('Erro:', error);
+            showToast('❌ Erro ao verificar código. Tente novamente.', true);
+        }
+    }
+    
+    function ativarCodigoPremium() {
+        ativarCodigoPremiumOnline();
+    }
+    
     const MSG_COBRANCA_PADRAO = "Olá {nome}! 👋 Passando para lembrar que seu acesso vence dia {vencimento}. O valor para renovação é de R$ {valor}. Como deseja pagar?";
     const MSG_RENOVACAO_PADRAO = "Olá {nome}! ✅ Sua renovação foi confirmada! Novo vencimento: {vencimento}. Obrigado pela confiança!";
     const MSG_PROMOCAO_PADRAO = "Olá {nome}! 🎉 Temos uma oferta especial para você! Entre em contato para saber mais.";
@@ -328,10 +429,18 @@
     function enviarMsgCliente(c, tipo) { const dataFmt = c.venc.split("-").reverse().join("/"); const partesNome = c.nome.trim().split(' '); const pNome = partesNome[0]; const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : ''; let msg = ''; if (tipo === 'cobranca') { msg = (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2)); } else if (tipo === 'renovacao') { msg = (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2)); } else if (tipo === 'promocao') { msg = (db.configMsgPromocao || MSG_PROMOCAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome); } window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`); }
     function enviarMsgRenovacaoAgora() { if (clientePosRenovacao === null) return; const c = db.clientes[clientePosRenovacao]; const dataFmt = (novaDataPosRenovacao || c.venc).split("-").reverse().join("/"); const partesNome = c.nome.trim().split(' '); const pNome = partesNome[0]; const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : ''; let msg = (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2)); fecharModais(); window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`); clientePosRenovacao = null; novaDataPosRenovacao = null; }
 
-    function atualizarUIPremium() { const pts = document.querySelectorAll('[id^="plan-text-"]'); pts.forEach(el => { if (el) el.textContent = isPremium ? 'PREMIUM' : 'FREE'; }); const pbs = document.querySelectorAll('.current-plan-badge'); pbs.forEach(el => { if (isPremium) el.classList.add('premium'); else el.classList.remove('premium'); }); const mb = document.getElementById('msg-premium-badge'); if (mb) mb.style.display = isPremium ? 'none' : 'inline'; const tb = document.getElementById('token-premium-badge'); if (tb) tb.style.display = isPremium ? 'none' : 'inline'; const co = document.getElementById('chart-premium-overlay'); if (co) co.style.display = isPremium ? 'none' : 'flex'; atualizarBannerBackup(); atualizarTooltipVagas(); lucide.createIcons(); }
+    function atualizarUIPremium() { 
+        verificarExpiracaoPremium();
+        const pts = document.querySelectorAll('[id^="plan-text-"]'); pts.forEach(el => { if (el) el.textContent = isPremium ? 'PREMIUM' : 'FREE'; });
+        const pbs = document.querySelectorAll('.current-plan-badge'); pbs.forEach(el => { if (isPremium) el.classList.add('premium'); else el.classList.remove('premium'); });
+        const mb = document.getElementById('msg-premium-badge'); if (mb) mb.style.display = isPremium ? 'none' : 'inline';
+        const tb = document.getElementById('token-premium-badge'); if (tb) tb.style.display = isPremium ? 'none' : 'inline';
+        const co = document.getElementById('chart-premium-overlay'); if (co) co.style.display = isPremium ? 'none' : 'flex';
+        atualizarContadorDias();
+        atualizarBannerBackup(); atualizarTooltipVagas(); lucide.createIcons(); 
+    }
     function atualizarTooltipVagas() { if (isPremium) { document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none'); return; } const vagas = 10 - db.clientes.length; let msg; if (vagas > 0) { msg = `<strong>${vagas} cliente${vagas>1?'s':''} gratuito${vagas>1?'s':''}</strong> disponíve${vagas>1?'is':'l'}`; msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`; } else { msg = `Limite de <strong>10 clientes</strong> atingido`; msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`; } document.querySelectorAll('.free-slots-tip').forEach(el => { el.innerHTML = msg; el.style.display = 'block'; }); }
-    function ativarCodigoPremium() { const cod = document.getElementById('pro-code-input').value.toUpperCase().trim(); if (CODIGOS_PREMIUM_VALIDOS.includes(cod)) { isPremium = true; localStorage.setItem(PREMIUM_STORAGE_KEY, 'true'); fecharModais(); showToast('✅ Plano PREMIUM ativado! 💎', false); atualizarUIPremium(); atualizar(); } else { showToast('❌ Código inválido!', true); } }
-    function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.")}`); showToast('Redirecionando para WhatsApp...'); }
+    function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 34,90/ano.")}`); showToast('Redirecionando para WhatsApp...'); }
     function abrirKiwify() { window.open('https://pay.kiwify.com.br/a26pAg3'); }
     function abrirConfigMsgComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO; document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO; document.getElementById('cfg-msg-promocao').value = db.configMsgPromocao || MSG_PROMOCAO_PADRAO; abrirModalComHistorico('modal-config-msg'); }
     function copiarTokenComValidacao() { if (!isPremium) { mostrarModalUpgrade(); return; } copiarTokenComToast(); confirmarBackupFeito(); }
@@ -406,6 +515,7 @@
     document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY;});
     document.addEventListener('touchend',e=>{if(Array.from(document.querySelectorAll('.overlay')).some(o=>o.style.display==='flex'))return;const diffX=touchStartX-e.changedTouches[0].screenX;const diffY=Math.abs(touchStartY-e.changedTouches[0].screenY);if(Math.abs(diffX)>80&&diffY<30){let idx=tabsOrder.indexOf(curTabId);if(diffX>0&&idx<tabsOrder.length-1)showTab(tabsOrder[idx+1]);else if(diffX<0&&idx>0)showTab(tabsOrder[idx-1]);}});
 
+    verificarExpiracaoPremium();
     atualizar(); atualizarUIPremium();
 </script>
 </body>
