@@ -96,7 +96,7 @@
             caret-color: white !important;
         }
         
-        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active, .batch-send-btn:active { transform: scale(0.96) !important; transition: transform 0.1s ease !important; }
+        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active { transform: scale(0.96) !important; transition: transform 0.1s ease !important; }
         .item-card { transition: all 0.2s ease; touch-action: pan-y; }
         .item-card:active { background: rgba(22, 27, 44, 0.8); box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
         .client-avatar { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #8B5CF6); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: white; text-transform: uppercase; margin-right: 10px; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
@@ -130,17 +130,10 @@
 
         .search-container { margin-bottom: 12px; }
         .search-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); padding: 11px 20px; border-radius: 100px; color: white; outline: none; font-size: 0.8rem; }
-        .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+        .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 20px; }
         .chip { padding: 10px 4px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-dim); font-size: 0.55rem; font-weight: 700; text-align: center; cursor: pointer; text-transform: uppercase; position: relative; overflow: visible; }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         .chip-badge { position: absolute; top: -6px; right: -4px; min-width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.5rem; color: white; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none; z-index: 5; }
-
-        .batch-send-btn {
-            display: none; width: 100%; padding: 10px; background: linear-gradient(135deg, var(--entrada), #0ea5e9);
-            color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 0.7rem;
-            cursor: pointer; margin-bottom: 12px; text-align: center; letter-spacing: 0.3px;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-        }
 
         .welcome-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 25px; background: rgba(22, 27, 44, 0.3); border: 2px dashed var(--border); border-radius: 30px; text-align: center; margin-top: 10px; }
         .welcome-icon { width: 70px; height: 70px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1)); color: var(--primary); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(99, 102, 241, 0.2); }
@@ -240,7 +233,6 @@
             <div class="chip" id="chip-alerta" onclick="filtrarStatus('alerta')">A Vencer <div id="badge-alerta" class="chip-badge" style="background:var(--alerta)">0</div></div>
             <div class="chip" id="chip-vencido" onclick="filtrarStatus('vencido')">Vencidos <div id="badge-vencido" class="chip-badge" style="background:var(--saida)">0</div></div>
         </div>
-        <button class="batch-send-btn" id="batch-send-btn" onclick="abrirEnvioLote()">📢 Enviar mensagem para estes clientes</button>
         <div id="grid-home" class="item-grid"></div>
     </div>
 
@@ -248,7 +240,6 @@
         <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">CLIENTES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-cli">FREE</span><span id="dias-restantes-cli" class="dias-restantes" style="display:none;"></span></div></div>
         <div id="free-slots-cli" class="free-slots-tip" style="display: none;"></div>
         <div class="config-btn-slim" onclick="abrirConfigMsgComValidacao()"><i data-lucide="message-square-text" size="14"></i><b>Configurar Cobrança</b><span class="premium-badge" id="msg-premium-badge">PREMIUM</span></div>
-        <button class="batch-send-btn" id="batch-send-btn-cli" onclick="abrirEnvioLote()">📢 Enviar mensagem para estes clientes</button>
         <div id="grid-cli" class="item-grid"></div>
     </div>
     
@@ -280,7 +271,7 @@
     </div>
 </div>
 
-<div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome" autocomplete="off"><label>WhatsApp</label><input type="number" id="c-wpp" placeholder="Ex: 5511999998888" autocomplete="off"><small style="font-size:0.55rem; color:var(--text-dim); display:block; margin-top:-2px; margin-bottom:10px">Apenas números (DDI+DDD+NÚMERO)</small><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Servidor</label><select id="c-srv"></select><button class="btn-save" onclick="salvarCli()">Salvar</button></div></div>
+<div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome" autocomplete="off"><label>WhatsApp</label><input type="number" id="c-wpp" placeholder="Ex: 5511999998888" autocomplete="off"><small style="font-size:0.55rem; color:var(--text-dim); display:block; margin-top:-2px; margin-bottom:10px">Apenas números (DDI+DDD+NÚMERO)</small><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Desconto (R$)</label><input type="number" id="c-desconto" placeholder="0,00" autocomplete="off" step="0.01"><label>Servidor</label><select id="c-srv"></select><button class="btn-save" onclick="salvarCli()">Salvar</button></div></div>
 <div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome" autocomplete="off"><label>Preço</label><input type="number" id="p-val" autocomplete="off"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
 <div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome" autocomplete="off"><label>Custo</label><input type="number" id="s-custo" autocomplete="off"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
 <div class="overlay" id="modal-renew"><div class="modal"><h3>Renovar</h3><input type="hidden" id="renew-idx"><button class="btn-save" onclick="calcularPrevia30()">Calcular +30 Dias</button><div style="margin-top:15px; border-top:1px solid var(--border); padding-top:15px;"><label>Nova Data:</label><input type="date" id="renew-custom-date"><button class="btn-save" style="background:var(--lucro); margin-top:10px;" onclick="confirmarRenovacaoFinal()">Confirmar</button></div></div></div>
@@ -303,8 +294,6 @@
     let clienteMsgAtual = null;
     let clientePosRenovacao = null;
     let novaDataPosRenovacao = null;
-    let loteClientes = [];
-    let loteIndex = 0;
 
     document.body.addEventListener('touchmove', function(e) { if (e.target.closest('main')) return; if (e.target.closest('.overlay')) return; e.preventDefault(); }, { passive: false });
     document.addEventListener('focusin', function(e) { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { setTimeout(() => { window.scrollTo(0, 0); }, 300); } });
@@ -402,15 +391,20 @@
     function abrirMsgChooser(i) { if (!isPremium) { mostrarModalUpgrade(); return; } clienteMsgAtual = i; abrirModalComHistorico('modal-msg-chooser'); }
     function enviarMsgTipo(tipo) { if (clienteMsgAtual === null) return; const c = db.clientes[clienteMsgAtual]; enviarMsgCliente(c, tipo); fecharModais(); clienteMsgAtual = null; }
     
+    function getValorFinal(c) {
+        return Math.max(0, parseFloat(c.pVal || 0) - parseFloat(c.desconto || 0));
+    }
+
     function montarMensagem(c, tipo) {
         const dataFmt = c.venc.split("-").reverse().join("/");
         const partesNome = c.nome.trim().split(' ');
         const pNome = partesNome[0];
         const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : '';
+        const valorFinal = getValorFinal(c).toFixed(2);
         if (tipo === 'cobranca') {
-            return (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
+            return (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", valorFinal);
         } else {
-            return (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", c.pVal.toFixed(2));
+            return (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", valorFinal);
         }
     }
     
@@ -426,57 +420,6 @@
         fecharModais();
         window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`);
         clientePosRenovacao = null; novaDataPosRenovacao = null;
-    }
-
-    function abrirEnvioLote() {
-        if (!isPremium) { mostrarModalUpgrade(); return; }
-        const termo = (document.getElementById('search-main')?.value || '').toLowerCase();
-        loteClientes = [];
-        db.clientes.forEach((c, i) => {
-            const hoje = new Date(); hoje.setHours(0,0,0,0);
-            const partesData = c.venc.split('-');
-            const dv = new Date(parseInt(partesData[0]),parseInt(partesData[1])-1,parseInt(partesData[2]));
-            dv.setHours(0,0,0,0);
-            const diff = Math.round((dv.getTime()-hoje.getTime())/(1000*60*60*24));
-            let st = "ativo";
-            if(diff<0) st="vencido"; else if(diff===0) st="hoje"; else if(diff===1) st="alerta";
-            if (termo && !c.nome.toLowerCase().includes(termo)) return;
-            if (filtroAtual && st !== filtroAtual) return;
-            if (!filtroAtual && curTabId==='tab-dash' && (st==='vencido'||st==='hoje')) return;
-            loteClientes.push({...c, id: i});
-        });
-        if (loteClientes.length === 0) { showToast('Nenhum cliente encontrado!', true); return; }
-        const modalEl = document.getElementById('modal-pos-renovacao');
-        modalEl.querySelector('h3').innerText = '📢 Envio em Lote';
-        modalEl.querySelector('p').innerHTML = `Enviar para <strong>${loteClientes.length} cliente${loteClientes.length>1?'s':''}</strong>?<br><small>Uma aba por cliente.</small>`;
-        modalEl.querySelector('.confirm-btns').innerHTML = `
-            <button class="btn-save" style="background:#22c55e;flex:1" onclick="iniciarEnvioLote('cobranca')">💰 Cobrança</button>
-            <button class="btn-save" style="background:var(--entrada);flex:1" onclick="iniciarEnvioLote('renovacao')">🔄 Renovação</button>
-            <button class="btn-cancel" style="flex:1" onclick="fecharModais()">Cancelar</button>
-        `;
-        abrirModalComHistorico('modal-pos-renovacao');
-    }
-    
-    function iniciarEnvioLote(tipo) {
-        fecharModais();
-        loteIndex = 0;
-        enviarProximoLote(tipo);
-        setTimeout(() => {
-            const modalEl = document.getElementById('modal-pos-renovacao');
-            modalEl.querySelector('h3').innerText = 'Renovado com sucesso!';
-            modalEl.querySelector('p').innerHTML = 'Deseja enviar uma mensagem de renovação para <strong id="pos-renovacao-nome"></strong>?';
-            modalEl.querySelector('.confirm-btns').innerHTML = `
-                <button class="btn-save" style="background:#22c55e;flex:1" onclick="enviarMsgRenovacaoAgora()">📩 Enviar WhatsApp</button>
-                <button class="btn-cancel" style="flex:1" onclick="fecharModais()">Agora não</button>
-            `;
-        }, 500);
-    }
-    
-    function enviarProximoLote(tipo) {
-        if (loteIndex >= loteClientes.length) { showToast(`✅ ${loteClientes.length} mensagens abertas!`); loteClientes = []; return; }
-        enviarMsgCliente(loteClientes[loteIndex], tipo);
-        loteIndex++;
-        if (loteIndex < loteClientes.length) { showToast(`📩 ${loteIndex}/${loteClientes.length} - Próximo...`); setTimeout(() => enviarProximoLote(tipo), 2000); }
     }
 
     function atualizarUIPremium() { 
@@ -502,14 +445,14 @@
     function showToast(msg, isAlert = false) { const t = document.getElementById("toast"); t.innerText = msg; t.className = isAlert ? "show alert" : "show"; setTimeout(() => { t.className = ""; }, 3000); }
     function showTab(id, el) { curTabId = id; document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab')); document.querySelectorAll('.menu-item').forEach(n => n.classList.remove('active')); document.getElementById(id).classList.add('active-tab'); if(el) el.classList.add('active'); else document.querySelector(`[data-tab="${id}"]`).classList.add('active'); atualizarUIPremium(); atualizar(); }
 
-    function copiarTokenComToast() { const compact = { c: db.clientes.map(i=>({n:i.nome,w:i.wpp,v:i.venc,p:i.pNome,pv:i.pVal,s:i.sNome,sv:i.sVal})), p: db.planos.map(i=>({n:i.nome,v:i.val})), s: db.servidores.map(i=>({n:i.nome,c:i.custo})), t: db.transacoes.map(i=>({c:i.cli,p:i.pVal,s:i.sVal,d:i.data})), m: db.configMsg, mr: db.configMsgRenovacao }; const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact)))); navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado!")); }
-    function confirmarToken() { try { const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value)))); if(raw.c) { db.clientes = raw.c.map(i=>({nome:i.n,wpp:i.w,venc:i.v,pNome:i.p,pVal:i.pv,sNome:i.s,sVal:i.sv})); db.planos = raw.p.map(i=>({nome:i.n,val:i.v})); db.servidores = raw.s.map(i=>({nome:i.n,custo:i.c})); db.transacoes = raw.t.map(i=>({cli:i.c,pVal:i.p,sVal:i.s,data:i.d})); db.configMsg = raw.m || db.configMsg; db.configMsgRenovacao = raw.mr || db.configMsgRenovacao; } else if(raw.clientes) { db = raw; } persistir(); fecharModais(); showToast("Restaurado!"); } catch(e) { showToast("Código Inválido!", true); } }
+    function copiarTokenComToast() { const compact = { c: db.clientes.map(i=>({n:i.nome,w:i.wpp,v:i.venc,p:i.pNome,pv:i.pVal,s:i.sNome,sv:i.sVal,d:i.desconto||0})), p: db.planos.map(i=>({n:i.nome,v:i.val})), s: db.servidores.map(i=>({n:i.nome,c:i.custo})), t: db.transacoes.map(i=>({c:i.cli,p:i.pVal,s:i.sVal,d:i.data})), m: db.configMsg, mr: db.configMsgRenovacao }; const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact)))); navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado!")); }
+    function confirmarToken() { try { const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value)))); if(raw.c) { db.clientes = raw.c.map(i=>({nome:i.n,wpp:i.w,venc:i.v,pNome:i.p,pVal:i.pv,sNome:i.s,sVal:i.sv,desconto:i.d||0})); db.planos = raw.p.map(i=>({nome:i.n,val:i.v})); db.servidores = raw.s.map(i=>({nome:i.n,custo:i.c})); db.transacoes = raw.t.map(i=>({cli:i.c,pVal:i.p,sVal:i.s,data:i.d})); db.configMsg = raw.m || db.configMsg; db.configMsgRenovacao = raw.mr || db.configMsgRenovacao; } else if(raw.clientes) { db = raw; } persistir(); fecharModais(); showToast("Restaurado!"); } catch(e) { showToast("Código Inválido!", true); } }
 
-    function salvarCli() { const n=document.getElementById('c-nome').value, v=document.getElementById('c-venc').value, pIdx=document.getElementById('c-plano').value, sIdx=document.getElementById('c-srv').value, idx=parseInt(document.getElementById('edit-idx-cli').value); if(!n||!v||pIdx===""||sIdx==="") return; if (!isPremium && idx===-1 && db.clientes.length>=10) { fecharModais(); mostrarModalUpgrade(); return; } const d={nome:n,wpp:document.getElementById('c-wpp').value,venc:v,pNome:db.planos[pIdx].nome,pVal:parseFloat(db.planos[pIdx].val),sNome:db.servidores[sIdx].nome,sVal:parseFloat(db.servidores[sIdx].custo),dataCadastro:new Date().toISOString().split('T')[0]}; if(idx===-1) { db.clientes.push(d); db.transacoes.push({cli:n,pVal:d.pVal,sVal:d.sVal,data:new Date().toISOString().slice(0,7)}); } else { db.clientes[idx].nome=d.nome; db.clientes[idx].wpp=d.wpp; db.clientes[idx].venc=d.venc; db.clientes[idx].pNome=d.pNome; db.clientes[idx].pVal=d.pVal; db.clientes[idx].sNome=d.sNome; db.clientes[idx].sVal=d.sVal; } fecharModais(); persistir(); }
+    function salvarCli() { const n=document.getElementById('c-nome').value, v=document.getElementById('c-venc').value, pIdx=document.getElementById('c-plano').value, sIdx=document.getElementById('c-srv').value, idx=parseInt(document.getElementById('edit-idx-cli').value), desc=parseFloat(document.getElementById('c-desconto').value||0); if(!n||!v||pIdx===""||sIdx==="") return; if (!isPremium && idx===-1 && db.clientes.length>=10) { fecharModais(); mostrarModalUpgrade(); return; } const d={nome:n,wpp:document.getElementById('c-wpp').value,venc:v,pNome:db.planos[pIdx].nome,pVal:parseFloat(db.planos[pIdx].val),sNome:db.servidores[sIdx].nome,sVal:parseFloat(db.servidores[sIdx].custo),desconto:desc,dataCadastro:new Date().toISOString().split('T')[0]}; const valorFinal = getValorFinal(d); if(idx===-1) { db.clientes.push(d); db.transacoes.push({cli:n,pVal:valorFinal,sVal:d.sVal,data:new Date().toISOString().slice(0,7)}); } else { db.clientes[idx].nome=d.nome; db.clientes[idx].wpp=d.wpp; db.clientes[idx].venc=d.venc; db.clientes[idx].pNome=d.pNome; db.clientes[idx].pVal=d.pVal; db.clientes[idx].sNome=d.sNome; db.clientes[idx].sVal=d.sVal; db.clientes[idx].desconto=d.desconto; } fecharModais(); persistir(); }
     function salvarPla() { const n=document.getElementById('p-nome').value, v=document.getElementById('p-val').value, idx=parseInt(document.getElementById('edit-idx-pla').value); if(n) { if(idx===-1) db.planos.push({nome:n,val:v}); else db.planos[idx]={nome:n,val:v}; fecharModais(); persistir(); } }
     function salvarSrv() { const n=document.getElementById('s-nome').value, c=document.getElementById('s-custo').value, idx=parseInt(document.getElementById('edit-idx-srv').value); if(n) { if(idx===-1) db.servidores.push({nome:n,custo:c}); else db.servidores[idx]={nome:n,custo:c}; fecharModais(); persistir(); } }
-    function abrirNovoManual() { if(curTabId==='tab-dash'||curTabId==='tab-cli') { if (!isPremium&&db.clientes.length>=10) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(curTabId==='tab-pla') { document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(curTabId==='tab-srv') { if (!isPremium&&db.servidores.length>=1) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
-    function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
+    function abrirNovoManual() { if(curTabId==='tab-dash'||curTabId==='tab-cli') { if (!isPremium&&db.clientes.length>=10) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('c-desconto').value=""; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(curTabId==='tab-pla') { document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(curTabId==='tab-srv') { if (!isPremium&&db.servidores.length>=1) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
+    function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('c-desconto').value=c.desconto||0; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
     function salvarConfigMsg() { if (!isPremium) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
     function confirmarExclusao(tipo,i) { document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm'); document.getElementById('btn-do-delete').onclick = function() { if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1); showToast('Excluído!', true); persistir(); fecharModais(); }; }
     function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) document.getElementById('chip-'+s).classList.add('active'); atualizar(); }
@@ -548,16 +491,8 @@
         if(bAlert){ if(countAlert>0){bAlert.innerText=countAlert;bAlert.style.display='flex';}else bAlert.style.display='none'; }
         proc.sort((a,b)=>a.peso-b.peso);
 
-        const batchBtns = document.querySelectorAll('.batch-send-btn');
-        const qtdFiltrada = filtroAtual ? proc.filter(p => p.st === filtroAtual).length : (curTabId==='tab-dash' ? proc.filter(p => p.st==='ativo' || p.st==='alerta').length : proc.length);
-        const mostrarBatch = isPremium && ((filtroAtual && qtdFiltrada > 0) || (termo && qtdFiltrada > 0));
-        batchBtns.forEach(btn => {
-            btn.style.display = mostrarBatch ? 'block' : 'none';
-            if (mostrarBatch) btn.innerText = `📢 Enviar mensagem para ${qtdFiltrada} cliente${qtdFiltrada>1?'s':''} (${filtroAtual || 'filtro'})`;
-        });
-
         const buscaAtiva = termo.length > 0;
-        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
+        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const valorFinal = getValorFinal(c).toFixed(2); const descontoStr = (parseFloat(c.desconto||0) > 0) ? ` <span style="color:var(--lucro)">(-R$ ${parseFloat(c.desconto).toFixed(2)})</span>` : ''; const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome} | R$ ${valorFinal}${descontoStr}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
 
         if(curTabId==='tab-fin'||curTabId==='tab-dash'){ let entT=0,saiT=0,lucM=0; const mesAtual=hojeISO.slice(0,7); db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);}); const dsLucro=document.getElementById('ds-lucro'),dsNovos=document.getElementById('ds-novos'); if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`; if(dsNovos)dsNovos.innerText=countNovos; if(curTabId==='tab-fin'){ const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc'); let tC=isPremium?db.transacoes:db.transacoes.slice(-10); let entT10=0,saiT10=0; tC.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;}); if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`; if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`; if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`; if(isPremium&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10); const gridFin=document.getElementById('grid-fin'); let tPM=isPremium?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse(); tPM.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;}); if(!isPremium&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;} } }
         lucide.createIcons(); atualizarUIPremium(); atualizarTooltipVagas(); atualizarBannerBackup();
@@ -567,7 +502,7 @@
     function abrirEditFin(idx){const t=db.transacoes[idx];document.getElementById('edit-fin-idx').value=idx;document.getElementById('ef-entrada').value=t.pVal;document.getElementById('ef-saida').value=t.sVal;document.getElementById('modal-edit-fin').style.display='flex';abrirModalComHistorico('modal-edit-fin');}
     function salvarEditFin(){const idx=document.getElementById('edit-fin-idx').value;db.transacoes[idx].pVal=parseFloat(document.getElementById('ef-entrada').value);db.transacoes[idx].sVal=parseFloat(document.getElementById('ef-saida').value);persistir();fecharModais();showToast("OK!");}
     function calcularPrevia30(){const idx=document.getElementById('renew-idx').value;const base=new Date(db.clientes[idx].venc+"T12:00:00"),hoje=new Date();const inicio=base<hoje?hoje:base;inicio.setDate(inicio.getDate()+30);document.getElementById('renew-custom-date').value=inicio.toISOString().split('T')[0];}
-    function confirmarRenovacaoFinal(){const idx=document.getElementById('renew-idx').value,novaData=document.getElementById('renew-custom-date').value;if(!novaData)return;db.clientes[idx].venc=novaData;db.transacoes.push({cli:db.clientes[idx].nome,pVal:db.clientes[idx].pVal,sVal:db.clientes[idx].sVal,data:new Date().toISOString().slice(0,7)});persistir();fecharModais();if(isPremium){clientePosRenovacao=parseInt(idx);novaDataPosRenovacao=novaData;document.getElementById('pos-renovacao-nome').innerText=db.clientes[idx].nome;abrirModalComHistorico('modal-pos-renovacao');}else{showToast("Renovado! "+novaData.split("-").reverse().join("/"));}}
+    function confirmarRenovacaoFinal(){const idx=document.getElementById('renew-idx').value,novaData=document.getElementById('renew-custom-date').value;if(!novaData)return;const c=db.clientes[idx];c.venc=novaData;const valorFinal = getValorFinal(c);db.transacoes.push({cli:c.nome,pVal:valorFinal,sVal:c.sVal,data:new Date().toISOString().slice(0,7)});persistir();fecharModais();if(isPremium){clientePosRenovacao=parseInt(idx);novaDataPosRenovacao=novaData;document.getElementById('pos-renovacao-nome').innerText=c.nome;abrirModalComHistorico('modal-pos-renovacao');}else{showToast("Renovado! "+novaData.split("-").reverse().join("/"));}}
 
     document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY;});
     document.addEventListener('touchend',e=>{if(Array.from(document.querySelectorAll('.overlay')).some(o=>o.style.display==='flex'))return;const diffX=touchStartX-e.changedTouches[0].screenX;const diffY=Math.abs(touchStartY-e.changedTouches[0].screenY);if(Math.abs(diffX)>80&&diffY<30){let idx=tabsOrder.indexOf(curTabId);if(diffX>0&&idx<tabsOrder.length-1)showTab(tabsOrder[idx+1]);else if(diffX<0&&idx>0)showTab(tabsOrder[idx-1]);}});
