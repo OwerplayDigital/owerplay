@@ -101,6 +101,15 @@
             100% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
         }
         
+        .server-filter-container {
+            margin-bottom: 12px;
+        }
+        .server-filter {
+            width: 100%; background: var(--card); border: 1.5px solid var(--border);
+            padding: 10px 14px; border-radius: 12px; color: white; outline: none;
+            font-size: 0.7rem; font-family: inherit; cursor: pointer;
+        }
+        
         input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
         textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active,
         select:-webkit-autofill, select:-webkit-autofill:hover, select:-webkit-autofill:focus, select:-webkit-autofill:active {
@@ -145,7 +154,7 @@
 
         .search-container { margin-bottom: 12px; }
         .search-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); padding: 11px 20px; border-radius: 100px; color: white; outline: none; font-size: 0.8rem; }
-        .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 20px; }
+        .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
         .chip { padding: 10px 4px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-dim); font-size: 0.55rem; font-weight: 700; text-align: center; cursor: pointer; text-transform: uppercase; position: relative; overflow: visible; }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         .chip-badge { position: absolute; top: -6px; right: -4px; min-width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.5rem; color: white; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none; z-index: 5; }
@@ -250,6 +259,11 @@
             <div class="chip" id="chip-alerta" onclick="filtrarStatus('alerta')">A Vencer <div id="badge-alerta" class="chip-badge" style="background:var(--alerta)">0</div></div>
             <div class="chip" id="chip-vencido" onclick="filtrarStatus('vencido')">Vencidos <div id="badge-vencido" class="chip-badge" style="background:var(--saida)">0</div></div>
         </div>
+        <div class="server-filter-container">
+            <select class="server-filter" id="server-filter-dash" onchange="filtrarServidor(this.value)">
+                <option value="">Todos os servidores</option>
+            </select>
+        </div>
         <div id="grid-home" class="item-grid"></div>
     </div>
 
@@ -257,6 +271,17 @@
         <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">CLIENTES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-cli">FREE</span><span id="dias-restantes-cli" class="dias-restantes" style="display:none;"></span></div></div>
         <div id="free-slots-cli" class="free-slots-tip" style="display: none;"></div>
         <div class="config-btn-slim" onclick="abrirConfigMsgComValidacao()"><i data-lucide="message-square-text" size="14"></i><b>Configurar Mensagens</b><span class="premium-badge" id="msg-premium-badge">PREMIUM</span></div>
+        <div class="filter-chips">
+            <div class="chip" id="chip-cli-ativo" onclick="filtrarStatus('ativo')">Ativos <div id="badge-cli-ativo" class="chip-badge" style="background:var(--lucro)">0</div></div>
+            <div class="chip" id="chip-cli-hoje" onclick="filtrarStatus('hoje')">Hoje <div id="badge-cli-hoje" class="chip-badge" style="background:var(--saida)">0</div></div>
+            <div class="chip" id="chip-cli-alerta" onclick="filtrarStatus('alerta')">A Vencer <div id="badge-cli-alerta" class="chip-badge" style="background:var(--alerta)">0</div></div>
+            <div class="chip" id="chip-cli-vencido" onclick="filtrarStatus('vencido')">Vencidos <div id="badge-cli-vencido" class="chip-badge" style="background:var(--saida)">0</div></div>
+        </div>
+        <div class="server-filter-container">
+            <select class="server-filter" id="server-filter-cli" onchange="filtrarServidor(this.value)">
+                <option value="">Todos os servidores</option>
+            </select>
+        </div>
         <div id="grid-cli" class="item-grid"></div>
     </div>
     
@@ -313,6 +338,7 @@
     let clienteMsgAtual = null;
     let clientePosRenovacao = null;
     let novaDataPosRenovacao = null;
+    let filtroServidorAtual = '';
 
     document.body.addEventListener('touchmove', function(e) { if (e.target.closest('main')) return; if (e.target.closest('.overlay')) return; e.preventDefault(); }, { passive: false });
     document.addEventListener('focusin', function(e) { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { setTimeout(() => { window.scrollTo(0, 0); }, 300); } });
@@ -419,6 +445,25 @@
         if (!isPremium && !isTrial && !trialUsed) {
             document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none');
         }
+    }
+    
+    function filtrarServidor(srvNome) {
+        filtroServidorAtual = srvNome;
+        // Sincroniza os dois dropdowns
+        document.getElementById('server-filter-dash').value = srvNome;
+        document.getElementById('server-filter-cli').value = srvNome;
+        atualizar();
+    }
+    
+    function atualizarDropdownsServidores() {
+        const servidores = [...new Set(db.clientes.map(c => c.sNome).filter(Boolean))].sort();
+        ['server-filter-dash', 'server-filter-cli'].forEach(id => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            const currentValue = sel.value;
+            sel.innerHTML = '<option value="">Todos os servidores</option>' + servidores.map(s => `<option value="${s}">${s}</option>`).join('');
+            sel.value = currentValue || filtroServidorAtual;
+        });
     }
     
     async function ativarCodigoPremiumOnline() {
@@ -531,7 +576,10 @@
     function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('c-desconto').value=c.desconto||0; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
     function salvarConfigMsg() { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
     function confirmarExclusao(tipo,i) { document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm'); document.getElementById('btn-do-delete').onclick = function() { if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1); showToast('Excluído!', true); persistir(); fecharModais(); }; }
-    function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) document.getElementById('chip-'+s).classList.add('active'); atualizar(); }
+    function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) { 
+        document.getElementById('chip-'+s)?.classList.add('active');
+        document.getElementById('chip-cli-'+s)?.classList.add('active');
+    } atualizar(); }
     function getIniciais(nome) { if(!nome) return '?'; const partes = nome.trim().split(' '); if(partes.length===1) return partes[0].substring(0,2).toUpperCase(); return (partes[0][0]+partes[partes.length-1][0]).toUpperCase(); }
 
     function atualizar() {
@@ -540,6 +588,7 @@
         const planoSelect = document.getElementById('c-plano'), srvSelect = document.getElementById('c-srv');
         if(planoSelect) planoSelect.innerHTML = db.planos.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
         if(srvSelect) srvSelect.innerHTML = db.servidores.map((s,i)=>`<option value="${i}">${s.nome}</option>`).join('');
+        atualizarDropdownsServidores();
         ['grid-home','grid-cli','grid-pla','grid-srv','grid-fin'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML=''; });
         const fab = document.getElementById('main-fab');
         if(fab) { const temDados = db.clientes.length>0||(curTabId==='tab-pla')||(curTabId==='tab-srv'); const podeCadastrarCliente = (curTabId==='tab-cli'||curTabId==='tab-dash')&&db.servidores.length>0&&db.planos.length>0; fab.style.display = (curTabId!=='tab-fin'&&(temDados||podeCadastrarCliente))?'flex':'none'; }
@@ -566,11 +615,20 @@
         if(bVenc){ if(countVenc>0){bVenc.innerText=countVenc;bVenc.style.display='flex';}else bVenc.style.display='none'; }
         if(bAlert){ if(countAlert>0){bAlert.innerText=countAlert;bAlert.style.display='flex';}else bAlert.style.display='none'; }
         
+        const bAtivoCli=document.getElementById('badge-cli-ativo'),bHojeCli=document.getElementById('badge-cli-hoje'),bVencCli=document.getElementById('badge-cli-vencido'),bAlertCli=document.getElementById('badge-cli-alerta');
+        if(bAtivoCli){ if(countAtivos>0){bAtivoCli.innerText=countAtivos;bAtivoCli.style.display='flex';}else bAtivoCli.style.display='none'; }
+        if(bHojeCli){ if(countHoje>0){bHojeCli.innerText=countHoje;bHojeCli.style.display='flex';}else bHojeCli.style.display='none'; }
+        if(bVencCli){ if(countVenc>0){bVencCli.innerText=countVenc;bVencCli.style.display='flex';}else bVencCli.style.display='none'; }
+        if(bAlertCli){ if(countAlert>0){bAlertCli.innerText=countAlert;bAlertCli.style.display='flex';}else bAlertCli.style.display='none'; }
+        
         // Ordena por data de vencimento (do mais próximo para o mais distante)
         proc.sort((a,b)=>a.diff-b.diff);
 
         const buscaAtiva = termo.length > 0;
-        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const valorFinal = getValorFinal(c).toFixed(2); const descontoStr = (parseFloat(c.desconto||0) > 0) ? ` <span style="color:var(--lucro)">(-R$ ${parseFloat(c.desconto).toFixed(2)})</span>` : ''; const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome} | R$ ${valorFinal}${descontoStr}</div><div class="server-line">Servidor: ${c.sNome || '—'}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
+        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ 
+            // Filtro por servidor
+            if (filtroServidorAtual && c.sNome !== filtroServidorAtual) return;
+            if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const valorFinal = getValorFinal(c).toFixed(2); const descontoStr = (parseFloat(c.desconto||0) > 0) ? ` <span style="color:var(--lucro)">(-R$ ${parseFloat(c.desconto).toFixed(2)})</span>` : ''; const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome} | R$ ${valorFinal}${descontoStr}</div><div class="server-line">Servidor: ${c.sNome || '—'}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
 
         if(curTabId==='tab-fin'||curTabId==='tab-dash'){ let entT=0,saiT=0,lucM=0; const mesAtual=hojeISO.slice(0,7); db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);}); const dsLucro=document.getElementById('ds-lucro'),dsNovos=document.getElementById('ds-novos'); if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`; if(dsNovos)dsNovos.innerText=countNovos; if(curTabId==='tab-fin'){ const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc'); let tC=(isPremium||isTrial)?db.transacoes:db.transacoes.slice(-10); let entT10=0,saiT10=0; tC.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;}); if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`; if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`; if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`; if((isPremium||isTrial)&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10); const gridFin=document.getElementById('grid-fin'); let tPM=(isPremium||isTrial)?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse(); tPM.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;}); if(!isPremium&&!isTrial&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;} } }
         lucide.createIcons(); atualizarUIPremium(); atualizarTooltipVagas(); atualizarBannerBackup();
