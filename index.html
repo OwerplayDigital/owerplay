@@ -196,7 +196,7 @@
         .plan-price-big { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
         .plan-price-cents { font-size: 1rem; font-weight: 600; color: var(--premium-color); align-self: flex-start; margin-top: 2px; }
 
-        .plan-er { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .current-plan-badge { background: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; color: white; }
         .current-plan-badge.premium { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; box-shadow: var(--premium-glow); display: flex; align-items: center; gap: 4px; }
         .current-plan-badge.premium::before { content: "💎"; font-size: 11px; }
@@ -283,13 +283,6 @@
     </style>
 </head>
 <body onclick="if(event.target.classList.contains('overlay')) fecharModais()">
-<div id="tela-login" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; flex-direction: column;">
-    <h2 style="font-family: sans-serif; margin-bottom: 20px;">Acesso ao Gestor IPTV</h2>
-    <input type="email" id="login-email" placeholder="Seu e-mail" style="margin: 10px; padding: 12px; width: 260px; border-radius: 8px; border: 1px solid #333; background: #222; color: white;">
-    <input type="password" id="login-senha" placeholder="Sua senha" style="margin: 10px; padding: 12px; width: 260px; border-radius: 8px; border: 1px solid #333; background: #222; color: white;">
-    <button onclick="fazerLogin()" style="margin-top: 20px; padding: 12px 40px; background: #3ecf8e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">Entrar</button>
-    <p id="mensagem-erro" style="color: #ff4d4d; margin-top: 15px; font-family: sans-serif; font-size: 14px;"></p>
-</div>
 
 <div id="toast"></div>
 
@@ -758,48 +751,20 @@
 
         if(curTabId==='tab-fin'||curTabId==='tab-dash'){ let entT=0,saiT=0,lucM=0; const mesAtual=hojeISO.slice(0,7); db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);}); const dsLucro=document.getElementById('ds-lucro'),dsNovos=document.getElementById('ds-novos'); if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`; if(dsNovos)dsNovos.innerText=countNovos; if(curTabId==='tab-fin'){ const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc'); let tC=(isPremium||isTrial)?db.transacoes:db.transacoes.slice(-10); let entT10=0,saiT10=0; tC.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;}); if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`; if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`; if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`; if((isPremium||isTrial)&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10); const gridFin=document.getElementById('grid-fin'); let tPM=(isPremium||isTrial)?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse(); tPM.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;}); if(!isPremium&&!isTrial&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;} } }
         lucide.createIcons(); atualizarUIPremium(); atualizarTooltipVagas(); atualizarBannerBackup();
-<script>
-        // Fecha as funções antigas do seu site
-        verificarTrial();
-        atualizar(); 
-        atualizarUIPremium();
-    </script>
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Usei a chave que apareceu na sua foto
-        const _URL = 'https://rmrbdyswzkzpmeqwcl.supabase.co';
-        const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcmJkeXN3emt6cnBtZXF3Y2wiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcxNDE5OTI5NiwiZXhwIjoyMDMwMTE1Mjk2fQ.Z67F-3H6tV1zL_rQ_fC4I3T6r8R7B1oD7X_0X6r1zL8';
-        
-        // Aqui é onde o erro de "já declarado" acontece se tiver outro igual
-        const supabase = window.supabase.createClient(_URL, _KEY);
+    function renderFin(e,s,l){const canvas=document.getElementById('finChart');if(!canvas)return;const ctx=canvas.getContext('2d');if(chartObj)chartObj.destroy();chartObj=new Chart(ctx,{type:'bar',data:{labels:['Entrada','Saída','Lucro'],datasets:[{data:[e,s,l],backgroundColor:['#38bdf8','#fb7185','#10b981'],borderRadius:10}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#2d3348'},ticks:{color:'#94a3b8'}}}}});}
+    function abrirEditFin(idx){const t=db.transacoes[idx];document.getElementById('edit-fin-idx').value=idx;document.getElementById('ef-entrada').value=t.pVal;document.getElementById('ef-saida').value=t.sVal;document.getElementById('modal-edit-fin').style.display='flex';abrirModalComHistorico('modal-edit-fin');}
+    function salvarEditFin(){const idx=document.getElementById('edit-fin-idx').value;db.transacoes[idx].pVal=parseFloat(document.getElementById('ef-entrada').value);db.transacoes[idx].sVal=parseFloat(document.getElementById('ef-saida').value);persistir();fecharModais();showToast("OK!");}
+    function calcularPrevia30(){const idx=document.getElementById('renew-idx').value;const base=new Date(db.clientes[idx].venc+"T12:00:00"),hoje=new Date();const inicio=base<hoje?hoje:base;inicio.setDate(inicio.getDate()+30);document.getElementById('renew-custom-date').value=inicio.toISOString().split('T')[0];}
+    function confirmarRenovacaoFinal(){const idx=document.getElementById('renew-idx').value,novaData=document.getElementById('renew-custom-date').value;if(!novaData)return;const c=db.clientes[idx];c.venc=novaData;const valorFinal = getValorFinal(c);db.transacoes.push({cli:c.nome,pVal:valorFinal,sVal:c.sVal,data:new Date().toISOString().slice(0,7)});persistir();fecharModais();if(isPremium||isTrial){clientePosRenovacao=parseInt(idx);novaDataPosRenovacao=novaData;document.getElementById('pos-renovacao-nome').innerText=c.nome;abrirModalComHistorico('modal-pos-renovacao');}else{showToast("Renovado! "+novaData.split("-").reverse().join("/"));}}
 
-        async function fazerLogin() {
-            const email = document.getElementById('login-email').value;
-            const senha = document.getElementById('login-senha').value;
-            const erroDiv = document.getElementById('mensagem-erro');
+    document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY;});
+    document.addEventListener('touchend',e=>{if(Array.from(document.querySelectorAll('.overlay')).some(o=>o.style.display==='flex'))return;const diffX=touchStartX-e.changedTouches[0].screenX;const diffY=Math.abs(touchStartY-e.changedTouches[0].screenY);if(Math.abs(diffX)>80&&diffY<30){let idx=tabsOrder.indexOf(curTabId);if(diffX>0&&idx<tabsOrder.length-1)showTab(tabsOrder[idx+1]);else if(diffX<0&&idx>0)showTab(tabsOrder[idx-1]);}});
 
-            if (!email || !senha) {
-                erroDiv.innerText = "Preencha e-mail e senha.";
-                return;
-            }
-
-            erroDiv.style.color = "white";
-            erroDiv.innerText = "Carregando...";
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: senha,
-            });
-
-            if (error) {
-                erroDiv.style.color = "#ff4d4d";
-                erroDiv.innerText = "Erro: " + error.message;
-            } else {
-                document.getElementById('tela-login').style.display = 'none';
-                localStorage.setItem('logado', 'true');
-            }
-        }
-    </script>
+    verificarExpiracaoPremium();
+    verificarTrial();
+    atualizar(); atualizarUIPremium();
+</script>
 </body>
 </html>
