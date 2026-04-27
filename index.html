@@ -528,6 +528,7 @@ function showTab(id) {
 supabase.auth.getSession().then(function(res){
     if (res.data && res.data.session && res.data.session.user) {
         user = res.data.session.user;
+        window.location.reload();
         document.getElementById('tela-login').style.display = 'none';
         document.getElementById('tela-app').style.display = 'flex';
         carregarTudo().then(atualizarListas);
