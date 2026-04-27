@@ -762,16 +762,11 @@
 
     function renderFin(e,s,l){const canvas=document.getElementById('finChart');if(!canvas)return;const ctx=canvas.getContext('2d');if(chartObj)chartObj.destroy();chartObj=new Chart(ctx,{type:'bar',data:{labels:['Entrada','Saída','Lucro'],datasets:[{data:[e,s,l],backgroundColor:['#38bdf8','#fb7185','#10b981'],borderRadius:10}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#2d3348'},ticks:{color:'#94a3b8'}}}}});}
     function abrirEditFin(idx){const t=db.transacoes[idx];document.getElementById('edit-fin-idx').value=idx;document.getElementById('ef-entrada').value=t.pVal;document.getElementById('ef-saida').value=t.sVal;document.getElementById('modal-edit-fin').style.display='flex';abrirModalComHistorico('modal-edit-fin');}
-    function salvarEditFin(){const idx=document.getElementById('edit-fin-idx').value;db.transacoes[idx].pVal=parseFloat(document.getElementById('ef-entrada').value);db.transacoes[idx].sVal=parseFloat(document.getElementById('ef-saida').value);persistir();fecharModais();showToast("OK!");}
-    function calcularPrevia30(){const idx=document.getElementById('renew-idx').value;const base=new Date(db.clientes[idx].venc+"T12:00:00"),hoje=new Date();const inicio=base<hoje?hoje:base;inicio.setDate(inicio.getDate()+30);document.getElementById('renew-custom-date').value=inicio.toISOString().split('T')[0];}
-    function confirmarRenovacaoFinal(){const idx=document.getElementById('renew-idx').value,novaData=document.getElementById('renew-custom-date').value;if(!novaData)return;const c=db.clientes[idx];c.venc=novaData;const valorFinal = getValorFinal(c);db.transacoes.push({cli:c.nome,pVal:valorFinal,sVal:c.sVal,data:new Date().toISOString().slice(0,7)});persistir();fecharModais();if(isPremium||isTrial){clientePosRenovacao=parseInt(idx);novaDataPosRenovacao=novaData;document.getElementById('pos-renovacao-nome').innerText=c.nome;abrirModalComHistorico('modal-pos-renovacao');}else{showToast("Renovado! "+novaData.split("-").reverse().join("/"));}}
-
-    document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY;});
-    document.addEventListener('touchend',e=>{if(Array.from(document.querySelectorAll('.overlay')).some(o=>o.style.display==='flex'))return;const diffX=touchStartX-e.changedTouches[0].screenX;const diffY=Math.abs(touchStartY-e.changedTouches[0].screenY);if(Math.abs(diffX)>80&&diffY<30){let idx=tabsOrder.indexOf(curTabId);if(diffX>0&&idx<tabsOrder.length-1)showTab(tabsOrder[idx+1]);else if(diffX<0&&idx>0)showTab(tabsOrder[idx-1]);}});
-<script>
-        // Código antigo do site
+    <script>
+        // Fecha o código antigo corretamente
         verificarTrial();
-        atualizar(); atualizarUIPremium();
+        atualizar(); 
+        atualizarUIPremium();
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -784,11 +779,6 @@
             const email = document.getElementById('login-email').value;
             const senha = document.getElementById('login-senha').value;
             const erroDiv = document.getElementById('mensagem-erro');
-
-            if (!email || !senha) {
-                erroDiv.innerText = "Preencha todos os campos.";
-                return;
-            }
 
             erroDiv.style.color = "white";
             erroDiv.innerText = "Verificando...";
@@ -808,4 +798,3 @@
     </script>
 </body>
 </html>
-    
