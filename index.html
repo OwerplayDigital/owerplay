@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>OwerPlay Gestor</title>
-    
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'%3EOW%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'%3EOW%3C/text%3E%3C/svg%3E">
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg: #0b0f1a; --card: #161b2c; --primary: #6366f1; --text: #f8fafc;
@@ -30,7 +28,25 @@
             touch-action: pan-y; position: fixed; width: 100%; top: 0; left: 0;
             -webkit-overflow-scrolling: touch; overscroll-behavior: none;
         }
-
+        #login-screen {
+            position: fixed; inset: 0; background: var(--bg); z-index: 99999;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 30px;
+        }
+        .login-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+            padding: 30px 22px; width: 100%; max-width: 350px; text-align: center;
+        }
+        .login-logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; margin-bottom: 8px; }
+        .login-subtitle { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 25px; }
+        .login-input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); padding: 14px; border-radius: 14px; color: white; outline: none; margin-bottom: 12px; font-family: inherit; font-size: 0.85rem; text-align: center; }
+        .btn-login { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 8px; font-family: inherit; }
+        .btn-login:active { transform: scale(0.96); }
+        .login-toggle-text { margin-top: 15px; font-size: 0.7rem; color: var(--text-dim); }
+        .btn-toggle { display: block; width: 100%; margin-top: 6px; padding: 12px; background: transparent; color: var(--primary); border: 1.5px solid var(--primary); border-radius: 14px; font-weight: 700; font-size: 0.8rem; text-decoration: none; font-family: inherit; cursor: pointer; }
+        .btn-toggle:active { opacity: 0.7; transform: scale(0.96); }
+        .login-error { color: var(--saida); font-size: 0.65rem; margin-top: 8px; min-height: 20px; }
+        .loading-spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         nav { 
             width: 100%; height: 75px; background: #070a13; border-radius: 20px 20px 0 0; 
             border-top: 1px solid var(--border); border-left: 1px solid var(--border); border-right: 1px solid var(--border);
@@ -42,190 +58,28 @@
         .menu-item.active { color: var(--text); }
         .menu-item.active i, .menu-item.active svg { opacity: 1 !important; color: var(--primary) !important; transform: translateY(-2px); filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.8)) !important; }
         .menu-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 22px; height: 3px; background: var(--primary); border-radius: 0 0 4px 4px; }
-
         main { flex: 1; padding: 18px; overflow-y: auto; padding-bottom: 100px; position: relative; z-index: 10; -webkit-overflow-scrolling: touch; }
         .tab-content { display: none; }
         .active-tab { display: block; animation: slideFade 0.3s ease-out; }
         @keyframes slideFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .app-brand { font-size: 1.1rem; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
         .version-tag { font-size: 0.55rem; color: var(--text-dim); opacity: 0.5; font-weight: 400; letter-spacing: 0; margin-left: 4px; }
-        
-        .backup-alert-banner {
-            background: linear-gradient(135deg, rgba(251, 113, 133, 0.15), rgba(251, 113, 133, 0.05));
-            border: 1px solid rgba(251, 113, 133, 0.3); border-radius: 14px; padding: 12px 14px;
-            margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { border-color: rgba(251, 113, 133, 0.3); } 50% { border-color: rgba(251, 113, 133, 0.7); } 100% { border-color: rgba(251, 113, 133, 0.3); } }
-        .backup-alert-icon { color: var(--saida); min-width: 20px; margin-top: 1px; }
-        .backup-alert-content { flex: 1; }
-        .backup-alert-content p { font-size: 0.65rem; color: var(--text); line-height: 1.4; margin-bottom: 8px; font-weight: 500; }
-        .backup-alert-content p strong { color: var(--saida); }
-        .backup-alert-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-        .btn-backup { padding: 8px 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; transition: 0.2s; }
-        .btn-backup-primary { background: var(--saida); color: white; }
-        .btn-backup-secondary { background: rgba(255,255,255,0.05); color: var(--text-dim); border: 1px solid var(--border); }
-        
-        .premium-expiry-banner {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            border-radius: 14px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: premiumPulse 2s infinite;
-        }
-        @keyframes premiumPulse {
-            0% { border-color: rgba(139, 92, 246, 0.4); }
-            50% { border-color: rgba(139, 92, 246, 0.8); }
-            100% { border-color: rgba(139, 92, 246, 0.4); }
-        }
-        .premium-expiry-banner .expiry-icon { font-size: 1.2rem; min-width: 24px; text-align: center; }
-        .premium-expiry-banner .expiry-text { flex: 1; font-size: 0.65rem; color: var(--text); line-height: 1.4; }
-        .premium-expiry-banner .expiry-text strong { color: var(--premium-color); }
-        .premium-expiry-banner .expiry-btn { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.6rem; cursor: pointer; background: var(--premium-color); color: white; white-space: nowrap; }
-        
-        .btn-trial-banner {
-            display: none; width: 100%; padding: 14px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 0.8rem;
-            cursor: pointer; margin-bottom: 14px; text-align: center;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            animation: trialPulseBtn 2s infinite;
-        }
-        @keyframes trialPulseBtn {
-            0% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
-            50% { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6); }
-            100% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
-        }
-        
-        /* NOVA LINHA DE BUSCA - ALTURAS IGUAIS E ALINHADAS */
-        .search-filter-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            align-items: stretch;
-        }
-        .search-icon-btn {
-            width: 42px;
-            min-width: 42px;
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-dim);
-            transition: 0.2s;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .search-icon-btn.active-search {
-            color: var(--primary);
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
-        }
-        .search-input-inline {
-            flex: 1;
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            padding: 10px 14px;
-            border-radius: 12px;
-            color: white;
-            outline: none;
-            font-size: 0.8rem;
-            font-family: inherit;
-            display: none;
-            box-sizing: border-box;
-            transition: 0.2s;
-        }
-        .search-input-inline.visible {
-            display: block;
-        }
-        .server-filter-inline {
-            flex: 1;
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            padding: 10px 12px;
-            border-radius: 12px;
-            color: white;
-            outline: none;
-            font-size: 0.7rem;
-            font-family: inherit;
-            cursor: pointer;
-            min-width: 0;
-            box-sizing: border-box;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        
-        .server-filter-container {
-            display: none;
-        }
-        .server-filter {
-            width: 100%; background: var(--card); border: 1.5px solid var(--border);
-            padding: 10px 14px; border-radius: 12px; color: white; outline: none;
-            font-size: 0.7rem; font-family: inherit; cursor: pointer;
-        }
-        
-        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
-        textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active,
-        select:-webkit-autofill, select:-webkit-autofill:hover, select:-webkit-autofill:focus, select:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px var(--bg) inset !important;
-            -webkit-text-fill-color: white !important;
-            transition: background-color 5000s ease-in-out 0s;
-            caret-color: white !important;
-        }
-        
-        .btn-icon:active, .btn-save:active, .upgrade-btn:active, .chip:active, .fab:active, .btn-backup:active, .btn-trial-banner:active { transform: scale(0.96) !important; transition: transform 0.1s ease !important; }
-        .item-card { transition: all 0.2s ease; touch-action: pan-y; }
-        .item-card:active { background: rgba(22, 27, 44, 0.8); box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
-        .client-avatar { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #8B5CF6); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: white; text-transform: uppercase; margin-right: 10px; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
-        .client-info-row { display: flex; align-items: center; margin-bottom: 8px; }
-        .client-details { flex: 1; }
-        .item-card { position: relative; overflow: hidden; }
-
-        .premium-badge { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; margin-left: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--premium-glow); }
-        .upgrade-btn { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
-        .plan-card { background: linear-gradient(135deg, #1e2438, #161b2c); border: 2px solid var(--premium-color); border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1); }
-        .plan-price-container { display: flex; align-items: baseline; justify-content: flex-end; gap: 2px; }
-        .plan-price-small { font-size: 1.1rem; font-weight: 600; color: var(--premium-color); }
-        .plan-price-big { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
-        .plan-price-cents { font-size: 1rem; font-weight: 600; color: var(--premium-color); align-self: flex-start; margin-top: 2px; }
-
-        .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .current-plan-badge { background: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; color: white; }
-        .current-plan-badge.premium { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; box-shadow: var(--premium-glow); display: flex; align-items: center; gap: 4px; }
-        .current-plan-badge.premium::before { content: "💎"; font-size: 11px; }
-        .current-plan-badge.trial { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-        
-        .free-slots-tip { background: rgba(99, 102, 241, 0.10); border-radius: 14px; padding: 12px 15px; margin-bottom: 12px; font-size: 0.7rem; color: var(--text-dim); text-align: center; border: 1px solid rgba(99, 102, 241, 0.2); line-height: 1.6; letter-spacing: 0.3px; }
-        .free-slots-tip strong { color: white; font-weight: 700; }
-        .free-slots-tip .premium-link { color: var(--premium-color); font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-        .config-btn-slim { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; cursor: pointer; width: fit-content; margin-left: auto; margin-right: auto; }
-        .config-btn-slim b { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .mini-stats { display: flex; gap: 10px; margin-bottom: 20px; }
-        .mini-card { flex: 1; background: var(--card); padding: 15px; border-radius: 18px; border: 1.5px solid var(--border); position: relative; }
-        .mini-card b { font-size: 0.9rem; color: var(--text); }
-        .mini-card small { font-size: 0.5rem; color: var(--text-dim); text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 4px; }
-
-        .search-container { margin-bottom: 12px; }
-        .search-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); padding: 11px 20px; border-radius: 100px; color: white; outline: none; font-size: 0.8rem; }
+        .btn-trial-banner { display: none; width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-bottom: 14px; text-align: center; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); animation: trialPulseBtn 2s infinite; }
+        @keyframes trialPulseBtn { 0% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); } }
+        .search-filter-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: stretch; }
+        .search-icon-btn { width: 42px; min-width: 42px; background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dim); transition: 0.2s; padding: 0; box-sizing: border-box; }
+        .search-icon-btn.active-search { color: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
+        .search-input-inline { flex: 1; background: var(--card); border: 1.5px solid var(--border); padding: 10px 14px; border-radius: 12px; color: white; outline: none; font-size: 0.8rem; font-family: inherit; display: none; box-sizing: border-box; transition: 0.2s; }
+        .search-input-inline.visible { display: block; }
+        .server-filter-inline { flex: 1; background: var(--card); border: 1.5px solid var(--border); padding: 10px 12px; border-radius: 12px; color: white; outline: none; font-size: 0.7rem; font-family: inherit; cursor: pointer; min-width: 0; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
         .filter-chips { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
         .chip { padding: 10px 4px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-dim); font-size: 0.55rem; font-weight: 700; text-align: center; cursor: pointer; text-transform: uppercase; position: relative; overflow: visible; }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         .chip-badge { position: absolute; top: -6px; right: -4px; min-width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.5rem; color: white; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none; z-index: 5; }
-
-        .welcome-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 25px; background: rgba(22, 27, 44, 0.3); border: 2px dashed var(--border); border-radius: 30px; text-align: center; margin-top: 10px; }
-        .welcome-icon { width: 70px; height: 70px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1)); color: var(--primary); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(99, 102, 241, 0.2); }
-        .welcome-state h3 { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 8px; background: linear-gradient(135deg, white, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .welcome-state p { font-size: 0.8rem; color: var(--text-dim); max-width: 280px; line-height: 1.6; margin-bottom: 25px; }
-        .welcome-state .btn-save { width: auto; padding: 14px 35px; font-size: 0.85rem; margin-top: 0; display: flex; align-items: center; gap: 8px; }
-
+        .mini-stats { display: flex; gap: 10px; margin-bottom: 20px; }
+        .mini-card { flex: 1; background: var(--card); padding: 15px; border-radius: 18px; border: 1.5px solid var(--border); position: relative; }
+        .mini-card b { font-size: 0.9rem; color: var(--text); }
+        .mini-card small { font-size: 0.5rem; color: var(--text-dim); text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 4px; }
         .item-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
         .item-card { background: var(--card); padding: 14px; border-radius: 18px; border: 1.5px solid transparent; position: relative; }
         .card-border-ativo { border-color: var(--lucro); }
@@ -234,7 +88,9 @@
         .card-border-hoje { border-color: var(--saida); }
         .card-border-plano { border-color: var(--primary); }
         .card-border-servidor { border-color: var(--primary); }
-
+        .client-avatar { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #8B5CF6); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: white; text-transform: uppercase; margin-right: 10px; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
+        .client-info-row { display: flex; align-items: center; margin-bottom: 8px; }
+        .client-details { flex: 1; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
         .card-status-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.5rem; font-weight: 800; color: white; text-transform: uppercase; }
         .card-actions { display: flex; gap: 6px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
@@ -242,529 +98,640 @@
         .btn-edit { color: var(--alerta); }
         .btn-del { color: var(--saida); }
         .server-line { font-size: 0.6rem; color: var(--text-dim); margin-top: 2px; }
-
-        .fin-card-top { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 18px; position: relative; }
-        .fin-smooth-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .fin-item { display: flex; flex-direction: column; gap: 2px; }
-        .fin-label { font-size: 0.5rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
-        .fin-val { font-size: 0.75rem; font-weight: 600; }
-        .btn-more-fin { position: absolute; top: 15px; right: 15px; color: var(--text-dim); background: none; border: none; cursor: pointer; padding: 5px; opacity: 0.6; }
-
         .fab { position: fixed; bottom: 95px; right: 25px; width: 54px; height: 54px; background: var(--primary); border-radius: 18px; display: none; align-items: center; justify-content: center; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.4); z-index: 5000; border: none; cursor: pointer; transition: 0.2s; }
-
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal { background: var(--card); width: 100%; max-width: 350px; padding: 22px; border-radius: 24px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
         .modal h3 { margin-bottom: 12px; font-weight: 800; font-size: 1.1rem; }
         .modal label { display: block; font-size: 0.7rem; color: var(--text-dim); margin: 10px 0 5px; text-transform: uppercase; font-weight: 800; }
         .modal input, .modal select, .modal textarea { width: 100%; background: var(--bg); border: 1.5px solid var(--border); padding: 12px; border-radius: 12px; color: white; outline: none; margin-bottom: 4px; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; }
         .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; margin-top: 12px; cursor: pointer; font-size: 0.85rem; }
-        
         .btn-kiwify { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 8px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
-
         .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
         .btn-confirm { background: var(--saida); flex: 1; padding: 14px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; }
         .btn-cancel { background: var(--border); flex: 1; padding: 14px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; }
-
         #toast { visibility: hidden; min-width: 280px; background-color: var(--lucro); color: #fff; text-align: center; border-radius: 18px; padding: 18px; position: fixed; z-index: 11000; left: 50%; top: 35px; transform: translateX(-50%); font-weight: 700; box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         #toast.alert { background-color: var(--saida); }
         @keyframes fadein { from {top: 0; opacity: 0;} to {top: 35px; opacity: 1;} }
         @keyframes fadeout { from {top: 35px; opacity: 1;} to {top: 0; opacity: 0;} }
-        
-        .premium-locked-overlay { position: absolute; inset: 0; background: rgba(22, 27, 44, 0.95); backdrop-filter: blur(3px); border-radius: 20px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 15px; cursor: pointer; }
-        .diamond-icon { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.8)); }
-        .msg-menu-item { display: flex; align-items: center; gap: 10px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
-        .msg-menu-item:hover, .msg-menu-item:active { background: rgba(99, 102, 241, 0.1); border-color: var(--primary); }
-        .msg-menu-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-        .msg-menu-info { flex: 1; }
-        .msg-menu-info b { font-size: 0.8rem; display: block; margin-bottom: 2px; }
-        .msg-menu-info span { font-size: 0.6rem; color: var(--text-dim); }
         .dias-restantes { font-size: 0.6rem; font-weight: 600; opacity: 0.9; margin-left: 4px; }
+        #app-container { display: none; }
+        .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .current-plan-badge { background: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; color: white; }
+        .current-plan-badge.premium { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; box-shadow: var(--premium-glow); display: flex; align-items: center; gap: 4px; }
+        .current-plan-badge.premium::before { content: "💎"; font-size: 11px; }
+        .current-plan-badge.trial { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .premium-badge { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; margin-left: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--premium-glow); }
+        .upgrade-btn { background: linear-gradient(135deg, var(--premium-color), #A78BFA); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; margin-top: 12px; box-shadow: var(--premium-glow); transition: 0.3s; text-align: center; letter-spacing: 0.3px; }
+        .premium-locked-overlay { position: absolute; inset: 0; background: rgba(22, 27, 44, 0.95); backdrop-filter: blur(3px); border-radius: 20px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 15px; cursor: pointer; }
+        .config-btn-slim { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; cursor: pointer; width: fit-content; margin-left: auto; margin-right: auto; }
     </style>
 </head>
-<body onclick="if(event.target.classList.contains('overlay')) fecharModais()">
+<body>
 
 <div id="toast"></div>
 
-<nav id="bottom-nav">
-    <div class="menu-item active" data-tab="tab-dash" onclick="showTab('tab-dash', this)"><i data-lucide="home"></i><span>Início</span></div>
-    <div class="menu-item" data-tab="tab-cli" onclick="showTab('tab-cli', this)"><i data-lucide="users"></i><span>Clientes</span></div>
-    <div class="menu-item" data-tab="tab-pla" onclick="showTab('tab-pla', this)"><i data-lucide="package"></i><span>Planos</span></div>
-    <div class="menu-item" data-tab="tab-srv" onclick="showTab('tab-srv', this)"><i data-lucide="database"></i><span>Servidores</span></div>
-    <div class="menu-item" data-tab="tab-fin" onclick="showTab('tab-fin', this)"><i data-lucide="trending-up"></i><span>Finanças</span></div>
-</nav>
+<!-- TELA DE LOGIN -->
+<div id="login-screen">
+    <div class="login-card">
+        <div class="login-logo">OWERPLAY</div>
+        <div class="login-subtitle" id="login-subtitle">Faça login para acessar seu gestor</div>
+        <input type="email" id="login-email" class="login-input" placeholder="Seu email" autocomplete="email">
+        <input type="password" id="login-password" class="login-input" placeholder="Sua senha" autocomplete="current-password">
+        <div class="login-error" id="login-error"></div>
+        <button class="btn-login" id="btn-login-action">Entrar</button>
+        <div class="login-toggle-text" id="login-toggle-text">Não tem conta?</div>
+        <button class="btn-toggle" id="login-toggle-btn">Criar conta grátis</button>
+        <div class="loading-spinner" id="login-spinner"></div>
+    </div>
+</div>
 
+<!-- APP PRINCIPAL -->
+<div id="app-container">
+<nav id="bottom-nav">
+    <div class="menu-item active" data-tab="tab-dash"><i data-lucide="home"></i><span>Início</span></div>
+    <div class="menu-item" data-tab="tab-cli"><i data-lucide="users"></i><span>Clientes</span></div>
+    <div class="menu-item" data-tab="tab-pla"><i data-lucide="package"></i><span>Planos</span></div>
+    <div class="menu-item" data-tab="tab-srv"><i data-lucide="database"></i><span>Servidores</span></div>
+    <div class="menu-item" data-tab="tab-fin"><i data-lucide="trending-up"></i><span>Finanças</span></div>
+</nav>
 <main id="swipe-area">
-    <button class="fab" id="main-fab" onclick="abrirNovoManual()"><i data-lucide="plus" size="24"></i></button>
+    <button class="fab" id="main-fab"><i data-lucide="plus" size="24"></i></button>
 
     <div id="tab-dash" class="tab-content active-tab">
-        <div class="plan-header">
-            <h2 class="app-brand" style="margin-bottom: 0;">OWERPLAY GESTOR <span class="version-tag">v1.0</span></h2>
-            <div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-dash">FREE</span><span id="dias-restantes-dash" class="dias-restantes" style="display:none;"></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+            <h2 class="app-brand" style="margin-bottom:0;">OWERPLAY GESTOR <span class="version-tag">v2.0</span></h2>
+            <button id="btn-logout" style="background:rgba(251,113,133,0.15);color:var(--saida);border:1px solid rgba(251,113,133,0.3);padding:8px 14px;border-radius:10px;font-size:0.6rem;font-weight:700;cursor:pointer;font-family:inherit;">Sair</button>
         </div>
-        <button class="btn-trial-banner" id="btn-trial-dash" onclick="ativarTrial()">Teste Grátis 7 Dias — Todos os recursos liberados!</button>
-        <div id="premium-expiry-banner" class="premium-expiry-banner" style="display: none;">
-            <span class="expiry-icon">⚠️</span>
-            <span class="expiry-text" id="expiry-banner-text"></span>
-            <button class="expiry-btn" onclick="copiarTokenComToast()">💾 Backup</button>
-        </div>
-        <div id="free-slots-dash" class="free-slots-tip" style="display: none;"></div>
+        <div class="plan-header"><div></div><div class="current-plan-badge" id="badge-plano-dash"><span id="plan-text-dash">FREE</span><span id="dias-restantes-dash" class="dias-restantes" style="display:none;"></span></div></div>
+        <button class="btn-trial-banner" id="btn-trial-dash">Teste Grátis 7 Dias — Todos os recursos liberados!</button>
+        <div id="free-slots-dash" class="free-slots-tip" style="display:none;"></div>
         <div class="mini-stats">
-            <div class="mini-card" style="border-color: var(--lucro);"><small>Lucro do Mês</small><b id="ds-lucro">R$ 0,00</b><div style="position:absolute; right:12px; top:12px; cursor:pointer" onclick="togglePriv()"><i data-lucide="eye" id="eye-icon" size="14"></i></div></div>
-            <div class="mini-card" style="border-color: var(--primary);"><small>Novos Clientes</small><b id="ds-novos">0</b></div>
+            <div class="mini-card" style="border-color:var(--lucro);"><small>Lucro do Mês</small><b id="ds-lucro">R$ 0,00</b><div style="position:absolute;right:12px;top:12px;cursor:pointer" id="toggle-priv"><i data-lucide="eye" size="14"></i></div></div>
+            <div class="mini-card" style="border-color:var(--primary);"><small>Novos Clientes</small><b id="ds-novos">0</b></div>
         </div>
-        
         <div class="search-filter-row">
-            <div class="search-icon-btn" id="search-icon-dash" onclick="toggleSearchDash()">
-                <i data-lucide="search" size="18"></i>
-            </div>
-            <input type="text" id="search-input-inline-dash" class="search-input-inline" placeholder="Buscar por nome..." oninput="atualizar()" autocomplete="off">
-            <select class="server-filter-inline" id="server-filter-inline-dash" onchange="filtrarServidor(this.value)">
-                <option value="">Todos os servidores</option>
-            </select>
+            <div class="search-icon-btn" id="search-icon-dash"><i data-lucide="search" size="18"></i></div>
+            <input type="text" id="search-input-inline-dash" class="search-input-inline" placeholder="Buscar por nome..." autocomplete="off">
+            <select class="server-filter-inline" id="server-filter-inline-dash"><option value="">Todos os servidores</option></select>
         </div>
-        
         <div class="filter-chips">
-            <div class="chip" id="chip-ativo" onclick="filtrarStatus('ativo')">Ativos <div id="badge-ativo" class="chip-badge" style="background:var(--lucro)">0</div></div>
-            <div class="chip" id="chip-hoje" onclick="filtrarStatus('hoje')">Hoje <div id="badge-hoje" class="chip-badge" style="background:var(--saida)">0</div></div>
-            <div class="chip" id="chip-alerta" onclick="filtrarStatus('alerta')">A Vencer <div id="badge-alerta" class="chip-badge" style="background:var(--alerta)">0</div></div>
-            <div class="chip" id="chip-vencido" onclick="filtrarStatus('vencido')">Vencidos <div id="badge-vencido" class="chip-badge" style="background:var(--saida)">0</div></div>
-        </div>
-        <div class="server-filter-container" style="display:none;">
-            <select class="server-filter" id="server-filter-dash" onchange="filtrarServidor(this.value)">
-                <option value="">Todos os servidores</option>
-            </select>
+            <div class="chip" id="chip-ativo">Ativos<div class="chip-badge" id="badge-ativo" style="background:var(--lucro)">0</div></div>
+            <div class="chip" id="chip-hoje">Hoje<div class="chip-badge" id="badge-hoje" style="background:var(--saida)">0</div></div>
+            <div class="chip" id="chip-alerta">A Vencer<div class="chip-badge" id="badge-alerta" style="background:var(--alerta)">0</div></div>
+            <div class="chip" id="chip-vencido">Vencidos<div class="chip-badge" id="badge-vencido" style="background:var(--saida)">0</div></div>
         </div>
         <div id="grid-home" class="item-grid"></div>
     </div>
 
     <div id="tab-cli" class="tab-content">
-        <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">CLIENTES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-cli">FREE</span><span id="dias-restantes-cli" class="dias-restantes" style="display:none;"></span></div></div>
-        <div id="free-slots-cli" class="free-slots-tip" style="display: none;"></div>
-        <div class="config-btn-slim" onclick="abrirConfigMsgComValidacao()"><i data-lucide="message-square-text" size="14"></i><b>Configurar Mensagens</b><span class="premium-badge" id="msg-premium-badge">PREMIUM</span></div>
-        
+        <div class="plan-header"><h2 class="app-brand" style="margin-bottom:0;">CLIENTES</h2><div class="current-plan-badge" id="badge-plano-cli"><span id="plan-text-cli">FREE</span><span id="dias-restantes-cli" class="dias-restantes" style="display:none;"></span></div></div>
+        <div id="free-slots-cli" class="free-slots-tip" style="display:none;"></div>
+        <div class="config-btn-slim" id="btn-config-msg"><i data-lucide="message-square-text" size="14"></i><b>Configurar Mensagens</b><span class="premium-badge" id="msg-premium-badge">PREMIUM</span></div>
         <div class="search-filter-row">
-            <div class="search-icon-btn" id="search-icon-cli" onclick="toggleSearchCli()">
-                <i data-lucide="search" size="18"></i>
-            </div>
-            <input type="text" id="search-input-inline-cli" class="search-input-inline" placeholder="Buscar por nome..." oninput="atualizar()" autocomplete="off">
-            <select class="server-filter-inline" id="server-filter-inline-cli" onchange="filtrarServidor(this.value)">
-                <option value="">Todos os servidores</option>
-            </select>
+            <div class="search-icon-btn" id="search-icon-cli"><i data-lucide="search" size="18"></i></div>
+            <input type="text" id="search-input-inline-cli" class="search-input-inline" placeholder="Buscar por nome..." autocomplete="off">
+            <select class="server-filter-inline" id="server-filter-inline-cli"><option value="">Todos os servidores</option></select>
         </div>
-        
         <div class="filter-chips">
-            <div class="chip" id="chip-cli-ativo" onclick="filtrarStatus('ativo')">Ativos <div id="badge-cli-ativo" class="chip-badge" style="background:var(--lucro)">0</div></div>
-            <div class="chip" id="chip-cli-hoje" onclick="filtrarStatus('hoje')">Hoje <div id="badge-cli-hoje" class="chip-badge" style="background:var(--saida)">0</div></div>
-            <div class="chip" id="chip-cli-alerta" onclick="filtrarStatus('alerta')">A Vencer <div id="badge-cli-alerta" class="chip-badge" style="background:var(--alerta)">0</div></div>
-            <div class="chip" id="chip-cli-vencido" onclick="filtrarStatus('vencido')">Vencidos <div id="badge-cli-vencido" class="chip-badge" style="background:var(--saida)">0</div></div>
-        </div>
-        <div class="server-filter-container" style="display:none;">
-            <select class="server-filter" id="server-filter-cli" onchange="filtrarServidor(this.value)">
-                <option value="">Todos os servidores</option>
-            </select>
+            <div class="chip" id="chip-cli-ativo">Ativos<div class="chip-badge" id="badge-cli-ativo" style="background:var(--lucro)">0</div></div>
+            <div class="chip" id="chip-cli-hoje">Hoje<div class="chip-badge" id="badge-cli-hoje" style="background:var(--saida)">0</div></div>
+            <div class="chip" id="chip-cli-alerta">A Vencer<div class="chip-badge" id="badge-cli-alerta" style="background:var(--alerta)">0</div></div>
+            <div class="chip" id="chip-cli-vencido">Vencidos<div class="chip-badge" id="badge-cli-vencido" style="background:var(--saida)">0</div></div>
         </div>
         <div id="grid-cli" class="item-grid"></div>
     </div>
     
-    <div id="tab-pla" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">PLANOS</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-pla">FREE</span><span id="dias-restantes-pla" class="dias-restantes" style="display:none;"></span></div></div><div id="grid-pla" class="item-grid"></div></div>
-    <div id="tab-srv" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">SERVIDORES</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-srv">FREE</span><span id="dias-restantes-srv" class="dias-restantes" style="display:none;"></span></div></div><div id="grid-srv" class="item-grid"></div></div>
-
+    <div id="tab-pla" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom:0;">PLANOS</h2><div class="current-plan-badge" id="badge-plano-pla"><span id="plan-text-pla">FREE</span></div></div><div id="grid-pla" class="item-grid"></div></div>
+    <div id="tab-srv" class="tab-content"><div class="plan-header"><h2 class="app-brand" style="margin-bottom:0;">SERVIDORES</h2><div class="current-plan-badge" id="badge-plano-srv"><span id="plan-text-srv">FREE</span></div></div><div id="grid-srv" class="item-grid"></div></div>
     <div id="tab-fin" class="tab-content">
-        <div class="plan-header"><h2 class="app-brand" style="margin-bottom: 0;">FINANCEIRO</h2><div class="current-plan-badge" onclick="mostrarModalUpgrade()"><span id="plan-text-fin">FREE</span><span id="dias-restantes-fin" class="dias-restantes" style="display:none;"></span></div></div>
-        <div id="backup-alert-banner" class="backup-alert-banner" style="display: none;"><div class="backup-alert-icon"><i data-lucide="alert-triangle" size="20"></i></div><div class="backup-alert-content"><p><strong>⚠️ ALERTA!</strong> Seus dados estão salvos apenas neste navegador. Se você limpar os dados, trocar de celular ou desinstalar o app, <strong>perderá TODOS os clientes, planos e finanças!</strong></p><div class="backup-alert-actions"><button class="btn-backup btn-backup-primary" onclick="copiarTokenComToast()"><i data-lucide="download" size="12"></i> Fazer Backup Agora</button><button class="btn-backup btn-backup-secondary" onclick="confirmarBackupFeito()">✅ Já fiz o backup</button></div></div></div>
-        <div class="fin-card-top"><div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;"><i data-lucide="shield-check" style="color:var(--lucro)"></i><b style="font-size:0.85rem; color:var(--lucro); display: flex; align-items: center;">TOKEN DE SEGURANÇA BACKUP <span class="premium-badge" id="token-premium-badge" style="margin-left: 10px;">PREMIUM</span></b></div><p style="font-size:0.65rem; color:var(--text-dim); margin-bottom:15px">Gere seu token para criar uma cópia de segurança e garantir a proteção dos seus dados.</p><div style="display:flex; gap:10px;"><button class="btn-save" style="margin:0; flex:1; background:var(--lucro)" onclick="copiarTokenComValidacao()">Copiar Token</button><button class="btn-save" style="margin:0; flex:1; background:var(--border)" onclick="restaurarTokenComValidacao()">Restaurar</button></div></div>
-        <div class="mini-stats"><div class="mini-card" style="border-color: var(--entrada);"><small>Entrada</small><b id="fin-total-ent">R$ 0,00</b></div><div class="mini-card" style="border-color: var(--saida);"><small>Saída</small><b id="fin-total-sai">R$ 0,00</b></div><div class="mini-card" style="border-color: var(--lucro);"><small>Lucro</small><b id="fin-total-luc">R$ 0,00</b></div></div>
-        <div id="fin-hide-area" class="mini-card" style="height: 220px; border-radius:24px; padding:15px; margin-top:20px; margin-bottom:20px; position: relative;"><canvas id="finChart"></canvas><div id="chart-premium-overlay" class="premium-locked-overlay" style="display: none;" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 56px; height: 56px;"></i><p style="color: white; font-weight: 700; text-align: center;">Recurso PREMIUM<br><span style="font-size: 0.7rem; color: var(--text-dim);">Desbloqueie gráficos avançados</span></p><button class="upgrade-btn" style="width: auto; padding: 12px 30px;">ASSINAR PREMIUM</button></div></div>
+        <div class="plan-header"><h2 class="app-brand" style="margin-bottom:0;">FINANCEIRO</h2><div class="current-plan-badge" id="badge-plano-fin"><span id="plan-text-fin">FREE</span></div></div>
+        <div class="fin-card-top"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><i data-lucide="shield-check" style="color:var(--lucro)"></i><b style="font-size:0.85rem;color:var(--lucro);">DADOS SEGUROS NO SUPABASE ☁️</b></div><p style="font-size:0.65rem;color:var(--text-dim);margin-bottom:15px">Seus dados estão salvos na nuvem e disponíveis em qualquer dispositivo.</p></div>
+        <div class="mini-stats"><div class="mini-card" style="border-color:var(--entrada);"><small>Entrada</small><b id="fin-total-ent">R$ 0,00</b></div><div class="mini-card" style="border-color:var(--saida);"><small>Saída</small><b id="fin-total-sai">R$ 0,00</b></div><div class="mini-card" style="border-color:var(--lucro);"><small>Lucro</small><b id="fin-total-luc">R$ 0,00</b></div></div>
+        <div id="fin-hide-area" class="mini-card" style="height:220px;border-radius:24px;padding:15px;margin-top:20px;margin-bottom:20px;position:relative;"><canvas id="finChart"></canvas><div id="chart-premium-overlay" class="premium-locked-overlay" style="display:none;"><i data-lucide="gem" style="color:var(--premium-color);width:56px;height:56px;"></i><p style="color:white;font-weight:700;text-align:center;">Recurso PREMIUM<br><span style="font-size:0.7rem;color:var(--text-dim);">Desbloqueie gráficos avançados</span></p><button class="upgrade-btn" style="width:auto;padding:12px 30px;">ASSINAR PREMIUM</button></div></div>
         <div id="grid-fin" class="item-grid"></div>
     </div>
-</main>
+</main></div>
 
 <!-- MODAIS -->
-<div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width: 340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" onclick="enviarMsgTipo('cobranca')"><div class="msg-menu-icon" style="background: rgba(251, 113, 133, 0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><div class="msg-menu-item" onclick="enviarMsgTipo('renovacao')"><div class="msg-menu-icon" style="background: rgba(56, 189, 248, 0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color: var(--text-dim);"></i></div><button class="btn-save" style="background: var(--border); margin-top: 8px; padding: 10px;" onclick="fecharModais()">Cancelar</button></div></div>
-<div class="overlay" id="modal-config-msg"><div class="modal" style="max-width: 380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem; color:var(--text-dim); margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><button class="btn-save" onclick="salvarConfigMsg()">Salvar Todas</button></div></div>
-
-<div class="overlay" id="modal-upgrade">
-    <div class="modal" style="max-width: 340px; padding: 20px;">
-        <div style="text-align: center; margin-bottom: 15px;"><i data-lucide="gem" class="diamond-icon" style="color: var(--premium-color); width: 48px; height: 48px; margin-bottom: 6px;"></i><h3 style="font-size: 1.1rem; background: linear-gradient(135deg, var(--premium-color), #C4B5FD); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px;">OWERPLAY PREMIUM</h3><p style="color: var(--text-dim); font-size: 0.7rem;">Desbloqueie todo o poder do seu gestor</p></div>
-        <div class="plan-card" style="padding: 14px; margin-bottom: 14px;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h4 style="font-size: 1rem; font-weight: 700;">Plano PREMIUM</h4><div class="plan-price-container"><span class="plan-price-small">R$</span><span class="plan-price-big">19</span><span class="plan-price-cents">,90</span></div></div><p style="color: var(--text-dim); font-size: 0.6rem; margin-bottom: 12px; text-align: right;">/mês</p><div style="margin: 12px 0;"><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Clientes ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Servidores ilimitados</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Backup e restauração de tokens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Múltiplas mensagens</span></div><div style="display: flex; gap: 8px; margin-bottom: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Gráficos e relatórios avançados</span></div><div style="display: flex; gap: 8px;"><i data-lucide="check-circle" style="color: var(--lucro); width: 14px;"></i><span style="font-size: 0.7rem;">Histórico financeiro completo</span></div></div></div>
-        <div id="upgrade-code-section" style="margin-top: 12px;"><label style="font-size: 0.6rem;">Já tem um código PREMIUM?</label><div style="display: flex; gap: 6px;"><input type="text" id="pro-code-input" placeholder="Digite o código" style="flex: 1; text-transform: uppercase; padding: 10px; font-size: 0.8rem;" autocomplete="off"><button class="btn-save" style="margin: 0; width: auto; padding: 10px 16px; background: var(--premium-color); font-size: 0.8rem;" onclick="ativarCodigoPremium()">Ativar</button></div></div>
-        <button class="btn-kiwify" onclick="abrirKiwify()">🛒 Assinar Premium</button>
-        <button class="upgrade-btn" onclick="simularCompraPremium()">Assinar via WhatsApp</button>
-        <button class="btn-save" style="background: var(--border); margin-top: 6px; padding: 10px; font-size: 0.8rem;" onclick="fecharModais()">Talvez depois</button>
-    </div>
-</div>
-
-<div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome" autocomplete="off"><label>WhatsApp</label><input type="text" id="c-wpp" placeholder="Ex: +55 11 99999-8888" autocomplete="off"><small style="font-size:0.55rem; color:var(--text-dim); display:block; margin-top:-2px; margin-bottom:10px">Cole o número como está no WhatsApp</small><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Desconto (R$)</label><input type="number" id="c-desconto" placeholder="0,00" autocomplete="off" step="0.01"><label>Servidor</label><select id="c-srv"></select><button class="btn-save" onclick="salvarCli()">Salvar</button></div></div>
-<div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome" autocomplete="off"><label>Preço</label><input type="number" id="p-val" autocomplete="off"><button class="btn-save" onclick="salvarPla()">Salvar</button></div></div>
-<div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome" autocomplete="off"><label>Custo</label><input type="number" id="s-custo" autocomplete="off"><button class="btn-save" onclick="salvarSrvComValidacao()">Salvar</button></div></div>
-<div class="overlay" id="modal-renew"><div class="modal"><h3>Renovar</h3><input type="hidden" id="renew-idx"><button class="btn-save" onclick="calcularPrevia30()">Calcular +30 Dias</button><div style="margin-top:15px; border-top:1px solid var(--border); padding-top:15px;"><label>Nova Data:</label><input type="date" id="renew-custom-date"><button class="btn-save" style="background:var(--lucro); margin-top:10px;" onclick="confirmarRenovacaoFinal()">Confirmar</button></div></div></div>
-<div class="overlay" id="modal-opt-fin"><div class="modal" style="text-align:center"><h3>Opções</h3><div class="confirm-btns"><button class="btn-save" id="btn-opt-edit" style="background:var(--alerta); margin-top:0">Editar</button><button class="btn-save" id="btn-opt-del" style="background:var(--saida); margin-top:0">Excluir</button></div></div></div>
-<div class="overlay" id="modal-edit-fin"><div class="modal"><h3>Editar Venda</h3><input type="hidden" id="edit-fin-idx"><label>Venda</label><input type="number" id="ef-entrada" autocomplete="off"><label>Custo</label><input type="number" id="ef-saida" autocomplete="off"><button class="btn-save" onclick="salvarEditFin()">Salvar</button></div></div>
-<div class="overlay" id="modal-confirm"><div class="modal" style="text-align:center"><i data-lucide="trash-2" color="var(--saida)" size="48"></i><h3>Excluir?</h3><p style="color:var(--text-dim); font-size:0.8rem">Esta ação é permanente.</p><div class="confirm-btns"><button class="btn-cancel" onclick="fecharModais()">Não</button><button class="btn-confirm" id="btn-do-delete">Sim</button></div></div></div>
-<div class="overlay" id="modal-token"><div class="modal"><h3>Restaurar</h3><textarea id="token-input" rows="8" style="width:100%; background:var(--bg); color:white; border-radius:15px; padding:15px; border:1.5px solid var(--border); outline:none;" autocomplete="off"></textarea><button class="btn-save" onclick="confirmarToken()">Aplicar</button></div></div>
-<div class="overlay" id="modal-pos-renovacao"><div class="modal" style="max-width: 340px; text-align: center;"><i data-lucide="check-circle" style="color: var(--lucro); width: 48px; height: 48px; margin-bottom: 12px;"></i><h3>Renovado com sucesso!</h3><p style="font-size: 0.75rem; color: var(--text-dim); margin: 10px 0 20px;">Deseja enviar uma mensagem de renovação para <strong id="pos-renovacao-nome"></strong>?</p><div class="confirm-btns"><button class="btn-save" style="background: #22c55e; flex: 1;" onclick="enviarMsgRenovacaoAgora()">📩 Enviar WhatsApp</button><button class="btn-cancel" style="flex: 1;" onclick="fecharModais()">Agora não</button></div></div></div>
+<div class="overlay" id="modal-msg-chooser"><div class="modal" style="max-width:340px;"><h3>📩 Enviar mensagem</h3><div class="msg-menu-item" id="msg-cobranca"><div class="msg-menu-icon" style="background:rgba(251,113,133,0.15);">💰</div><div class="msg-menu-info"><b>Cobrança</b><span>Lembrete de vencimento</span></div><i data-lucide="chevron-right" style="color:var(--text-dim);"></i></div><div class="msg-menu-item" id="msg-renovacao"><div class="msg-menu-icon" style="background:rgba(56,189,248,0.15);">🔄</div><div class="msg-menu-info"><b>Renovação</b><span>Confirmação de renovação</span></div><i data-lucide="chevron-right" style="color:var(--text-dim);"></i></div><button class="btn-save" style="background:var(--border);margin-top:8px;padding:10px;" onclick="fecharModais()">Cancelar</button></div></div>
+<div class="overlay" id="modal-config-msg"><div class="modal" style="max-width:380px;"><h3>Configurar Mensagens</h3><p style="font-size:0.55rem;color:var(--text-dim);margin-bottom:12px">Use: {nome}, {sobrenome}, {vencimento}, {valor}</p><label>💰 Cobrança</label><textarea id="cfg-msg-cobranca" rows="3"></textarea><label>🔄 Renovação</label><textarea id="cfg-msg-renovacao" rows="3"></textarea><button class="btn-save" id="btn-salvar-msg">Salvar Todas</button></div></div>
+<div class="overlay" id="modal-cli"><div class="modal"><h3>Cliente</h3><input type="hidden" id="edit-idx-cli" value="-1"><label>Nome</label><input type="text" id="c-nome" autocomplete="off"><label>WhatsApp</label><input type="text" id="c-wpp" placeholder="Ex: +55 11 99999-8888" autocomplete="off"><label>Vencimento</label><input type="date" id="c-venc"><label>Plano</label><select id="c-plano"></select><label>Desconto (R$)</label><input type="number" id="c-desconto" placeholder="0,00" autocomplete="off" step="0.01"><label>Servidor</label><select id="c-srv"></select><button class="btn-save" id="btn-salvar-cli">Salvar</button></div></div>
+<div class="overlay" id="modal-pla"><div class="modal"><h3>Plano</h3><input type="hidden" id="edit-idx-pla" value="-1"><label>Nome</label><input type="text" id="p-nome" autocomplete="off"><label>Preço</label><input type="number" id="p-val" autocomplete="off"><button class="btn-save" id="btn-salvar-pla">Salvar</button></div></div>
+<div class="overlay" id="modal-srv"><div class="modal"><h3>Servidor</h3><input type="hidden" id="edit-idx-srv" value="-1"><label>Nome</label><input type="text" id="s-nome" autocomplete="off"><label>Custo</label><input type="number" id="s-custo" autocomplete="off"><button class="btn-save" id="btn-salvar-srv">Salvar</button></div></div>
+<div class="overlay" id="modal-renew"><div class="modal"><h3>Renovar</h3><input type="hidden" id="renew-idx"><button class="btn-save" id="btn-calcular-30">Calcular +30 Dias</button><div style="margin-top:15px;border-top:1px solid var(--border);padding-top:15px;"><label>Nova Data:</label><input type="date" id="renew-custom-date"><button class="btn-save" style="background:var(--lucro);margin-top:10px;" id="btn-confirmar-renovacao">Confirmar</button></div></div></div>
+<div class="overlay" id="modal-confirm"><div class="modal" style="text-align:center"><i data-lucide="trash-2" color="var(--saida)" size="48"></i><h3>Excluir?</h3><p style="color:var(--text-dim);font-size:0.8rem">Esta ação é permanente.</p><div class="confirm-btns"><button class="btn-cancel" onclick="fecharModais()">Não</button><button class="btn-confirm" id="btn-do-delete">Sim</button></div></div></div>
+<div class="overlay" id="modal-upgrade"><div class="modal" style="max-width:340px;padding:20px;"><div style="text-align:center;margin-bottom:15px;"><i data-lucide="gem" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:6px;"></i><h3 style="font-size:1.1rem;">OWERPLAY PREMIUM</h3><p style="color:var(--text-dim);font-size:0.7rem;">Desbloqueie todo o poder do seu gestor</p></div><button class="btn-kiwify" id="btn-kiwify">🛒 Assinar Premium</button><button class="upgrade-btn" id="btn-whatsapp-premium">Assinar via WhatsApp</button><button class="btn-save" style="background:var(--border);margin-top:6px;padding:10px;font-size:0.8rem;" onclick="fecharModais()">Talvez depois</button></div></div>
+<div class="overlay" id="modal-pos-renovacao"><div class="modal" style="max-width:340px;text-align:center;"><i data-lucide="check-circle" style="color:var(--lucro);width:48px;height:48px;margin-bottom:12px;"></i><h3>Renovado com sucesso!</h3><p style="font-size:0.75rem;color:var(--text-dim);margin:10px 0 20px;">Deseja enviar uma mensagem de renovação para <strong id="pos-renovacao-nome"></strong>?</p><div class="confirm-btns"><button class="btn-save" style="background:#22c55e;flex:1;" id="btn-enviar-msg-renovacao">📩 Enviar WhatsApp</button><button class="btn-cancel" style="flex:1;" onclick="fecharModais()">Agora não</button></div></div></div>
 
 <script>
-    const JSONBIN_BIN_ID = '69ec4032aaba882197361318';
-    const JSONBIN_API_KEY = '$2a$10$hPThmNbRFc4LJU8Lb39NOufogEbkwaSTJIJV4m3CCTqODEzgcP.y2';
-    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`;
-    
-    const STORAGE_KEY = 'OWERPLAY_FINAL_MASTER_V22';
-    const BACKUP_KEY = 'OWERPLAY_FINAL_BACKUP_V22';
-    const PREMIUM_STORAGE_KEY = 'OWERPLAY_PREMIUM_LICENSE';
-    const PREMIUM_EXPIRY_KEY = 'OWERPLAY_PREMIUM_EXPIRY';
-    const BACKUP_ALERT_KEY = 'OWERPLAY_BACKUP_ALERT_DISMISSED';
-    const TRIAL_USED_KEY = 'OWERPLAY_TRIAL_USED';
-    const TRIAL_EXPIRY_KEY = 'OWERPLAY_TRIAL_EXPIRY';
-    let clienteMsgAtual = null;
-    let clientePosRenovacao = null;
-    let novaDataPosRenovacao = null;
-    let filtroServidorAtual = '';
+// ============================================
+// CONFIGURAÇÃO SUPABASE
+// ============================================
+const SUPABASE_URL = 'https://jctfbwyftrdundxxgnwa.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ZfiNQ7QhDCjzjnUTtyudEQ_u-FMmnU0';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.body.addEventListener('touchmove', function(e) { if (e.target.closest('main')) return; if (e.target.closest('.overlay')) return; e.preventDefault(); }, { passive: false });
-    document.addEventListener('focusin', function(e) { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { setTimeout(() => { window.scrollTo(0, 0); }, 300); } });
-    document.addEventListener('focusout', function() { setTimeout(() => { window.scrollTo(0, 0); }, 100); });
-    
-    function salvarDadosProtegidos(d) { try { const j = JSON.stringify(d); localStorage.setItem(STORAGE_KEY, j); localStorage.setItem(BACKUP_KEY, j); } catch(e) {} }
-    function carregarDadosProtegidos() { let d = localStorage.getItem(STORAGE_KEY); if (!d) { d = localStorage.getItem(BACKUP_KEY); if (d) localStorage.setItem(STORAGE_KEY, d); } if (d) { try { return JSON.parse(d); } catch(e) { return null; } } return null; }
-    function deveMostrarAlertaBackup() { if (!isPremium && !isTrial) return false; const dismissed = localStorage.getItem(BACKUP_ALERT_KEY); if (!dismissed) return true; const dismissedDate = new Date(parseInt(dismissed)); const now = new Date(); const daysDiff = (now - dismissedDate) / (1000 * 60 * 60 * 24); return daysDiff >= 7; }
-    function confirmarBackupFeito() { localStorage.setItem(BACKUP_ALERT_KEY, Date.now().toString()); document.getElementById('backup-alert-banner').style.display = 'none'; showToast('✅ Backup confirmado!'); }
-    function atualizarBannerBackup() { const b = document.getElementById('backup-alert-banner'); if (b) b.style.display = deveMostrarAlertaBackup() ? 'flex' : 'none'; }
+// ============================================
+// VARIÁVEIS GLOBAIS
+// ============================================
+let db = { clientes: [], planos: [], servidores: [], transacoes: [], priv: false, configMsg: '', configMsgRenovacao: '' };
+let curTabId = 'tab-dash', chartObj = null, filtroAtual = null, filtroServidorAtual = '';
+let isPremium = false, isTrial = false;
+let clienteMsgAtual = null, clientePosRenovacao = null, novaDataPosRenovacao = null;
+let currentUser = null;
+const tabsOrder = ['tab-dash', 'tab-cli', 'tab-pla', 'tab-srv', 'tab-fin'];
+let touchStartX = 0, touchStartY = 0;
+let loginMode = 'login';
 
-    let isPremium = localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
-    let isTrial = false;
+const MSG_COBRANCA_PADRAO = "Olá {nome}! 👋 Passando para lembrar que seu acesso vence dia {vencimento}. O valor para renovação é de R$ {valor}. Como deseja pagar?";
+const MSG_RENOVACAO_PADRAO = "Olá {nome}! ✅ Sua renovação foi confirmada! Novo vencimento: {vencimento}. Obrigado pela confiança!";
+
+// ============================================
+// FUNÇÕES AUXILIARES
+// ============================================
+function getValorFinal(c) { return Math.max(0, parseFloat(c.pVal || 0) - parseFloat(c.desconto || 0)); }
+function getIniciais(nome) { if(!nome) return '?'; const partes = nome.trim().split(' '); if(partes.length===1) return partes[0].substring(0,2).toUpperCase(); return (partes[0][0]+partes[partes.length-1][0]).toUpperCase(); }
+function limparWhatsApp(raw) { return raw.replace(/[+\s\-()]/g, ''); }
+function fecharModais() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
+function showToast(msg, isAlert = false) { const t = document.getElementById("toast"); t.innerText = msg; t.className = isAlert ? "show alert" : "show"; setTimeout(() => { t.className = ""; }, 3000); }
+
+// ============================================
+// AUTENTICAÇÃO
+// ============================================
+function toggleLoginMode() {
+    loginMode = loginMode === 'login' ? 'cadastro' : 'login';
+    document.getElementById('btn-login-action').textContent = loginMode === 'login' ? 'Entrar' : 'Criar conta';
+    document.getElementById('login-subtitle').textContent = loginMode === 'login' ? 'Faça login para acessar seu gestor' : 'Crie sua conta gratuita';
+    document.getElementById('login-toggle-text').textContent = loginMode === 'login' ? 'Não tem conta?' : 'Já tem conta?';
+    document.getElementById('login-toggle-btn').textContent = loginMode === 'login' ? 'Criar conta grátis' : 'Fazer login';
+    document.getElementById('login-error').textContent = '';
+}
+
+async function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const errorEl = document.getElementById('login-error');
+    const spinner = document.getElementById('login-spinner');
+    const btn = document.getElementById('btn-login-action');
     
-    function verificarTrial() {
-        if (isPremium) { isTrial = false; return; }
-        const trialUsed = localStorage.getItem(TRIAL_USED_KEY) === 'true';
-        const trialExpiry = localStorage.getItem(TRIAL_EXPIRY_KEY);
-        if (trialUsed && trialExpiry) {
-            const agora = new Date();
-            const expira = new Date(trialExpiry);
-            if (agora < expira) { isTrial = true; } else { isTrial = false; }
-        }
-    }
+    errorEl.textContent = '';
+    if (!email || !password) { errorEl.textContent = 'Preencha todos os campos.'; return; }
+    if (password.length < 6) { errorEl.textContent = 'Senha deve ter pelo menos 6 caracteres.'; return; }
     
-    function getDiasRestantesTrial() {
-        if (!isTrial) return 0;
-        const trialExpiry = localStorage.getItem(TRIAL_EXPIRY_KEY);
-        if (!trialExpiry) return 0;
-        const agora = new Date();
-        const expira = new Date(trialExpiry);
-        const diff = Math.ceil((expira - agora) / (1000 * 60 * 60 * 24));
-        return diff > 0 ? diff : 0;
-    }
+    btn.style.display = 'none';
+    spinner.style.display = 'block';
     
-    function ativarTrial() {
-        if (isPremium) { showToast('Você já é PREMIUM! 💎'); return; }
-        if (isTrial) { showToast('Você já está no teste grátis!'); return; }
-        const trialUsed = localStorage.getItem(TRIAL_USED_KEY) === 'true';
-        if (trialUsed) { showToast('Você já usou seu teste grátis!', true); return; }
-        
-        isTrial = true;
-        localStorage.setItem(TRIAL_USED_KEY, 'true');
-        const expiraEm7Dias = new Date();
-        expiraEm7Dias.setDate(expiraEm7Dias.getDate() + 7);
-        localStorage.setItem(TRIAL_EXPIRY_KEY, expiraEm7Dias.toISOString().split('T')[0]);
-        
-        showToast('Teste grátis ativado por 7 dias! Aproveite!', false);
-        atualizarUIPremium(); atualizar();
-    }
-    
-    function verificarExpiracaoPremium() {
-        if (!isPremium) return;
-        const dataExpiracao = localStorage.getItem(PREMIUM_EXPIRY_KEY);
-        if (dataExpiracao) {
-            const agora = new Date();
-            const expira = new Date(dataExpiracao);
-            if (agora >= expira) {
-                isPremium = false;
-                localStorage.removeItem(PREMIUM_STORAGE_KEY);
-                localStorage.removeItem(PREMIUM_EXPIRY_KEY);
-                showToast('⏰ Seu período PREMIUM expirou! Renove para continuar.', true);
-            }
-        }
-    }
-    
-    function getDiasRestantes() {
-        if (isTrial) return getDiasRestantesTrial();
-        const dataExpiracao = localStorage.getItem(PREMIUM_EXPIRY_KEY);
-        if (!dataExpiracao) return 0;
-        const agora = new Date();
-        const expira = new Date(dataExpiracao);
-        const diff = Math.ceil((expira - agora) / (1000 * 60 * 60 * 24));
-        return diff > 0 ? diff : 0;
-    }
-    
-    function atualizarContadorDias() {
-        const dias = getDiasRestantes();
-        const contadores = document.querySelectorAll('.dias-restantes');
-        contadores.forEach(el => {
-            if ((isPremium || isTrial) && dias > 0) { el.textContent = `• ${dias} dia${dias > 1 ? 's' : ''}`; el.style.display = 'inline'; }
-            else { el.style.display = 'none'; }
-        });
-    }
-    
-    function atualizarBannerExpiracaoPremium() {
-        const banner = document.getElementById('premium-expiry-banner');
-        const texto = document.getElementById('expiry-banner-text');
-        if (!banner || !texto) return;
-        if (!isPremium) { banner.style.display = 'none'; return; }
-        const dias = getDiasRestantes();
-        if (dias <= 1 && dias > 0) {
-            banner.style.display = 'flex';
-            texto.innerHTML = dias === 0 ? '<strong>Premium expira hoje!</strong> Faça backup dos seus dados agora.' : '<strong>Premium expira amanhã!</strong> Faça backup enquanto ainda tem acesso.';
-        } else { banner.style.display = 'none'; }
-    }
-    
-    function atualizarBotaoTrialDash() {
-        const btnTrialDash = document.getElementById('btn-trial-dash');
-        if (!btnTrialDash) return;
-        const trialUsed = localStorage.getItem(TRIAL_USED_KEY) === 'true';
-        btnTrialDash.style.display = (!isPremium && !isTrial && !trialUsed) ? 'block' : 'none';
-        
-        if (!isPremium && !isTrial && !trialUsed) {
-            document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none');
-        }
-    }
-    
-    function toggleSearchDash() {
-        const input = document.getElementById('search-input-inline-dash');
-        const icon = document.getElementById('search-icon-dash');
-        if (input.classList.contains('visible')) {
-            input.classList.remove('visible');
-            icon.classList.remove('active-search');
-            input.value = '';
-            atualizar();
+    try {
+        let result;
+        if (loginMode === 'cadastro') {
+            result = await supabase.auth.signUp({ email, password });
+            if (result.error) throw result.error;
+            showToast('✅ Conta criada! Agora faça login.');
+            toggleLoginMode();
+            return;
         } else {
-            input.classList.add('visible');
-            icon.classList.add('active-search');
-            input.focus();
+            result = await supabase.auth.signInWithPassword({ email, password });
+            if (result.error) throw result.error;
         }
-    }
-    
-    function toggleSearchCli() {
-        const input = document.getElementById('search-input-inline-cli');
-        const icon = document.getElementById('search-icon-cli');
-        if (input.classList.contains('visible')) {
-            input.classList.remove('visible');
-            icon.classList.remove('active-search');
-            input.value = '';
-            atualizar();
-        } else {
-            input.classList.add('visible');
-            icon.classList.add('active-search');
-            input.focus();
-        }
-    }
-    
-    function filtrarServidor(srvNome) {
-        filtroServidorAtual = srvNome;
-        document.getElementById('server-filter-inline-dash').value = srvNome;
-        document.getElementById('server-filter-inline-cli').value = srvNome;
-        document.getElementById('server-filter-dash').value = srvNome;
-        document.getElementById('server-filter-cli').value = srvNome;
+        currentUser = result.data.user;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-container').style.display = 'block';
+        await carregarDados();
+        atualizarUI();
         atualizar();
+    } catch (error) {
+        errorEl.textContent = error.message?.includes('Invalid login credentials') ? 'Email ou senha inválidos.' : 'Erro ao fazer login.';
+    } finally {
+        btn.style.display = 'block';
+        spinner.style.display = 'none';
     }
+}
+
+async function handleLogout() {
+    await supabase.auth.signOut();
+    currentUser = null;
+    db = { clientes: [], planos: [], servidores: [], transacoes: [], priv: false, configMsg: '', configMsgRenovacao: '' };
+    document.getElementById('app-container').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ============================================
+// SUPABASE - CARREGAR E SALVAR
+// ============================================
+async function carregarDados() {
+    if (!currentUser) return;
+    const [perfilRes, planosRes, servidoresRes, clientesRes, transacoesRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', currentUser.id).single(),
+        supabase.from('planos').select('*').eq('user_id', currentUser.id).order('id'),
+        supabase.from('servidores').select('*').eq('user_id', currentUser.id).order('id'),
+        supabase.from('clientes').select('*').eq('user_id', currentUser.id).order('vencimento'),
+        supabase.from('transacoes').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+    ]);
     
-    function atualizarDropdownsServidores() {
-        const servidores = [...new Set(db.clientes.map(c => c.sNome).filter(Boolean))].sort();
-        ['server-filter-dash', 'server-filter-cli', 'server-filter-inline-dash', 'server-filter-inline-cli'].forEach(id => {
-            const sel = document.getElementById(id);
-            if (!sel) return;
-            const currentValue = sel.value;
-            sel.innerHTML = '<option value="">Todos os servidores</option>' + servidores.map(s => `<option value="${s}">${s}</option>`).join('');
-            sel.value = currentValue || filtroServidorAtual;
-        });
+    const perfil = perfilRes.data || {};
+    isPremium = perfil.is_premium || false;
+    isTrial = false;
+    if (perfil.trial_usado && perfil.trial_expiracao) {
+        const agora = new Date(); agora.setHours(0,0,0,0);
+        const trialExp = new Date(perfil.trial_expiracao);
+        if (!isPremium && agora < trialExp) { isTrial = true; localStorage.setItem('OWERPLAY_TRIAL_USED', 'true'); localStorage.setItem('OWERPLAY_TRIAL_EXPIRY', perfil.trial_expiracao); }
     }
+    if (perfil.is_premium && perfil.premium_expiracao) localStorage.setItem('OWERPLAY_PREMIUM_EXPIRY', perfil.premium_expiracao);
     
-    async function ativarCodigoPremiumOnline() {
-        const codigo = document.getElementById('pro-code-input').value.toUpperCase().trim();
-        if (!codigo) { showToast('❌ Digite um código!', true); return; }
-        showToast('🔍 Verificando código...', false);
+    db.clientes = (clientesRes.data || []).map(c => ({ id: c.id, nome: c.nome, wpp: c.whatsapp, venc: c.vencimento, pNome: c.plano_nome, pVal: parseFloat(c.plano_valor || 0), sNome: c.servidor_nome, sVal: parseFloat(c.servidor_custo || 0), desconto: parseFloat(c.desconto || 0), dataCadastro: c.data_cadastro || '' }));
+    db.planos = (planosRes.data || []).map(p => ({ id: p.id, nome: p.nome, val: parseFloat(p.valor || 0) }));
+    db.servidores = (servidoresRes.data || []).map(s => ({ id: s.id, nome: s.nome, custo: parseFloat(s.custo || 0) }));
+    db.transacoes = (transacoesRes.data || []).map(t => ({ id: t.id, cli: t.cliente_nome, pVal: parseFloat(t.entrada || 0), sVal: parseFloat(t.saida || 0), data: t.data_mes || '' }));
+    db.priv = perfil.priv || false;
+    db.configMsg = perfil.config_msg_cobranca || MSG_COBRANCA_PADRAO;
+    db.configMsgRenovacao = perfil.config_msg_renovacao || MSG_RENOVACAO_PADRAO;
+}
+
+async function salvarPerfil() {
+    if (!currentUser) return;
+    await supabase.from('profiles').upsert({ id: currentUser.id, is_premium: isPremium, premium_expiracao: localStorage.getItem('OWERPLAY_PREMIUM_EXPIRY') || null, trial_usado: localStorage.getItem('OWERPLAY_TRIAL_USED') === 'true', trial_expiracao: localStorage.getItem('OWERPLAY_TRIAL_EXPIRY') || null, priv: db.priv, config_msg_cobranca: db.configMsg, config_msg_renovacao: db.configMsgRenovacao });
+}
+
+async function persistir() { await salvarPerfil(); atualizar(); }
+
+// ============================================
+// TRIAL E PREMIUM
+// ============================================
+function ativarTrial() {
+    if (isPremium) { showToast('Você já é PREMIUM! 💎'); return; }
+    if (isTrial) { showToast('Você já está no teste grátis!'); return; }
+    if (localStorage.getItem('OWERPLAY_TRIAL_USED') === 'true') { showToast('Você já usou seu teste!', true); return; }
+    isTrial = true;
+    localStorage.setItem('OWERPLAY_TRIAL_USED', 'true');
+    const exp = new Date(); exp.setDate(exp.getDate() + 7);
+    localStorage.setItem('OWERPLAY_TRIAL_EXPIRY', exp.toISOString().split('T')[0]);
+    persistir();
+    showToast('✅ Teste grátis ativado por 7 dias!');
+}
+
+function getDiasRestantes() {
+    if (isTrial) {
+        const e = localStorage.getItem('OWERPLAY_TRIAL_EXPIRY'); if (!e) return 0;
+        const diff = Math.ceil((new Date(e) - new Date()) / (1000*60*60*24));
+        return diff > 0 ? diff : 0;
+    }
+    if (isPremium) {
+        const e = localStorage.getItem('OWERPLAY_PREMIUM_EXPIRY'); if (!e) return 30;
+        const diff = Math.ceil((new Date(e) - new Date()) / (1000*60*60*24));
+        return diff > 0 ? diff : 0;
+    }
+    return 0;
+}
+
+function atualizarUI() {
+    document.querySelectorAll('[id^="plan-text-"]').forEach(el => { if(el) el.textContent = isPremium ? 'PREMIUM' : (isTrial ? 'TESTE' : 'FREE'); });
+    document.querySelectorAll('.current-plan-badge').forEach(el => { el.classList.remove('premium','trial'); if(isPremium) el.classList.add('premium'); else if(isTrial) el.classList.add('trial'); });
+    const dias = getDiasRestantes();
+    document.querySelectorAll('.dias-restantes').forEach(el => { if((isPremium||isTrial) && dias>0) { el.textContent = `• ${dias} dia${dias>1?'s':''}`; el.style.display='inline'; } else el.style.display='none'; });
+    const mb = document.getElementById('msg-premium-badge'); if(mb) mb.style.display = (isPremium||isTrial) ? 'none' : 'inline';
+    const co = document.getElementById('chart-premium-overlay'); if(co) co.style.display = (isPremium||isTrial) ? 'none' : 'flex';
+    const btn = document.getElementById('btn-trial-dash');
+    if(btn) btn.style.display = (!isPremium && !isTrial && localStorage.getItem('OWERPLAY_TRIAL_USED') !== 'true') ? 'block' : 'none';
+}
+
+// ============================================
+// CRUD OPERATIONS
+// ============================================
+async function salvarCli() {
+    if (!currentUser) return;
+    const n = document.getElementById('c-nome').value, v = document.getElementById('c-venc').value;
+    const pI = document.getElementById('c-plano').value, sI = document.getElementById('c-srv').value;
+    const idx = parseInt(document.getElementById('edit-idx-cli').value);
+    const desc = parseFloat(document.getElementById('c-desconto').value || 0);
+    const wpp = limparWhatsApp(document.getElementById('c-wpp').value);
+    if(!n||!v||pI==""||sI=="") return;
+    if (!isPremium && !isTrial && idx===-1 && db.clientes.length>=10) { fecharModais(); showToast('Limite de 10 clientes!', true); return; }
+    
+    const d = { user_id: currentUser.id, nome: n, whatsapp: wpp, vencimento: v, plano_nome: db.planos[pI].nome, plano_valor: parseFloat(db.planos[pI].val), servidor_nome: db.servidores[sI].nome, servidor_custo: parseFloat(db.servidores[sI].custo), desconto: desc, data_cadastro: new Date().toISOString().split('T')[0] };
+    try {
+        if (idx === -1) {
+            await supabase.from('clientes').insert(d);
+            await supabase.from('transacoes').insert({ user_id: currentUser.id, cliente_nome: n, entrada: getValorFinal({pVal: d.plano_valor, desconto: desc}), saida: d.servidor_custo, data_mes: new Date().toISOString().slice(0,7) });
+        } else {
+            await supabase.from('clientes').update(d).eq('id', db.clientes[idx].id);
+        }
+        fecharModais(); await carregarDados(); atualizar();
+    } catch(e) { showToast('Erro ao salvar!', true); }
+}
+
+async function salvarPla() {
+    if (!currentUser) return;
+    const n = document.getElementById('p-nome').value, v = document.getElementById('p-val').value;
+    const idx = parseInt(document.getElementById('edit-idx-pla').value);
+    if(!n) return;
+    try {
+        if(idx===-1) await supabase.from('planos').insert({ user_id: currentUser.id, nome: n, valor: parseFloat(v) });
+        else await supabase.from('planos').update({ nome: n, valor: parseFloat(v) }).eq('id', db.planos[idx].id);
+        fecharModais(); await carregarDados(); atualizar();
+    } catch(e) { showToast('Erro ao salvar!', true); }
+}
+
+async function salvarSrv() {
+    if (!currentUser) return;
+    const n = document.getElementById('s-nome').value, c = document.getElementById('s-custo').value;
+    const idx = parseInt(document.getElementById('edit-idx-srv').value);
+    if(!n) return;
+    try {
+        if(idx===-1) await supabase.from('servidores').insert({ user_id: currentUser.id, nome: n, custo: parseFloat(c) });
+        else await supabase.from('servidores').update({ nome: n, custo: parseFloat(c) }).eq('id', db.servidores[idx].id);
+        fecharModais(); await carregarDados(); atualizar();
+    } catch(e) { showToast('Erro ao salvar!', true); }
+}
+
+async function confirmarExclusao(tipo, i) {
+    document.getElementById('modal-confirm').style.display='flex';
+    document.getElementById('btn-do-delete').onclick = async function() {
         try {
-            const response = await fetch(JSONBIN_URL, { headers: { 'X-Master-Key': JSONBIN_API_KEY } });
-            if (!response.ok) throw new Error('Erro na conexão');
-            const data = await response.json();
-            const codigos = data.record.codigos || [];
-            const codigoEncontrado = codigos.find(c => c.codigo.toUpperCase() === codigo);
-            if (!codigoEncontrado) { showToast('❌ Código inválido!', true); return; }
-            const dataExpiracao = new Date(codigoEncontrado.expiracao);
-            if (new Date() > dataExpiracao) { showToast('❌ Este código já expirou!', true); return; }
-            isPremium = true;
-            isTrial = false;
-            localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
-            const expiraEm30Dias = new Date(); expiraEm30Dias.setDate(expiraEm30Dias.getDate() + 30);
-            localStorage.setItem(PREMIUM_EXPIRY_KEY, expiraEm30Dias.toISOString().split('T')[0]);
-            fecharModais();
-            showToast('✅ Plano PREMIUM ativado por 30 dias! 💎', false);
-            atualizarUIPremium(); atualizar();
-        } catch (error) { showToast('❌ Erro ao verificar código. Tente novamente.', true); }
+            if(tipo==='cli') await supabase.from('clientes').delete().eq('id', db.clientes[i].id);
+            else if(tipo==='pla') await supabase.from('planos').delete().eq('id', db.planos[i].id);
+            else if(tipo==='srv') await supabase.from('servidores').delete().eq('id', db.servidores[i].id);
+            else if(tipo==='fin') await supabase.from('transacoes').delete().eq('id', db.transacoes[i].id);
+            fecharModais(); await carregarDados(); atualizar(); showToast('Excluído!', true);
+        } catch(e) { showToast('Erro!', true); }
+    };
+}
+
+function abrirNovoManual() {
+    if(curTabId==='tab-dash'||curTabId==='tab-cli') {
+        if (!isPremium && !isTrial && db.clientes.length>=10) { showToast('Limite de 10 clientes!', true); return; }
+        document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('c-desconto').value="";
+        document.getElementById('modal-cli').style.display='flex';
+    } else if(curTabId==='tab-pla') {
+        document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value="";
+        document.getElementById('modal-pla').style.display='flex';
+    } else if(curTabId==='tab-srv') {
+        if (!isPremium && !isTrial && db.servidores.length>=1) { showToast('Assine PREMIUM!', true); return; }
+        document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value="";
+        document.getElementById('modal-srv').style.display='flex';
     }
+}
+
+function editarItem(tipo, i) {
+    if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('c-desconto').value=c.desconto||0; document.getElementById('modal-cli').style.display='flex'; }
+    else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; }
+    else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; }
+}
+
+// ============================================
+// MENSAGENS E WHATSAPP
+// ============================================
+function montarMensagem(c, tipo) {
+    const dataFmt = c.venc.split("-").reverse().join("/");
+    const partes = c.nome.trim().split(' ');
+    const pNome = partes[0], sobrenome = partes.length > 1 ? partes.slice(1).join(' ') : '';
+    const valor = getValorFinal(c).toFixed(2);
+    const t = tipo === 'cobranca' ? (db.configMsg || MSG_COBRANCA_PADRAO) : (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO);
+    return t.replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", valor);
+}
+function enviarMsgCliente(c, tipo) { window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(montarMensagem(c, tipo))}`); }
+function abrirMsgChooser(i) { if (!isPremium && !isTrial) { showToast('Recurso PREMIUM', true); return; } clienteMsgAtual = i; document.getElementById('modal-msg-chooser').style.display='flex'; }
+function enviarMsgTipo(tipo) { if(clienteMsgAtual===null) return; enviarMsgCliente(db.clientes[clienteMsgAtual], tipo); fecharModais(); clienteMsgAtual=null; }
+
+// ============================================
+// NAVEGAÇÃO E FILTROS
+// ============================================
+function showTab(id) {
+    curTabId = id;
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+    document.querySelectorAll('.menu-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active-tab');
+    const el = document.querySelector(`[data-tab="${id}"]`);
+    if(el) el.classList.add('active');
+    atualizar();
+}
+function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual){ document.getElementById('chip-'+s)?.classList.add('active'); document.getElementById('chip-cli-'+s)?.classList.add('active'); } atualizar(); }
+function filtrarServidor(v) { filtroServidorAtual = v; document.getElementById('server-filter-inline-dash').value = v; document.getElementById('server-filter-inline-cli').value = v; atualizar(); }
+function toggleSearchDash() { const i = document.getElementById('search-input-inline-dash'), b = document.getElementById('search-icon-dash'); if(i.classList.contains('visible')){ i.classList.remove('visible'); b.classList.remove('active-search'); i.value=''; } else { i.classList.add('visible'); b.classList.add('active-search'); i.focus(); } atualizar(); }
+function toggleSearchCli() { const i = document.getElementById('search-input-inline-cli'), b = document.getElementById('search-icon-cli'); if(i.classList.contains('visible')){ i.classList.remove('visible'); b.classList.remove('active-search'); i.value=''; } else { i.classList.add('visible'); b.classList.add('active-search'); i.focus(); } atualizar(); }
+
+// ============================================
+// RENOVAÇÃO
+// ============================================
+function calcularPrevia30() {
+    const idx = document.getElementById('renew-idx').value;
+    const base = new Date(db.clientes[idx].venc+"T12:00:00"), hoje = new Date();
+    const inicio = base < hoje ? hoje : base;
+    inicio.setDate(inicio.getDate() + 30);
+    document.getElementById('renew-custom-date').value = inicio.toISOString().split('T')[0];
+}
+async function confirmarRenovacaoFinal() {
+    if (!currentUser) return;
+    const idx = document.getElementById('renew-idx').value;
+    const nd = document.getElementById('renew-custom-date').value;
+    if(!nd) return;
+    const c = db.clientes[idx];
+    try {
+        await supabase.from('clientes').update({ vencimento: nd }).eq('id', c.id);
+        await supabase.from('transacoes').insert({ user_id: currentUser.id, cliente_nome: c.nome, entrada: getValorFinal(c), saida: c.sVal, data_mes: new Date().toISOString().slice(0,7) });
+        fecharModais(); await carregarDados(); atualizar();
+        if(isPremium||isTrial){ clientePosRenovacao=idx; novaDataPosRenovacao=nd; document.getElementById('pos-renovacao-nome').innerText=c.nome; document.getElementById('modal-pos-renovacao').style.display='flex'; }
+        else showToast("Renovado!");
+    } catch(e) { showToast('Erro!', true); }
+}
+
+// ============================================
+// ATUALIZAR INTERFACE
+// ============================================
+function atualizar() {
+    const hojeISO = new Date().toISOString().split('T')[0];
+    const sd = document.getElementById('search-input-inline-dash'), sc = document.getElementById('search-input-inline-cli');
+    let termo = '';
+    if (curTabId==='tab-dash' && sd?.classList.contains('visible')) termo = sd.value.toLowerCase();
+    else if (curTabId==='tab-cli' && sc?.classList.contains('visible')) termo = sc.value.toLowerCase();
     
-    function ativarCodigoPremium() { ativarCodigoPremiumOnline(); }
-    function limparWhatsApp(raw) { return raw.replace(/[+\s\-()]/g, ''); }
+    const ps = document.getElementById('c-plano'), ss = document.getElementById('c-srv');
+    if(ps) ps.innerHTML = db.planos.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
+    if(ss) ss.innerHTML = db.servidores.map((s,i)=>`<option value="${i}">${s.nome}</option>`).join('');
     
-    const MSG_COBRANCA_PADRAO = "Olá {nome}! 👋 Passando para lembrar que seu acesso vence dia {vencimento}. O valor para renovação é de R$ {valor}. Como deseja pagar?";
-    const MSG_RENOVACAO_PADRAO = "Olá {nome}! ✅ Sua renovação foi confirmada! Novo vencimento: {vencimento}. Obrigado pela confiança!";
-
-    let db = carregarDadosProtegidos() || { clientes: [], planos: [], servidores: [], transacoes: [], priv: false, configMsg: MSG_COBRANCA_PADRAO, configMsgRenovacao: MSG_RENOVACAO_PADRAO };
-    let curTabId = 'tab-dash', chartObj = null, filtroAtual = null;
-    const tabsOrder = ['tab-dash', 'tab-cli', 'tab-pla', 'tab-srv', 'tab-fin'];
-    let touchStartX = 0, touchStartY = 0;
-
-    function abrirModalComHistorico(id) { const m = document.getElementById(id); if (!m) return; m.style.display = 'flex'; history.pushState({ modalOpen: true, modalId: id }, ''); }
-    window.addEventListener('popstate', function(e) { if (e.state && e.state.modalOpen) fecharModais(); });
-    function mostrarModalUpgrade() { if (isPremium) { showToast('Você já é PREMIUM! 💎'); return; } if (isTrial) { showToast('Você está no teste grátis!'); return; } abrirModalComHistorico('modal-upgrade'); }
-    function abrirMsgChooser(i) { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } clienteMsgAtual = i; abrirModalComHistorico('modal-msg-chooser'); }
-    function enviarMsgTipo(tipo) { if (clienteMsgAtual === null) return; const c = db.clientes[clienteMsgAtual]; enviarMsgCliente(c, tipo); fecharModais(); clienteMsgAtual = null; }
-    function getValorFinal(c) { return Math.max(0, parseFloat(c.pVal || 0) - parseFloat(c.desconto || 0)); }
-
-    function montarMensagem(c, tipo) {
-        const dataFmt = c.venc.split("-").reverse().join("/");
-        const partesNome = c.nome.trim().split(' ');
-        const pNome = partesNome[0];
-        const sobrenome = partesNome.length > 1 ? partesNome.slice(1).join(' ') : '';
-        const valorFinal = getValorFinal(c).toFixed(2);
-        if (tipo === 'cobranca') return (db.configMsg || MSG_COBRANCA_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", valorFinal);
-        else return (db.configMsgRenovacao || MSG_RENOVACAO_PADRAO).replace("{nome}", pNome).replace("{sobrenome}", sobrenome).replace("{vencimento}", dataFmt).replace("{valor}", valorFinal);
-    }
+    const srv = [...new Set(db.clientes.map(c=>c.sNome).filter(Boolean))].sort();
+    ['server-filter-inline-dash','server-filter-inline-cli'].forEach(id => {
+        const sel = document.getElementById(id); if(!sel) return;
+        sel.innerHTML = '<option value="">Todos os servidores</option>' + srv.map(s=>`<option value="${s}">${s}</option>`).join('');
+        sel.value = filtroServidorAtual;
+    });
     
-    function enviarMsgCliente(c, tipo) { const msg = montarMensagem(c, tipo); window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`); }
-    function enviarMsgRenovacaoAgora() {
-        if (clientePosRenovacao === null) return;
-        const c = db.clientes[clientePosRenovacao];
-        const msg = montarMensagem(c, 'renovacao');
-        fecharModais(); window.open(`https://wa.me/${c.wpp}?text=${encodeURIComponent(msg)}`);
-        clientePosRenovacao = null; novaDataPosRenovacao = null;
-    }
+    ['grid-home','grid-cli','grid-pla','grid-srv','grid-fin'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
+    const fab = document.getElementById('main-fab');
+    if(fab) { const td = db.clientes.length>0||curTabId==='tab-pla'||curTabId==='tab-srv'; const pc = (curTabId==='tab-cli'||curTabId==='tab-dash')&&db.servidores.length>0&&db.planos.length>0; fab.style.display = (curTabId!=='tab-fin'&&(td||pc))?'flex':'none'; }
+    
+    if(db.servidores.length===0&&curTabId==='tab-srv') document.getElementById('grid-srv').innerHTML=`<div class="welcome-state"><h3>Cadastre seu Servidor</h3><button class="btn-save" id="btn-add-srv-empty">Novo Servidor</button></div>`;
+    else if(curTabId==='tab-srv') db.servidores.forEach((s,i)=>document.getElementById('grid-srv').innerHTML+=`<div class="item-card card-border-servidor"><b>${s.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Custo: R$ ${parseFloat(s.custo).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" data-edit="srv,${i}"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" data-del="srv,${i}"><i data-lucide="trash-2"></i></button></div></div>`);
+    if(db.planos.length===0&&curTabId==='tab-pla') document.getElementById('grid-pla').innerHTML=`<div class="welcome-state"><h3>Crie seus Planos</h3><button class="btn-save" id="btn-add-pla-empty">Criar Plano</button></div>`;
+    else if(curTabId==='tab-pla') db.planos.forEach((p,i)=>document.getElementById('grid-pla').innerHTML+=`<div class="item-card card-border-plano"><b>${p.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Venda: R$ ${parseFloat(p.val).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" data-edit="pla,${i}"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" data-del="pla,${i}"><i data-lucide="trash-2"></i></button></div></div>`);
+    if(db.clientes.length===0&&curTabId==='tab-cli') document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><h3>Pronto para começar!</h3><button class="btn-save" id="btn-add-cli-empty">Novo Cliente</button></div>`;
 
-    function atualizarUIPremium() { 
-        verificarExpiracaoPremium();
-        verificarTrial();
-        
-        document.querySelectorAll('[id^="plan-text-"]').forEach(el => { if (el) el.textContent = isPremium ? 'PREMIUM' : (isTrial ? 'TESTE' : 'FREE'); });
-        document.querySelectorAll('.current-plan-badge').forEach(el => { el.classList.remove('premium', 'trial'); if (isPremium) el.classList.add('premium'); else if (isTrial) el.classList.add('trial'); });
-        
-        const mb = document.getElementById('msg-premium-badge'); if (mb) mb.style.display = (isPremium || isTrial) ? 'none' : 'inline';
-        const tb = document.getElementById('token-premium-badge'); if (tb) tb.style.display = (isPremium || isTrial) ? 'none' : 'inline';
-        const co = document.getElementById('chart-premium-overlay'); if (co) co.style.display = (isPremium || isTrial) ? 'none' : 'flex';
-        
-        atualizarContadorDias(); atualizarBannerBackup(); atualizarTooltipVagas(); atualizarBannerExpiracaoPremium(); atualizarBotaoTrialDash();
-        lucide.createIcons(); 
+    let proc = db.clientes.map((c,i) => { const hoje=new Date(); hoje.setHours(0,0,0,0); const p=c.venc.split('-'); const dv=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])); dv.setHours(0,0,0,0); const diff=Math.round((dv.getTime()-hoje.getTime())/(1000*60*60*24)); let st="ativo",stC="card-border-ativo",stT="Ativo",stB="var(--lucro)"; if(diff<0){st="vencido";stC="card-border-vencido";stT="Vencido";stB="var(--saida)";} else if(diff===0){st="hoje";stC="card-border-vencido";stT="Hoje";stB="var(--saida)";} else if(diff===1){st="alerta";stC="card-border-alerta";stT="Amanhã";stB="var(--alerta)";} return {...c,idx:i,st,stC,stT,stB,diff}; });
+    
+    const badges = { 'badge-ativo': proc.filter(p=>p.st==="ativo").length, 'badge-hoje': proc.filter(p=>p.st==="hoje").length, 'badge-vencido': proc.filter(p=>p.st==="vencido").length, 'badge-alerta': proc.filter(p=>p.st==="alerta").length };
+    Object.entries(badges).forEach(([id,count]) => { const el=document.getElementById(id); if(el){ if(count>0){el.innerText=count;el.style.display='flex';}else el.style.display='none'; } const cl=document.getElementById('badge-cli-'+id.split('-')[1]); if(cl){ if(count>0){cl.innerText=count;cl.style.display='flex';}else cl.style.display='none'; } });
+    
+    const nov = db.clientes.filter(c=>{ const dc=new Date(c.dataCadastro||'2000-01-01'); const pm=new Date(new Date().getFullYear(),new Date().getMonth(),1); return dc>=pm; }).length;
+    document.getElementById('ds-novos').innerText = nov;
+    
+    proc.sort((a,b)=>a.diff-b.diff);
+    const buscaAtiva = termo.length > 0;
+    
+    proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ 
+        if(filtroServidorAtual && c.sNome !== filtroServidorAtual) return;
+        if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; }
+        else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; }
+        const iniciais = getIniciais(c.nome); const vf = getValorFinal(c).toFixed(2);
+        const ds = (parseFloat(c.desconto||0) > 0) ? ` <span style="color:var(--lucro)">(-R$ ${parseFloat(c.desconto).toFixed(2)})</span>` : '';
+        const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome} | R$ ${vf}${ds}</div><div class="server-line">Servidor: ${c.sNome || '—'}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" data-msg="${c.idx}"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" data-renew="${c.idx}"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" data-edit="cli,${c.idx}"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" data-del="cli,${c.idx}"><i data-lucide="trash-2"></i></button></div></div>`;
+        if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card;
+        else document.getElementById('grid-cli').innerHTML+=card;
+    }});
+
+    if(curTabId==='tab-fin'||curTabId==='tab-dash'){
+        let entT=0,saiT=0,lucM=0; const ma=hojeISO.slice(0,7);
+        db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===ma)lucM+=(t.pVal-t.sVal);});
+        document.getElementById('ds-lucro').innerText = db.priv ? '••••' : `R$ ${lucM.toFixed(2)}`;
+        if(curTabId==='tab-fin'){
+            const tC=(isPremium||isTrial)?db.transacoes:db.transacoes.slice(-10);
+            let e10=0,s10=0; tC.forEach(t=>{e10+=t.pVal;s10+=t.sVal;});
+            document.getElementById('fin-total-ent').innerText = db.priv?'••':`R$ ${e10.toFixed(2)}`;
+            document.getElementById('fin-total-sai').innerText = db.priv?'••':`R$ ${s10.toFixed(2)}`;
+            document.getElementById('fin-total-luc').innerText = db.priv?'••':`R$ ${(e10-s10).toFixed(2)}`;
+            if((isPremium||isTrial)&&!db.priv){ const cv=document.getElementById('finChart'); if(cv){ const cx=cv.getContext('2d'); if(chartObj)chartObj.destroy(); chartObj=new Chart(cx,{type:'bar',data:{labels:['Entrada','Saída','Lucro'],datasets:[{data:[e10,s10,e10-s10],backgroundColor:['#38bdf8','#fb7185','#10b981'],borderRadius:10}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#2d3348'},ticks:{color:'#94a3b8'}}}}}); } }
+            const gf=document.getElementById('grid-fin');
+            const tPM=(isPremium||isTrial)?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse();
+            tPM.forEach((t,i)=>{const ri=db.transacoes.indexOf(t);gf.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;});
+        }
     }
-    function atualizarTooltipVagas() { 
-        const trialUsed = localStorage.getItem(TRIAL_USED_KEY) === 'true';
-        if (!isPremium && !isTrial && !trialUsed) {
-            document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none');
+    lucide.createIcons();
+    atualizarUI();
+}
+
+// ============================================
+// INICIALIZAÇÃO - EVENTOS (AGORA TUDO AQUI)
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Login
+    document.getElementById('login-toggle-btn').addEventListener('click', toggleLoginMode);
+    document.getElementById('btn-login-action').addEventListener('click', handleLogin);
+    document.getElementById('btn-logout').addEventListener('click', handleLogout);
+    
+    // Trial
+    document.getElementById('btn-trial-dash').addEventListener('click', ativarTrial);
+    
+    // Busca
+    document.getElementById('search-icon-dash').addEventListener('click', toggleSearchDash);
+    document.getElementById('search-icon-cli').addEventListener('click', toggleSearchCli);
+    document.getElementById('search-input-inline-dash').addEventListener('input', atualizar);
+    document.getElementById('search-input-inline-cli').addEventListener('input', atualizar);
+    document.getElementById('server-filter-inline-dash').addEventListener('change', function(){ filtrarServidor(this.value); });
+    document.getElementById('server-filter-inline-cli').addEventListener('change', function(){ filtrarServidor(this.value); });
+    
+    // Chips de filtro
+    ['ativo','hoje','alerta','vencido'].forEach(s => {
+        document.getElementById('chip-'+s).addEventListener('click', function(){ filtrarStatus(s); });
+        document.getElementById('chip-cli-'+s).addEventListener('click', function(){ filtrarStatus(s); });
+    });
+    
+    // Navegação
+    document.querySelectorAll('.menu-item').forEach(el => {
+        el.addEventListener('click', function(){ showTab(this.getAttribute('data-tab')); });
+    });
+    
+    // FAB
+    document.getElementById('main-fab').addEventListener('click', abrirNovoManual);
+    
+    // Salvar modais
+    document.getElementById('btn-salvar-cli').addEventListener('click', salvarCli);
+    document.getElementById('btn-salvar-pla').addEventListener('click', salvarPla);
+    document.getElementById('btn-salvar-srv').addEventListener('click', salvarSrv);
+    
+    // Renovação
+    document.getElementById('btn-calcular-30').addEventListener('click', calcularPrevia30);
+    document.getElementById('btn-confirmar-renovacao').addEventListener('click', confirmarRenovacaoFinal);
+    
+    // Mensagens
+    document.getElementById('msg-cobranca').addEventListener('click', function(){ enviarMsgTipo('cobranca'); });
+    document.getElementById('msg-renovacao').addEventListener('click', function(){ enviarMsgTipo('renovacao'); });
+    document.getElementById('btn-enviar-msg-renovacao').addEventListener('click', function(){
+        if(clientePosRenovacao!==null){ enviarMsgCliente(db.clientes[clientePosRenovacao], 'renovacao'); fecharModais(); clientePosRenovacao=null; }
+    });
+    
+    // Premium
+    document.getElementById('btn-kiwify').addEventListener('click', function(){ window.open('https://pay.kiwify.com.br/a26pAg3'); });
+    document.getElementById('btn-whatsapp-premium').addEventListener('click', function(){ window.open('https://wa.me/5532984911522?text='+encodeURIComponent('Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.')); });
+    
+    // Privacidade
+    document.getElementById('toggle-priv').addEventListener('click', function(){ db.priv=!db.priv; persistir(); });
+    
+    // Config mensagens
+    document.getElementById('btn-config-msg').addEventListener('click', function(){
+        if(!isPremium&&!isTrial){ showToast('Recurso PREMIUM', true); return; }
+        document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO;
+        document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO;
+        document.getElementById('modal-config-msg').style.display='flex';
+    });
+    document.getElementById('btn-salvar-msg').addEventListener('click', function(){
+        db.configMsg = document.getElementById('cfg-msg-cobranca').value;
+        db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value;
+        persistir(); fecharModais(); showToast('Mensagens salvas!');
+    });
+    
+    // Eventos delegados (para itens criados dinamicamente)
+    document.body.addEventListener('click', function(e) {
+        const target = e.target.closest('[data-edit]');
+        if (target) {
+            const [tipo, idx] = target.getAttribute('data-edit').split(',');
+            editarItem(tipo, parseInt(idx));
             return;
         }
-        if (isPremium || isTrial) { document.querySelectorAll('.free-slots-tip').forEach(el => el.style.display = 'none'); return; } 
-        const vagas = 10 - db.clientes.length; let msg; 
-        if (vagas > 0) { msg = `<strong>${vagas} cliente${vagas>1?'s':''} gratuito${vagas>1?'s':''}</strong> disponíve${vagas>1?'is':'l'}`; msg += `<br>Aproveite para testar. Depois, libere ilimitados no <span class="premium-link" onclick="mostrarModalUpgrade()">PREMIUM</span>`; } 
-        else { msg = `Limite de <strong>10 clientes</strong> atingido`; msg += `<br><span class="premium-link" onclick="mostrarModalUpgrade()">Assine o PREMIUM para continuar crescendo</span>`; } 
-        document.querySelectorAll('.free-slots-tip').forEach(el => { el.innerHTML = msg; el.style.display = 'block'; }); 
-    }
-    function simularCompraPremium() { window.open(`https://wa.me/5532984911522?text=${encodeURIComponent("Olá! Gostaria de assinar o plano PREMIUM do OwerPlay Gestor por R$ 19,90/mês.")}`); showToast('Redirecionando para WhatsApp...'); }
-    function abrirKiwify() { window.open('https://pay.kiwify.com.br/a26pAg3'); }
-    function abrirConfigMsgComValidacao() { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } document.getElementById('cfg-msg-cobranca').value = db.configMsg || MSG_COBRANCA_PADRAO; document.getElementById('cfg-msg-renovacao').value = db.configMsgRenovacao || MSG_RENOVACAO_PADRAO; abrirModalComHistorico('modal-config-msg'); }
-    function copiarTokenComValidacao() { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } copiarTokenComToast(); confirmarBackupFeito(); }
-    function restaurarTokenComValidacao() { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } abrirModalComHistorico('modal-token'); }
-    function salvarSrvComValidacao() { if (!isPremium && !isTrial && db.servidores.length >= 1) { if (parseInt(document.getElementById('edit-idx-srv').value) === -1) { fecharModais(); mostrarModalUpgrade(); return; } } salvarSrv(); }
-
-    function persistir() { salvarDadosProtegidos(db); atualizar(); }
-    function fecharModais() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
-    function togglePriv() { db.priv = !db.priv; persistir(); }
-    function showToast(msg, isAlert = false) { const t = document.getElementById("toast"); t.innerText = msg; t.className = isAlert ? "show alert" : "show"; setTimeout(() => { t.className = ""; }, 3000); }
-    function showTab(id, el) { curTabId = id; document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab')); document.querySelectorAll('.menu-item').forEach(n => n.classList.remove('active')); document.getElementById(id).classList.add('active-tab'); if(el) el.classList.add('active'); else document.querySelector(`[data-tab="${id}"]`).classList.add('active'); atualizarUIPremium(); atualizar(); }
-
-    function copiarTokenComToast() { const compact = { c: db.clientes.map(i=>({n:i.nome,w:i.wpp,v:i.venc,p:i.pNome,pv:i.pVal,s:i.sNome,sv:i.sVal,d:i.desconto||0})), p: db.planos.map(i=>({n:i.nome,v:i.val})), s: db.servidores.map(i=>({n:i.nome,c:i.custo})), t: db.transacoes.map(i=>({c:i.cli,p:i.pVal,s:i.sVal,d:i.data})), m: db.configMsg, mr: db.configMsgRenovacao }; const token = btoa(unescape(encodeURIComponent(JSON.stringify(compact)))); navigator.clipboard.writeText(token).then(()=>showToast("✅ Token copiado!")); }
-    function confirmarToken() { try { const raw = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('token-input').value)))); if(raw.c) { db.clientes = raw.c.map(i=>({nome:i.n,wpp:i.w,venc:i.v,pNome:i.p,pVal:i.pv,sNome:i.s,sVal:i.sv,desconto:i.d||0})); db.planos = raw.p.map(i=>({nome:i.n,val:i.v})); db.servidores = raw.s.map(i=>({nome:i.n,custo:i.c})); db.transacoes = raw.t.map(i=>({cli:i.c,pVal:i.p,sVal:i.s,data:i.d})); db.configMsg = raw.m || db.configMsg; db.configMsgRenovacao = raw.mr || db.configMsgRenovacao; } else if(raw.clientes) { db = raw; } persistir(); fecharModais(); showToast("Restaurado!"); } catch(e) { showToast("Código Inválido!", true); } }
-
-    function salvarCli() { const n=document.getElementById('c-nome').value, v=document.getElementById('c-venc').value, pIdx=document.getElementById('c-plano').value, sIdx=document.getElementById('c-srv').value, idx=parseInt(document.getElementById('edit-idx-cli').value), desc=parseFloat(document.getElementById('c-desconto').value||0), wppRaw=document.getElementById('c-wpp').value, wpp=limparWhatsApp(wppRaw); if(!n||!v||pIdx==""||sIdx=="") return; if (!isPremium && !isTrial && idx==-1 && db.clientes.length>=10) { fecharModais(); mostrarModalUpgrade(); return; } const d={nome:n,wpp:wpp,venc:v,pNome:db.planos[pIdx].nome,pVal:parseFloat(db.planos[pIdx].val),sNome:db.servidores[sIdx].nome,sVal:parseFloat(db.servidores[sIdx].custo),desconto:desc,dataCadastro:new Date().toISOString().split('T')[0]}; const valorFinal = getValorFinal(d); if(idx==-1) { db.clientes.push(d); db.transacoes.push({cli:n,pVal:valorFinal,sVal:d.sVal,data:new Date().toISOString().slice(0,7)}); } else { db.clientes[idx].nome=d.nome; db.clientes[idx].wpp=d.wpp; db.clientes[idx].venc=d.venc; db.clientes[idx].pNome=d.pNome; db.clientes[idx].pVal=d.pVal; db.clientes[idx].sNome=d.sNome; db.clientes[idx].sVal=d.sVal; db.clientes[idx].desconto=d.desconto; } fecharModais(); persistir(); }
-    function salvarPla() { const n=document.getElementById('p-nome').value, v=document.getElementById('p-val').value, idx=parseInt(document.getElementById('edit-idx-pla').value); if(n) { if(idx==-1) db.planos.push({nome:n,val:v}); else db.planos[idx]={nome:n,val:v}; fecharModais(); persistir(); } }
-    function salvarSrv() { const n=document.getElementById('s-nome').value, c=document.getElementById('s-custo').value, idx=parseInt(document.getElementById('edit-idx-srv').value); if(n) { if(idx==-1) db.servidores.push({nome:n,custo:c}); else db.servidores[idx]={nome:n,custo:c}; fecharModais(); persistir(); } }
-    function abrirNovoManual() { if(curTabId==='tab-dash'||curTabId==='tab-cli') { if (!isPremium && !isTrial && db.clientes.length>=10) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('c-desconto').value=""; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(curTabId==='tab-pla') { document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(curTabId==='tab-srv') { if (!isPremium && !isTrial && db.servidores.length>=1) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
-    function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('c-desconto').value=c.desconto||0; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
-    function salvarConfigMsg() { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
-    function confirmarExclusao(tipo,i) { document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm'); document.getElementById('btn-do-delete').onclick = function() { if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1); showToast('Excluído!', true); persistir(); fecharModais(); }; }
-    function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) { 
-        document.getElementById('chip-'+s)?.classList.add('active');
-        document.getElementById('chip-cli-'+s)?.classList.add('active');
-    } atualizar(); }
-    function getIniciais(nome) { if(!nome) return '?'; const partes = nome.trim().split(' '); if(partes.length===1) return partes[0].substring(0,2).toUpperCase(); return (partes[0][0]+partes[partes.length-1][0]).toUpperCase(); }
-
-    function atualizar() {
-        const hojeISO = new Date().toISOString().split('T')[0];
-        const searchDash = document.getElementById('search-input-inline-dash');
-        const searchCli = document.getElementById('search-input-inline-cli');
-        let termo = '';
-        if (curTabId === 'tab-dash' && searchDash && searchDash.classList.contains('visible')) {
-            termo = searchDash.value.toLowerCase();
-        } else if (curTabId === 'tab-cli' && searchCli && searchCli.classList.contains('visible')) {
-            termo = searchCli.value.toLowerCase();
+        const delTarget = e.target.closest('[data-del]');
+        if (delTarget) {
+            const [tipo, idx] = delTarget.getAttribute('data-del').split(',');
+            confirmarExclusao(tipo, parseInt(idx));
+            return;
         }
-        
-        const planoSelect = document.getElementById('c-plano'), srvSelect = document.getElementById('c-srv');
-        if(planoSelect) planoSelect.innerHTML = db.planos.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
-        if(srvSelect) srvSelect.innerHTML = db.servidores.map((s,i)=>`<option value="${i}">${s.nome}</option>`).join('');
-        atualizarDropdownsServidores();
-        ['grid-home','grid-cli','grid-pla','grid-srv','grid-fin'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML=''; });
-        const fab = document.getElementById('main-fab');
-        if(fab) { const temDados = db.clientes.length>0||(curTabId==='tab-pla')||(curTabId==='tab-srv'); const podeCadastrarCliente = (curTabId==='tab-cli'||curTabId==='tab-dash')&&db.servidores.length>0&&db.planos.length>0; fab.style.display = (curTabId!=='tab-fin'&&(temDados||podeCadastrarCliente))?'flex':'none'; }
-        
-        if(db.servidores.length===0&&curTabId==='tab-srv') { document.getElementById('grid-srv').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="database" size="32"></i></div><h3>Cadastre seu Servidor</h3><p>Adicione seu servidor de origem para gerenciar seus custos operacionais e vincular aos clientes.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Servidor</button></div>`; }
-        else if(curTabId==='tab-srv') { db.servidores.forEach((s,i)=>{ document.getElementById('grid-srv').innerHTML+=`<div class="item-card card-border-servidor"><b>${s.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Custo: R$ ${parseFloat(s.custo).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('srv',${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('srv',${i})"><i data-lucide="trash-2"></i></button></div></div>`; }); }
-        if(db.planos.length===0&&curTabId==='tab-pla') { document.getElementById('grid-pla').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="package" size="32"></i></div><h3>Crie seus Planos</h3><p>Defina categorias de venda com nome e valor para oferecer aos seus clientes de forma organizada.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Criar Plano</button></div>`; }
-        else if(curTabId==='tab-pla') { db.planos.forEach((p,i)=>{ document.getElementById('grid-pla').innerHTML+=`<div class="item-card card-border-plano"><b>${p.nome}</b><p style="font-size:0.7rem;color:var(--text-dim)">Venda: R$ ${parseFloat(p.val).toFixed(2)}</p><div class="card-actions"><button class="btn-icon btn-edit" onclick="editarItem('pla',${i})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('pla',${i})"><i data-lucide="trash-2"></i></button></div></div>`; }); }
-        if(db.clientes.length===0&&curTabId==='tab-cli') { const temServidor=db.servidores.length>0,temPlano=db.planos.length>0; if(temServidor&&temPlano){ document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="users" size="32"></i></div><h3>Pronto para começar!</h3><p>Tudo configurado. Cadastre seu primeiro cliente agora.</p><button class="btn-save" onclick="abrirNovoManual()"><i data-lucide="plus" size="18"></i> Novo Cliente</button></div>`; } else { const faltando=[]; if(!temServidor) faltando.push('<strong>Servidor</strong>'); if(!temPlano) faltando.push('<strong>Plano</strong>'); document.getElementById('grid-cli').innerHTML=`<div class="welcome-state"><div class="welcome-icon"><i data-lucide="users" size="32"></i></div><h3>Nenhum cliente</h3><p>Cadastre primeiro ${faltando.join(' e ')}.</p></div>`; } }
-
-        let proc = db.clientes.map((c,i) => { const hoje = new Date(); hoje.setHours(0,0,0,0); const partesData = c.venc.split('-'); const dv = new Date(parseInt(partesData[0]),parseInt(partesData[1])-1,parseInt(partesData[2])); dv.setHours(0,0,0,0); const diffMs = dv.getTime()-hoje.getTime(); const diff = Math.round(diffMs/(1000*60*60*24)); let st="ativo",stC="card-border-ativo",stT="Ativo",stB="var(--lucro)",peso=2; if(diff<0){st="vencido";stC="card-border-vencido";stT="Vencido";stB="var(--saida)";peso=3;} else if(diff===0){st="hoje";stC="card-border-vencido";stT="Hoje";stB="var(--saida)";peso=4;} else if(diff===1){st="alerta";stC="card-border-alerta";stT="Amanhã";stB="var(--alerta)";peso=1;} return {...c,id:i,st,stC,stT,stB,peso,diff}; });
-        
-        const countHoje = proc.filter(p=>p.st==="hoje").length;
-        const countVenc = proc.filter(p=>p.st==="vencido").length;
-        const countAlert = proc.filter(p=>p.st==="alerta").length;
-        const countAtivos = proc.filter(p=>p.st==="ativo").length;
-        
-        const hoje = new Date(); const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        const countNovos = db.clientes.filter(c => { const dc = new Date(c.dataCadastro || '2000-01-01'); return dc >= primeiroDiaMes; }).length;
-        
-        const bAtivo=document.getElementById('badge-ativo'),bHoje=document.getElementById('badge-hoje'),bVenc=document.getElementById('badge-vencido'),bAlert=document.getElementById('badge-alerta');
-        if(bAtivo){ if(countAtivos>0){bAtivo.innerText=countAtivos;bAtivo.style.display='flex';}else bAtivo.style.display='none'; }
-        if(bHoje){ if(countHoje>0){bHoje.innerText=countHoje;bHoje.style.display='flex';}else bHoje.style.display='none'; }
-        if(bVenc){ if(countVenc>0){bVenc.innerText=countVenc;bVenc.style.display='flex';}else bVenc.style.display='none'; }
-        if(bAlert){ if(countAlert>0){bAlert.innerText=countAlert;bAlert.style.display='flex';}else bAlert.style.display='none'; }
-        
-        const bAtivoCli=document.getElementById('badge-cli-ativo'),bHojeCli=document.getElementById('badge-cli-hoje'),bVencCli=document.getElementById('badge-cli-vencido'),bAlertCli=document.getElementById('badge-cli-alerta');
-        if(bAtivoCli){ if(countAtivos>0){bAtivoCli.innerText=countAtivos;bAtivoCli.style.display='flex';}else bAtivoCli.style.display='none'; }
-        if(bHojeCli){ if(countHoje>0){bHojeCli.innerText=countHoje;bHojeCli.style.display='flex';}else bHojeCli.style.display='none'; }
-        if(bVencCli){ if(countVenc>0){bVencCli.innerText=countVenc;bVencCli.style.display='flex';}else bVencCli.style.display='none'; }
-        if(bAlertCli){ if(countAlert>0){bAlertCli.innerText=countAlert;bAlertCli.style.display='flex';}else bAlertCli.style.display='none'; }
-        
-        proc.sort((a,b)=>a.diff-b.diff);
-
-        const buscaAtiva = termo.length > 0;
-        proc.forEach((c)=>{ if(curTabId==='tab-cli'||curTabId==='tab-dash'){ 
-            if (filtroServidorAtual && c.sNome !== filtroServidorAtual) return;
-            if(buscaAtiva) { if(!c.nome.toLowerCase().includes(termo)) return; } else { if(filtroAtual==='hoje'&&c.st!=='hoje') return; if(curTabId==='tab-dash'&&!filtroAtual&&(c.st==='vencido'||c.st==='hoje')) return; if(filtroAtual&&filtroAtual!=='hoje'&&c.st!==filtroAtual) return; } const iniciais = getIniciais(c.nome); const valorFinal = getValorFinal(c).toFixed(2); const descontoStr = (parseFloat(c.desconto||0) > 0) ? ` <span style="color:var(--lucro)">(-R$ ${parseFloat(c.desconto).toFixed(2)})</span>` : ''; const card = `<div class="item-card ${c.stC}"><div class="client-info-row"><div class="client-avatar">${iniciais}</div><div class="client-details"><div class="card-header"><b style="font-size:0.9rem">${c.nome}</b><span class="card-status-badge" style="background:${c.stB}">${c.stT}</span></div><div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Venc: <b>${c.venc.split("-").reverse().join("/")}</b> | ${c.pNome} | R$ ${valorFinal}${descontoStr}</div><div class="server-line">Servidor: ${c.sNome || '—'}</div></div></div><div class="card-actions"><button class="btn-icon" style="color:#22c55e" onclick="abrirMsgChooser(${c.id})"><i data-lucide="message-circle"></i></button><button class="btn-icon" style="color:var(--entrada)" onclick="document.getElementById('renew-idx').value='${c.id}';document.getElementById('modal-renew').style.display='flex';abrirModalComHistorico('modal-renew');"><i data-lucide="refresh-cw"></i></button><button class="btn-icon btn-edit" onclick="editarItem('cli',${c.id})"><i data-lucide="pencil"></i></button><button class="btn-icon btn-del" onclick="confirmarExclusao('cli',${c.id})"><i data-lucide="trash-2"></i></button></div></div>`; if(curTabId==='tab-dash') document.getElementById('grid-home').innerHTML+=card; else document.getElementById('grid-cli').innerHTML+=card; } });
-
-        if(curTabId==='tab-fin'||curTabId==='tab-dash'){ let entT=0,saiT=0,lucM=0; const mesAtual=hojeISO.slice(0,7); db.transacoes.forEach(t=>{entT+=t.pVal;saiT+=t.sVal;if(t.data===mesAtual)lucM+=(t.pVal-t.sVal);}); const dsLucro=document.getElementById('ds-lucro'),dsNovos=document.getElementById('ds-novos'); if(dsLucro)dsLucro.innerText=db.priv?'••••':`R$ ${lucM.toFixed(2)}`; if(dsNovos)dsNovos.innerText=countNovos; if(curTabId==='tab-fin'){ const finEnt=document.getElementById('fin-total-ent'),finSai=document.getElementById('fin-total-sai'),finLuc=document.getElementById('fin-total-luc'); let tC=(isPremium||isTrial)?db.transacoes:db.transacoes.slice(-10); let entT10=0,saiT10=0; tC.forEach(t=>{entT10+=t.pVal;saiT10+=t.sVal;}); if(finEnt)finEnt.innerText=db.priv?'••':`R$ ${entT10.toFixed(2)}`; if(finSai)finSai.innerText=db.priv?'••':`R$ ${saiT10.toFixed(2)}`; if(finLuc)finLuc.innerText=db.priv?'••':`R$ ${(entT10-saiT10).toFixed(2)}`; if((isPremium||isTrial)&&!db.priv)renderFin(entT10,saiT10,entT10-saiT10); const gridFin=document.getElementById('grid-fin'); let tPM=(isPremium||isTrial)?db.transacoes.slice().reverse():db.transacoes.slice(-10).reverse(); tPM.forEach((t,i)=>{const realIdx=db.transacoes.indexOf(t);gridFin.innerHTML+=`<div class="item-card" style="border:1px solid var(--border)"><button class="btn-more-fin" onclick="document.getElementById('modal-opt-fin').style.display='flex';abrirModalComHistorico('modal-opt-fin');document.getElementById('btn-opt-edit').onclick=function(){fecharModais();abrirEditFin(${realIdx})};document.getElementById('btn-opt-del').onclick=function(){fecharModais();confirmarExclusao('fin',${realIdx});};"><i data-lucide="more-horizontal"></i></button><b>${t.cli}</b><div class="fin-smooth-row"><div class="fin-item"><span class="fin-label">Venda</span><span class="fin-val" style="color:var(--entrada)">${db.priv?'••':'R$ '+t.pVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Custo</span><span class="fin-val" style="color:var(--saida)">${db.priv?'••':'R$ '+t.sVal.toFixed(2)}</span></div><div class="fin-item"><span class="fin-label">Lucro</span><span class="fin-val" style="color:var(--lucro)">${db.priv?'••':'R$ '+(t.pVal-t.sVal).toFixed(2)}</span></div></div></div>`;}); if(!isPremium&&!isTrial&&db.transacoes.length>10){gridFin.innerHTML+=`<div class="welcome-state" style="margin-top:15px;padding:30px 20px;cursor:pointer" onclick="mostrarModalUpgrade()"><i data-lucide="gem" class="diamond-icon" style="color:var(--premium-color);width:48px;height:48px;margin-bottom:10px"></i><p style="font-size:.75rem">+${db.transacoes.length-10} transações ocultas</p><p style="font-size:.65rem;color:var(--text-dim);margin-bottom:15px">Assine PREMIUM para histórico completo</p><button class="upgrade-btn" style="width:auto;padding:10px 30px">ASSINAR PREMIUM</button></div>`;} } }
-        lucide.createIcons(); atualizarUIPremium(); atualizarTooltipVagas(); atualizarBannerBackup();
-    }
-
-    function renderFin(e,s,l){const canvas=document.getElementById('finChart');if(!canvas)return;const ctx=canvas.getContext('2d');if(chartObj)chartObj.destroy();chartObj=new Chart(ctx,{type:'bar',data:{labels:['Entrada','Saída','Lucro'],datasets:[{data:[e,s,l],backgroundColor:['#38bdf8','#fb7185','#10b981'],borderRadius:10}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#2d3348'},ticks:{color:'#94a3b8'}}}}});}
-    function abrirEditFin(idx){const t=db.transacoes[idx];document.getElementById('edit-fin-idx').value=idx;document.getElementById('ef-entrada').value=t.pVal;document.getElementById('ef-saida').value=t.sVal;document.getElementById('modal-edit-fin').style.display='flex';abrirModalComHistorico('modal-edit-fin');}
-    function salvarEditFin(){const idx=document.getElementById('edit-fin-idx').value;db.transacoes[idx].pVal=parseFloat(document.getElementById('ef-entrada').value);db.transacoes[idx].sVal=parseFloat(document.getElementById('ef-saida').value);persistir();fecharModais();showToast("OK!");}
-    function calcularPrevia30(){const idx=document.getElementById('renew-idx').value;const base=new Date(db.clientes[idx].venc+"T12:00:00"),hoje=new Date();const inicio=base<hoje?hoje:base;inicio.setDate(inicio.getDate()+30);document.getElementById('renew-custom-date').value=inicio.toISOString().split('T')[0];}
-    function confirmarRenovacaoFinal(){const idx=document.getElementById('renew-idx').value,novaData=document.getElementById('renew-custom-date').value;if(!novaData)return;const c=db.clientes[idx];c.venc=novaData;const valorFinal = getValorFinal(c);db.transacoes.push({cli:c.nome,pVal:valorFinal,sVal:c.sVal,data:new Date().toISOString().slice(0,7)});persistir();fecharModais();if(isPremium||isTrial){clientePosRenovacao=parseInt(idx);novaDataPosRenovacao=novaData;document.getElementById('pos-renovacao-nome').innerText=c.nome;abrirModalComHistorico('modal-pos-renovacao');}else{showToast("Renovado! "+novaData.split("-").reverse().join("/"));}}
-
-    document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY;});
-    document.addEventListener('touchend',e=>{if(Array.from(document.querySelectorAll('.overlay')).some(o=>o.style.display==='flex'))return;const diffX=touchStartX-e.changedTouches[0].screenX;const diffY=Math.abs(touchStartY-e.changedTouches[0].screenY);if(Math.abs(diffX)>80&&diffY<30){let idx=tabsOrder.indexOf(curTabId);if(diffX>0&&idx<tabsOrder.length-1)showTab(tabsOrder[idx+1]);else if(diffX<0&&idx>0)showTab(tabsOrder[idx-1]);}});
-
-    verificarExpiracaoPremium();
-    verificarTrial();
-    atualizar(); atualizarUIPremium();
+        const msgTarget = e.target.closest('[data-msg]');
+        if (msgTarget) {
+            abrirMsgChooser(parseInt(msgTarget.getAttribute('data-msg')));
+            return;
+        }
+        const renewTarget = e.target.closest('[data-renew]');
+        if (renewTarget) {
+            document.getElementById('renew-idx').value = renewTarget.getAttribute('data-renew');
+            document.getElementById('modal-renew').style.display='flex';
+            return;
+        }
+        // Botões de adicionar vazios
+        if (e.target.id === 'btn-add-cli-empty') abrirNovoManual();
+        if (e.target.id === 'btn-add-pla-empty') abrirNovoManual();
+        if (e.target.id === 'btn-add-srv-empty') abrirNovoManual();
+    });
+    
+    // Swipe
+    document.addEventListener('touchstart', function(e){ touchStartX=e.changedTouches[0].screenX; touchStartY=e.changedTouches[0].screenY; });
+    document.addEventListener('touchend', function(e){
+        if(Array.from(document.querySelectorAll('.overlay')).some(o=>o.style.display==='flex')) return;
+        const dx=touchStartX-e.changedTouches[0].screenX, dy=Math.abs(touchStartY-e.changedTouches[0].screenY);
+        if(Math.abs(dx)>80&&dy<30){ const i=tabsOrder.indexOf(curTabId); if(dx>0&&i<tabsOrder.length-1) showTab(tabsOrder[i+1]); else if(dx<0&&i>0) showTab(tabsOrder[i-1]); }
+    });
+    
+    document.body.addEventListener('touchmove', function(e){ if(e.target.closest('main')) return; if(e.target.closest('.overlay')) return; e.preventDefault(); }, { passive: false });
+    
+    // Fechar modais ao clicar fora
+    document.querySelectorAll('.overlay').forEach(o => { o.addEventListener('click', function(e){ if(e.target===o) fecharModais(); }); });
+    
+    // Iniciar
+    supabase.auth.getSession().then(({ data }) => {
+        if (data?.session?.user) {
+            currentUser = data.session.user;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+            carregarDados().then(() => { atualizarUI(); atualizar(); });
+        }
+    });
+});
 </script>
 </body>
 </html>
