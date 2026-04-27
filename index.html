@@ -781,6 +781,26 @@
   const supabase = supabase.createClient(_URL, _KEY);
 
   console.log("Banco de dados conectado!");
+async function fazerLogin() {
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+    const erroDiv = document.getElementById('mensagem-erro');
+
+    erroDiv.style.color = "white";
+    erroDiv.innerText = "Verificando...";
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: senha,
+    });
+
+    if (error) {
+      erroDiv.style.color = "#ff4d4d";
+      erroDiv.innerText = "E-mail ou senha incorretos.";
+    } else {
+      document.getElementById('tela-login').style.display = 'none';
+    }
+  }
 </script>
 
 </body>
