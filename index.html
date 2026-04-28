@@ -598,7 +598,48 @@
     function salvarPla() { const n=document.getElementById('p-nome').value, v=document.getElementById('p-val').value, idx=parseInt(document.getElementById('edit-idx-pla').value); if(n) { if(idx==-1) db.planos.push({nome:n,val:v}); else db.planos[idx]={nome:n,val:v}; fecharModais(); persistir(); } }
     function salvarSrv() { const n=document.getElementById('s-nome').value, c=document.getElementById('s-custo').value, idx=parseInt(document.getElementById('edit-idx-srv').value); if(n) { if(idx==-1) db.servidores.push({nome:n,custo:c}); else db.servidores[idx]={nome:n,custo:c}; fecharModais(); persistir(); } }
     function abrirNovoManual() { if(curTabId==='tab-dash'||curTabId==='tab-cli') { if (!isPremium && !isTrial && db.clientes.length>=10) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-cli').value="-1"; document.getElementById('c-nome').value=""; document.getElementById('c-wpp').value=""; document.getElementById('c-venc').value=""; document.getElementById('c-desconto').value=""; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(curTabId==='tab-pla') { document.getElementById('edit-idx-pla').value="-1"; document.getElementById('p-nome').value=""; document.getElementById('p-val').value=""; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(curTabId==='tab-srv') { if (!isPremium && !isTrial && db.servidores.length>=1) { mostrarModalUpgrade(); return; } document.getElementById('edit-idx-srv').value="-1"; document.getElementById('s-nome').value=""; document.getElementById('s-custo').value=""; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
-    function editarItem(tipo,i) { if(tipo==='cli'){ const c=db.clientes[i]; document.getElementById('edit-idx-cli').value=i; document.getElementById('c-nome').value=c.nome; document.getElementById('c-wpp').value=c.wpp; document.getElementById('c-venc').value=c.venc; document.getElementById('c-desconto').value=c.desconto||0; document.getElementById('modal-cli').style.display='flex'; abrirModalComHistorico('modal-cli'); } else if(tipo==='pla'){ const p=db.planos[i]; document.getElementById('edit-idx-pla').value=i; document.getElementById('p-nome').value=p.nome; document.getElementById('p-val').value=p.val; document.getElementById('modal-pla').style.display='flex'; abrirModalComHistorico('modal-pla'); } else if(tipo==='srv'){ const s=db.servidores[i]; document.getElementById('edit-idx-srv').value=i; document.getElementById('s-nome').value=s.nome; document.getElementById('s-custo').value=s.custo; document.getElementById('modal-srv').style.display='flex'; abrirModalComHistorico('modal-srv'); } }
+    
+    // FUNÇÃO EDITAR ITEM - CORRIGIDA COM findIndex
+    function editarItem(tipo,i) {
+        if(tipo==='cli'){
+            const c = db.clientes[i];
+            document.getElementById('edit-idx-cli').value = i;
+            document.getElementById('c-nome').value = c.nome;
+            document.getElementById('c-wpp').value = c.wpp;
+            document.getElementById('c-venc').value = c.venc;
+            document.getElementById('c-desconto').value = c.desconto||0;
+            
+            // Encontrar o índice do plano pelo nome
+            const planoIdx = db.planos.findIndex(function(p) { return p.nome === c.pNome; });
+            if (planoIdx >= 0) {
+                document.getElementById('c-plano').value = planoIdx;
+            }
+            
+            // Encontrar o índice do servidor pelo nome
+            const srvIdx = db.servidores.findIndex(function(s) { return s.nome === c.sNome; });
+            if (srvIdx >= 0) {
+                document.getElementById('c-srv').value = srvIdx;
+            }
+            
+            document.getElementById('modal-cli').style.display = 'flex';
+            abrirModalComHistorico('modal-cli');
+        } else if(tipo==='pla'){
+            const p = db.planos[i];
+            document.getElementById('edit-idx-pla').value = i;
+            document.getElementById('p-nome').value = p.nome;
+            document.getElementById('p-val').value = p.val;
+            document.getElementById('modal-pla').style.display = 'flex';
+            abrirModalComHistorico('modal-pla');
+        } else if(tipo==='srv'){
+            const s = db.servidores[i];
+            document.getElementById('edit-idx-srv').value = i;
+            document.getElementById('s-nome').value = s.nome;
+            document.getElementById('s-custo').value = s.custo;
+            document.getElementById('modal-srv').style.display = 'flex';
+            abrirModalComHistorico('modal-srv');
+        }
+    }
+    
     function salvarConfigMsg() { if (!isPremium && !isTrial) { mostrarModalUpgrade(); return; } db.configMsg = document.getElementById('cfg-msg-cobranca').value; db.configMsgRenovacao = document.getElementById('cfg-msg-renovacao').value; persistir(); fecharModais(); showToast("Mensagens salvas!"); }
     function confirmarExclusao(tipo,i) { document.getElementById('modal-confirm').style.display='flex'; abrirModalComHistorico('modal-confirm'); document.getElementById('btn-do-delete').onclick = function() { if(tipo==='cli') db.clientes.splice(i,1); else if(tipo==='pla') db.planos.splice(i,1); else if(tipo==='srv') db.servidores.splice(i,1); else if(tipo==='fin') db.transacoes.splice(i,1); showToast('Excluído!', true); persistir(); fecharModais(); }; }
     function filtrarStatus(s) { filtroAtual = (filtroAtual===s) ? null : s; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); if(filtroAtual) { 
