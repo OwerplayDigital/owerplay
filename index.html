@@ -61,17 +61,17 @@
     .hamburger-btn { display: none; position: fixed; top: 16px; right: 16px; z-index: 110; background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-md); width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-md); color: var(--text-primary); transition: all var(--transition-fast); }
     .hamburger-btn:active { transform: scale(0.94); }
 
-    .sidebar { width: var(--sidebar-width); background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-right: 1px solid var(--separator); padding: 24px 16px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 90; box-shadow: var(--shadow-lg); transition: transform var(--transition-spring); overflow-y: auto; }
+    .sidebar { width: var(--sidebar-width); background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-right: 1px solid var(--separator); padding: 24px 16px 40px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 90; box-shadow: var(--shadow-lg); transition: transform var(--transition-spring); overflow-y: auto; }
     .sidebar-close-btn { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: var(--radius-sm); background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); transition: all var(--transition-fast); z-index: 5; }
     .sidebar-close-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-    .sidebar-section { margin-bottom: 16px; }
+    .sidebar-section { margin-bottom: 12px; }
     .sidebar-section-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); font-weight: 700; padding: 6px 10px; margin-bottom: 2px; }
-    .sidebar-divider { height: 1px; background: var(--separator); margin: 10px 0; }
+    .sidebar-divider { height: 1px; background: var(--separator); margin: 8px 0; }
     .logo-area { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; padding: 0 6px; }
     .logo-icon { background: var(--accent-gradient); color: white; width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 16px rgba(220,200,155,0.35); }
     .logo-text { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.04em; color: var(--text-primary); }
-    .nav-item, .sidebar-action { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); font-weight: 500; font-size: 0.85rem; color: var(--text-secondary); transition: all var(--transition-fast); cursor: pointer; background: transparent; border: none; width: 100%; text-align: left; letter-spacing: -0.02em; }
-    .nav-item i, .sidebar-action i { width: 18px; height: 18px; stroke-width: 1.6; opacity: 0.7; }
+    .nav-item, .sidebar-action { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--radius-sm); font-weight: 500; font-size: 0.83rem; color: var(--text-secondary); transition: all var(--transition-fast); cursor: pointer; background: transparent; border: none; width: 100%; text-align: left; letter-spacing: -0.02em; }
+    .nav-item i, .sidebar-action i { width: 17px; height: 17px; stroke-width: 1.6; opacity: 0.7; flex-shrink: 0; }
     .nav-item:hover, .sidebar-action:hover { background: var(--bg-tertiary); color: var(--text-primary); }
     .nav-item.active { background: var(--accent-light); color: var(--accent-dark); font-weight: 600; }
     .nav-item.active i { opacity: 1; stroke-width: 2; }
@@ -101,10 +101,6 @@
 
     .stat-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 16px 18px; box-shadow: var(--shadow-xs); border: 1px solid var(--separator); transition: all var(--transition-fast); position: relative; overflow: hidden; border-left: 3px solid var(--accent); }
     .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-    .stat-card.entrada::before { background: var(--info); }
-    .stat-card.saida::before { background: var(--danger); }
-    .stat-card.lucro::before { background: var(--success); }
-    .stat-card.crescimento::before { background: var(--teal); }
     .stat-card.lucro-dashboard { border-left: none; }
 
     .stat-card.clickable { cursor: pointer; }
@@ -197,6 +193,13 @@
     .pro-badge-lock { font-size: 0.6rem; background: var(--accent-light); color: var(--accent-dark); padding: 2px 6px; border-radius: 8px; margin-left: auto; font-weight: 600; }
     .pro-item { display: flex; align-items: center; gap: 10px; }
 
+    .trial-banner-dash {
+      background: linear-gradient(135deg, #1C1B1A 0%, #2A2725 100%);
+      border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
+      border: 1px solid #DCC89B; display: flex; align-items: center; gap: 10px;
+      color: white; font-size: 0.75rem; font-weight: 500;
+    }
+
     @media (max-width: 1024px) {
       .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: var(--shadow-xl); }
       .main-content { margin-left: 0; padding: 24px 16px 140px; } .hamburger-btn { display: flex; }
@@ -231,6 +234,10 @@
         <button class="sidebar-action pro-item" id="sidebarMensagens"><i data-lucide="message-square"></i> Mensagens <span class="pro-badge-lock">⭐ PRO</span></button>
         <button class="sidebar-action" id="sidebarPlanoPRO"><i data-lucide="crown"></i> <span id="proBadgeText" style="color:#DCC89B;">Plano FREE</span></button>
       </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">Testes</div>
+        <button class="sidebar-action" id="sidebarModoFree" style="font-size:0.7rem;color:var(--danger);"><i data-lucide="refresh-cw" width="14" height="14"></i> Modo FREE (sem teste)</button>
+      </div>
     </aside>
     <main class="main-content" id="mainContent"></main>
     <div class="toast-container" id="toastContainer"></div>
@@ -249,84 +256,158 @@
   <script>
     (function() {
       const STORAGE_KEY = 'owerplay_v5';
-      const TRIAL_DAYS = 7;
+      const TESTE_DIAS = 7;
+      const KIWIFY_LINK = 'https://pay.kiwify.com.br/a26pAg3';
+      const WHATSAPP_LINK = 'https://wa.me/553284911522?text=Ol%C3%A1!%20Quero%20assinar%20o%20Owerplay%20PRO';
+      const JSONBIN_BIN_ID = '69ec4032aaba882197361318';
+      const JSONBIN_MASTER_KEY = '$2a$10$hPThmNbRFc4LJU8Lb39N0ufogEbkwasTJJJV4m3CCTq0DEzgcP.y2';
+      const JSONBIN_API_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+      
       const defaultTemplates = {
         cobranca: "Olá {nome}, Bom dia!\nSeu plano de tv vence hoje *{vencimento}*\n\n⚠️ *Na data do vencimento, o sistema poderá bloquear automaticamente a qualquer momento, renove assim que possível!*\n\nDADOS PARA PAGAMENTO:\nValor: *R${valor}*\nPix:\nBanco:\n\n✅ *Favor enviar comprovante*",
         renovacao: "📌 Obrigado pela confiança!\n✅ Sua assinatura foi renovada com sucesso!\n🗓️ PRÓXIMO VENCIMENTO: *{vencimento}*"
       };
       let db = { clientes: [], planos: [], servidores: [], transacoes: [], templates: defaultTemplates, log: [] };
       let planoPro = false;
-      let trialStart = null;
+      let testeStart = null;
       try { const s = localStorage.getItem(STORAGE_KEY); if (s) { db = JSON.parse(s); if (!db.transacoes) db.transacoes = []; if (!db.templates) db.templates = defaultTemplates; if (!db.log) db.log = []; } } catch(e) { localStorage.removeItem(STORAGE_KEY); }
       try { planoPro = JSON.parse(localStorage.getItem('owerplay_pro') || 'false'); } catch(e) {}
-      try { trialStart = localStorage.getItem('owerplay_trial'); } catch(e) {}
+      try { testeStart = localStorage.getItem('owerplay_teste'); } catch(e) {}
 
-      // ==================== SISTEMA DE TRIAL ====================
-      function initTrial() {
-        if (planoPro) return; // já é PRO pago, ignora trial
-        if (!trialStart) {
-          trialStart = new Date().toISOString();
-          localStorage.setItem('owerplay_trial', trialStart);
+      function initTeste() {
+        if (planoPro) return;
+        if (!testeStart) {
+          testeStart = new Date().toISOString();
+          localStorage.setItem('owerplay_teste', testeStart);
+          setTimeout(() => showToast('🎁 7 dias de teste PRO grátis! Aproveite!', 'info'), 500);
         }
-        const start = new Date(trialStart);
+        const start = new Date(testeStart);
         const now = new Date();
-        const diasRestantes = TRIAL_DAYS - Math.floor((now - start) / (1000 * 60 * 60 * 24));
-        if (diasRestantes > 0) {
-          planoPro = true; // trial ativo
-        } else {
-          planoPro = false; // trial expirado
-        }
+        const diasRestantes = TESTE_DIAS - Math.floor((now - start) / (1000 * 60 * 60 * 24));
+        if (diasRestantes > 0) { planoPro = true; } else { planoPro = false; }
         savePro();
       }
-      function getTrialDaysLeft() {
-        if (!trialStart) return 0;
-        const start = new Date(trialStart);
-        const now = new Date();
-        return Math.max(0, TRIAL_DAYS - Math.floor((now - start) / (1000 * 60 * 60 * 24)));
+      function resetModoFree() {
+        localStorage.removeItem('owerplay_pro');
+        localStorage.setItem('owerplay_teste', new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString());
+        planoPro = false; testeStart = localStorage.getItem('owerplay_teste');
+        savePro(); atualizarBadgePro(); atualizarIconesPro();
+        renderSection(currentSection); showToast('Modo FREE ativado! 🔒', 'info');
       }
-      function isTrial() {
-        return !JSON.parse(localStorage.getItem('owerplay_pro') || 'false') && getTrialDaysLeft() > 0;
+      function getTesteDiasRestantes() {
+        if (!testeStart) return 0;
+        const start = new Date(testeStart); const now = new Date();
+        return Math.max(0, TESTE_DIAS - Math.floor((now - start) / (1000 * 60 * 60 * 24)));
       }
+      function isTesteAtivo() { return !JSON.parse(localStorage.getItem('owerplay_pro') || 'false') && getTesteDiasRestantes() > 0; }
       function savePro() { localStorage.setItem('owerplay_pro', JSON.stringify(planoPro)); atualizarBadgePro(); atualizarIconesPro(); }
       function atualizarBadgePro() {
-        const badge = document.getElementById('proBadgeText');
-        if (!badge) return;
-        if (isTrial()) {
-          const d = getTrialDaysLeft();
-          badge.textContent = 'Trial PRO ⭐ ' + d + ' dia' + (d > 1 ? 's' : '');
-          badge.style.color = '#DCC89B';
-        } else if (planoPro) {
-          badge.textContent = 'Plano PRO ⭐';
-          badge.style.color = '#DCC89B';
-        } else {
-          badge.textContent = 'Plano FREE';
-          badge.style.color = '';
-        }
+        const badge = document.getElementById('proBadgeText'); if (!badge) return;
+        if (isTesteAtivo()) { const d = getTesteDiasRestantes(); badge.textContent = 'Teste PRO ⭐ ' + d + ' dia' + (d > 1 ? 's' : ''); badge.style.color = '#DCC89B'; }
+        else if (planoPro) { badge.textContent = 'Plano PRO ⭐'; badge.style.color = '#DCC89B'; }
+        else { badge.textContent = 'Plano FREE'; badge.style.color = ''; }
       }
       function atualizarIconesPro() {
         const ativo = planoPro;
-        document.querySelectorAll('.pro-badge-lock').forEach(el => {
-          el.style.display = ativo ? 'none' : 'inline';
-        });
+        document.querySelectorAll('.pro-badge-lock').forEach(el => { el.style.display = ativo ? 'none' : 'inline'; });
         const finBadge = document.querySelector('[data-section="financas"] span');
         if (finBadge) finBadge.style.display = ativo ? 'none' : 'inline';
       }
       function exigePRO() { if (!planoPro) { showBannerPRO(); return false; } return true; }
+
+      async function ativarCodigoPremium(codigoDigitado) {
+        try {
+          const resp = await fetch(JSONBIN_API_URL + '/latest', { headers: { 'X-Master-Key': JSONBIN_MASTER_KEY } });
+          const data = await resp.json();
+          const codigos = data.record.codigos;
+          const encontrado = codigos.find(c => c.codigo === codigoDigitado.trim());
+          if (!encontrado) { showToast('Código inválido! ❌', 'error'); return false; }
+          if (encontrado.usado) { showToast('Código já utilizado! ❌', 'error'); return false; }
+          if (encontrado.expiracao && new Date(encontrado.expiracao) < new Date()) { showToast('Código expirado! ❌', 'error'); return false; }
+          encontrado.usado = true;
+          encontrado.data_ativacao = new Date().toISOString();
+          await fetch(JSONBIN_API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY },
+            body: JSON.stringify({ codigos: codigos })
+          });
+          planoPro = true; savePro();
+          showToast('Código ativado! Bem-vindo ao PRO! 🎉');
+          try { confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } }); } catch(e) {}
+          return true;
+        } catch(e) { showToast('Erro ao validar código. Tente novamente.', 'error'); return false; }
+      }
+
       function showBannerPRO() {
-        const dias = getTrialDaysLeft();
-        const trialMsg = dias > 0 ? `<p style="color:#DCC89B;font-size:0.75rem;margin-bottom:12px;">🎁 Trial: ${dias} dia${dias>1?'s':''} restante${dias>1?'s':''}</p>` : '';
-        const html = `<div class="modal-overlay" id="bannerProOverlay"><div class="modal-content" style="max-width:440px;padding:0;background:transparent;border:none;box-shadow:none;animation:none;"><div style="background:linear-gradient(135deg,#1C1B1A 0%,#2A2725 100%);border-radius:22px;padding:28px 24px;text-align:center;max-width:90%;margin:20px auto;border:2px solid #DCC89B;box-shadow:0 16px 48px rgba(220,200,155,0.2);"><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;color:#DCC89B;font-weight:700;margin-bottom:8px;">✨ Owerplay PRO</div><div style="font-size:2.2rem;font-weight:800;color:white;margin-bottom:4px;">R$ 19,90<span style="font-size:1rem;color:#8E8278;">/mês</span></div>${trialMsg}<p style="color:#B5AAA0;font-size:0.85rem;margin-bottom:20px;line-height:1.5;">Desbloqueie clientes ilimitados, servidores ilimitados e muito mais.</p><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;text-align:left;color:#D8D0C0;font-size:0.8rem;"><div>✓ Clientes ilimitados</div><div>✓ Servidores ilimitados</div><div>✓ Exportar/Importar backup</div><div>✓ Mensagens personalizadas</div><div>✓ Gráficos e relatórios avançados</div><div>✓ Histórico financeiro completo</div></div><button style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#DCC89B,#B8A67A);color:white;font-weight:700;font-size:1rem;cursor:pointer;box-shadow:0 8px 24px rgba(220,200,155,0.4);" id="ativarProBtn">Quero ser PRO 🚀</button><p style="color:#8E8278;font-size:0.7rem;margin-top:12px;">Cancele quando quiser</p></div></div></div>`;
+        const dias = getTesteDiasRestantes();
+        const testeMsg = dias > 0 ? `<p style="color:#DCC89B;font-size:0.75rem;margin-bottom:12px;">🎁 Teste: ${dias} dia${dias>1?'s':''} restante${dias>1?'s':''}</p>` : '';
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const bg = isDark ? 'linear-gradient(135deg, #1C1B1A 0%, #2A2725 100%)' : '#FFFFFF';
+        const cardBg = isDark ? '#2A2725' : '#FFFEF5';
+        const textColor = isDark ? '#F5F0EB' : '#1C1B1A';
+        const textSec = isDark ? '#B5AAA0' : '#8E8278';
+        const borderColor = isDark ? '#3D3936' : '#E8E2D5';
+        const dashBorder = isDark ? '#4D4945' : '#D8D0C0';
+        const inputBg = isDark ? '#1C1B1A' : '#FFFFFF';
+        const inputBorder = isDark ? '#4D4945' : '#E8E2D5';
+        const listColor = isDark ? '#D8D0C0' : '#1C1B1A';
+        const sectionTitle = isDark ? '#B5AAA0' : '#B5AAA0';
+        
+        const html = `<div class="modal-overlay" id="bannerProOverlay"><div class="modal-content" style="max-width:440px;padding:0;background:transparent;border:none;box-shadow:none;animation:none;">
+          <div style="background:${bg};border-radius:20px;padding:28px 24px;max-width:90%;margin:20px auto;border:1px solid ${borderColor};box-shadow:0 4px 24px rgba(28,27,26,0.08);">
+            <div style="text-align:center;margin-bottom:20px;">
+              <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#DCC89B;font-weight:600;margin-bottom:4px;">Owerplay Premium</div>
+              <p style="color:${textSec};font-size:0.85rem;margin:0;">Desbloqueie todo o poder do seu gestor</p>
+            </div>
+            <div style="background:${cardBg};border-radius:16px;padding:18px;text-align:center;margin-bottom:16px;border:1px solid ${borderColor};">
+              <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:${textSec};font-weight:600;margin-bottom:4px;">Plano Premium</div>
+              <div style="font-size:1.8rem;font-weight:800;color:${textColor};">R$ 19,90<span style="font-size:0.85rem;color:${textSec};font-weight:500;"> /mês</span></div>
+            </div>
+            ${testeMsg}
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;padding:0 4px;">
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Clientes ilimitados</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Servidores ilimitados</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Backup e restauração de tokens</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Múltiplas mensagens</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Gráficos e relatórios avançados</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Histórico financeiro completo</div>
+            </div>
+            <div style="background:${cardBg};border-radius:14px;padding:14px;margin-bottom:16px;border:1px dashed ${dashBorder};">
+              <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:${sectionTitle};font-weight:600;margin-bottom:8px;">Já tem um código Premium?</div>
+              <div style="display:flex;gap:8px;">
+                <input type="text" class="search-input" id="codigoPremiumInput" placeholder="Digite o código" style="flex:1;background:${inputBg};border-color:${inputBorder};color:${textColor};font-size:0.8rem;">
+                <button class="btn btn-primary" id="ativarCodigoBtn" style="white-space:nowrap;font-size:0.8rem;">Ativar</button>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="btnAssinarPremium" style="width:100%;margin-bottom:8px;">Assinar Premium</button>
+            <button id="btnWhatsApp" style="width:100%;padding:12px;border-radius:14px;border:1px solid #25D366;background:transparent;color:#25D366;font-weight:600;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;">💬 Assinar via WhatsApp</button>
+            <button id="btnTalvezDepois" style="width:100%;padding:10px;border-radius:14px;border:none;background:transparent;color:${textSec};font-weight:500;font-size:0.8rem;cursor:pointer;">Talvez depois</button>
+          </div>
+        </div></div>`;
+        
         document.body.insertAdjacentHTML('beforeend', html);
-        document.getElementById('ativarProBtn').addEventListener('click', () => { planoPro = true; savePro(); document.getElementById('bannerProOverlay').remove(); renderSection(currentSection); showToast('Plano PRO ativado! 🎉 Bem-vindo!'); try { confetti({ particleCount: 80, spread: 80, origin: { y: 0.5 } }); } catch(e) {} });
+        document.getElementById('btnAssinarPremium').addEventListener('click', () => window.open(KIWIFY_LINK, '_blank'));
+        document.getElementById('btnWhatsApp').addEventListener('click', () => window.open(WHATSAPP_LINK, '_blank'));
+        document.getElementById('btnTalvezDepois').addEventListener('click', () => document.getElementById('bannerProOverlay').remove());
+        document.getElementById('ativarCodigoBtn').addEventListener('click', async () => {
+          const codigo = document.getElementById('codigoPremiumInput').value.trim();
+          if (!codigo) { showToast('Digite um código!', 'warning'); return; }
+          document.getElementById('ativarCodigoBtn').disabled = true;
+          document.getElementById('ativarCodigoBtn').textContent = 'Verificando...';
+          const ok = await ativarCodigoPremium(codigo);
+          if (ok) { document.getElementById('bannerProOverlay').remove(); renderSection(currentSection); }
+          else { document.getElementById('ativarCodigoBtn').disabled = false; document.getElementById('ativarCodigoBtn').textContent = 'Ativar'; }
+        });
         document.getElementById('bannerProOverlay').addEventListener('click', (e) => { if (e.target.id === 'bannerProOverlay') e.target.remove(); });
       }
+      
       document.getElementById('sidebarPlanoPRO').addEventListener('click', () => { if (planoPro) { showToast('Você já é PRO! ⭐', 'info'); } else { showBannerPRO(); } });
+      document.getElementById('sidebarModoFree').addEventListener('click', () => { closeSidebar(); resetModoFree(); });
 
       function saveDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); if (currentSection === 'dashboard') renderDashboard(); else if (currentSection === 'financas') renderFinancas(); atualizarNotificacoes(); atualizarDarkModeText(); }
       function addLog(m) { db.log.unshift({ msg: m, data: new Date().toLocaleString('pt-BR') }); if (db.log.length > 50) db.log.pop(); saveDB(); }
       function showToast(m, t) { t = t || 'success'; const c = document.getElementById('toastContainer'); if (!c) return; const icons = { success: 'check-circle', error: 'alert-circle', warning: 'alert-triangle', info: 'info' }; const toast = document.createElement('div'); toast.className = 'toast'; toast.innerHTML = `<i data-lucide="${icons[t]}" width="18" height="18" style="color:var(--${t==='success'?'success':t==='error'?'danger':'warning'})"></i><span>${m}</span>`; c.appendChild(toast); lucide.createIcons(); setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-8px) scale(0.95)'; toast.style.transition = 'all 0.25s ease'; setTimeout(() => toast.remove(), 250); }, 2000); }
 
-      // ==================== BACKUP VIA ARQUIVO .JSON ====================
       function backupArquivo() { if (!exigePRO()) return; const blob = new Blob([JSON.stringify(db, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'owerplay_backup_' + new Date().toISOString().split('T')[0] + '.json'; a.click(); URL.revokeObjectURL(url); addLog('Backup exportado (.json)'); showToast('Backup salvo! 📁'); }
       function restaurarArquivo() { if (!exigePRO()) return; const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.onchange = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const data = JSON.parse(ev.target.result); if (!data.clientes) throw new Error('Inválido'); db = data; if (!db.transacoes) db.transacoes = []; if (!db.templates) db.templates = defaultTemplates; if (!db.log) db.log = []; saveDB(); renderSection(currentSection); showToast('Backup restaurado! ✅'); addLog('Backup restaurado via arquivo'); } catch(err) { showToast('Arquivo inválido', 'error'); } }; reader.readAsText(file); }; input.click(); }
       document.getElementById('sidebarBackup').addEventListener('click', () => { closeSidebar(); backupArquivo(); });
@@ -343,7 +424,7 @@
       const mainContent = document.getElementById('mainContent'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('mobileOverlay'), fab = document.getElementById('fabAdd'), bottomNav = document.getElementById('bottomNav');
       function navigateTo(s, f) { currentSection = s; clientesFilter = f || null; document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(e => e.classList.remove('active')); document.querySelectorAll('[data-section="' + s + '"]').forEach(e => e.classList.add('active')); updateFab(); renderSection(s); closeSidebar(); }
       window.navigateWithFilter = function(f) { navigateTo('clientes', f); };
-      window.navigateToFinancas = function() { if (!exigePRO()) return; navigateTo('financas'); };
+      window.navigateToFinancas = function() { navigateTo('financas'); };
       window.goBack = function() { navigateTo('dashboard'); };
       function updateFab() { if (currentSection === 'financas' || currentSection === 'mensagens') { fab.style.display = 'none'; return; } if (currentSection === 'planos' && db.planos.length === 0) { fab.style.display = 'none'; return; } if (currentSection === 'servidores' && db.servidores.length === 0) { fab.style.display = 'none'; return; } if (currentSection === 'clientes' && db.clientes.length === 0 && db.planos.length === 0 && db.servidores.length === 0) { fab.style.display = 'none'; return; } if (window.innerWidth < 1024) fab.style.display = 'flex'; else fab.style.display = 'none'; }
       window.addEventListener('scroll', () => { const cs = window.pageYOffset || document.documentElement.scrollTop; if (cs > lastScrollY && cs > 100) fab.classList.add('hidden'); else if (cs < lastScrollY) fab.classList.remove('hidden'); lastScrollY = cs <= 0 ? 0 : cs; }, { passive: true });
@@ -374,7 +455,32 @@
       function showNotesModal(cid) { const c = db.clientes.find(x => x.id === cid); if (!c) return; const h = `<div class="modal-overlay" id="notesModalOverlay"><div class="modal-content"><h3>📝 Anotações</h3><p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:14px;">${c.nome}</p><textarea class="textarea-input" id="notesText">${c.anotacoes || ''}</textarea><div style="display:flex;gap:10px;margin-top:16px;"><button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('notesModalOverlay').remove()">Cancelar</button><button class="btn btn-primary" style="flex:1;" id="saveNotesBtn">Salvar</button></div></div></div>`; document.body.insertAdjacentHTML('beforeend', h); lucide.createIcons(); document.getElementById('saveNotesBtn').addEventListener('click', () => { c.anotacoes = document.getElementById('notesText').value; saveDB(); addLog('Anotações: ' + c.nome); document.getElementById('notesModalOverlay').remove(); renderSection(currentSection); showToast('Anotações salvas!'); }); document.getElementById('notesModalOverlay').addEventListener('click', (e) => { if (e.target.id === 'notesModalOverlay') e.target.remove(); }); }
       function showRelatorio() { const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']; const hoje = new Date(); const lb=[], ed=[], sd=[], ld=[]; for (let i=5;i>=0;i--) { const mes=new Date(hoje.getFullYear(),hoje.getMonth()-i,1); const ms=`${mes.getFullYear()}-${String(mes.getMonth()+1).padStart(2,'0')}`; lb.push(meses[mes.getMonth()]); ed.push(db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(ms)).reduce((s,t)=>s+t.valor,0)); sd.push(db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(ms)).reduce((s,t)=>s+t.valor,0)); ld.push(ed[ed.length-1]-sd[sd.length-1]); } const h=`<div class="modal-overlay" id="relatorioOverlay"><div class="modal-content" style="max-width:520px;"><h3 style="margin-bottom:14px;font-weight:700;">📊 Relatório 6 Meses</h3><div class="chart-modal-container"><canvas id="relatorioChart"></canvas></div><button class="btn btn-ghost" style="width:100%;margin-top:16px;" onclick="document.getElementById('relatorioOverlay').remove()">Fechar</button></div></div>`; document.body.insertAdjacentHTML('beforeend',h); setTimeout(()=>{const ctx=document.getElementById('relatorioChart');if(ctx){new Chart(ctx,{type:'bar',data:{labels:lb,datasets:[{label:'Entradas',data:ed,backgroundColor:'#8BA4C2',borderRadius:8,borderSkipped:false},{label:'Saídas',data:sd,backgroundColor:'#D9756B',borderRadius:8,borderSkipped:false},{label:'Lucro',data:ld,backgroundColor:'#8DC98F',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:18,font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});}},200);document.getElementById('relatorioOverlay').addEventListener('click',(e)=>{if(e.target.id==='relatorioOverlay')e.target.remove();});}
 
-      function renderDashboard() { const hoje = new Date().toISOString().split('T')[0]; const ent = db.transacoes.filter(t => t.tipo==='entrada').reduce((s,t) => s+t.valor, 0); const sai = db.transacoes.filter(t => t.tipo==='saida').reduce((s,t) => s+t.valor, 0); const luc = ent - sai; mainContent.innerHTML = `<h1 class="section-title">Owerplay Gestor</h1><p class="section-subtitle">Conectando você ao lucro</p><div style="max-width:400px;margin:0 auto 24px;"><div class="stat-card lucro-dashboard lucro-destaque clickable" onclick="window.navigateToFinancas()"><i data-lucide="arrow-up-right" class="card-arrow" width="18" height="18"></i><div class="stat-label">💰 Lucro do Mês</div><div class="stat-value">R$ ${luc.toFixed(2)}</div></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card clickable" onclick="window.navigateWithFilter('active')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">✅ Ativos</div><div class="stat-value">${db.clientes.filter(c=>c.vencimento>=hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('expired')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">⚠️ Vencidos</div><div class="stat-value" style="color:var(--danger)">${db.clientes.filter(c=>c.vencimento<hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('today')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">📅 Hoje</div><div class="stat-value warning-color">${db.clientes.filter(c=>c.vencimento===hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('all')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">👥 Total</div><div class="stat-value neutral">${db.clientes.length}</div></div></div><input type="text" class="search-input" placeholder="🔍 Buscar cliente..." id="searchDash" style="margin-bottom:16px;"><div class="card-grid" id="dashboardClients"></div>`; renderCards('dashboardClients', db.clientes, hoje); }
+      function renderDashboard() { 
+        const hoje = new Date().toISOString().split('T')[0]; 
+        const ent = db.transacoes.filter(t => t.tipo==='entrada').reduce((s,t) => s+t.valor, 0); 
+        const sai = db.transacoes.filter(t => t.tipo==='saida').reduce((s,t) => s+t.valor, 0); 
+        const luc = ent - sai;
+        const diasTeste = getTesteDiasRestantes();
+        const testeAtivo = isTesteAtivo();
+        
+        let statusBanner = '';
+        if (testeAtivo && diasTeste > 0) {
+          statusBanner = `<div class="trial-banner-dash">
+            <span>⭐</span>
+            <div style="flex:1"><strong>Teste PRO ativo</strong> · ${diasTeste} dia${diasTeste>1?'s':''} restante${diasTeste>1?'s':''}</div>
+            <span style="color:#DCC89B;font-size:0.7rem;">${diasTeste}/7</span>
+          </div>`;
+        } else if (!planoPro) {
+          statusBanner = `<div class="trial-banner-dash" style="border-color:var(--danger);">
+            <span style="font-size:1rem;">⏰</span>
+            <div style="flex:1"><strong>Teste expirado</strong> · Assine o PRO para continuar</div>
+            <button style="background:var(--accent-gradient);border:none;color:white;padding:6px 12px;border-radius:8px;font-weight:600;font-size:0.7rem;cursor:pointer;" onclick="document.getElementById('sidebarPlanoPRO').click()">Assinar</button>
+          </div>`;
+        }
+        
+        mainContent.innerHTML = `<h1 class="section-title">Owerplay Gestor</h1><p class="section-subtitle">Conectando você ao lucro</p>${statusBanner}<div style="max-width:400px;margin:0 auto 24px;"><div class="stat-card lucro-dashboard lucro-destaque clickable" onclick="window.navigateToFinancas()"><i data-lucide="arrow-up-right" class="card-arrow" width="18" height="18"></i><div class="stat-label">💰 Lucro do Mês</div><div class="stat-value">R$ ${luc.toFixed(2)}</div></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card clickable" onclick="window.navigateWithFilter('active')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">✅ Ativos</div><div class="stat-value">${db.clientes.filter(c=>c.vencimento>=hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('expired')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">⚠️ Vencidos</div><div class="stat-value" style="color:var(--danger)">${db.clientes.filter(c=>c.vencimento<hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('today')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">📅 Hoje</div><div class="stat-value warning-color">${db.clientes.filter(c=>c.vencimento===hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('all')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">👥 Total</div><div class="stat-value neutral">${db.clientes.length}</div></div></div><input type="text" class="search-input" placeholder="🔍 Buscar cliente..." id="searchDash" style="margin-bottom:16px;"><div class="card-grid" id="dashboardClients"></div>`; 
+        renderCards('dashboardClients', db.clientes, hoje); 
+      }
       function renderCards(contId, clientes, hoje) { const cont = document.getElementById(contId); if (!cont) return; if (clientes.length === 0) { cont.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i data-lucide="user-round" width="48" height="48"></i><p style="font-size:1.1rem;font-weight:500;">Nenhum cliente encontrado</p></div>`; lucide.createIcons(); return; } cont.innerHTML = clientes.sort((a,b)=>a.vencimento.localeCompare(b.vencimento)).map((c,i) => { const p = db.planos.find(x=>x.id===c.planoId) || {}; const s = db.servidores.find(x=>x.id===c.servidorId) || {}; const ini = c.nome.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase(); let sc='badge-success', st='Ativo'; if (c.vencimento < hoje) { sc='badge-danger'; st='Vencido'; } else if (c.vencimento === hoje) { sc='badge-warning'; st='Hoje'; } return `<div class="client-card" style="animation-delay:${i*0.04}s"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div class="avatar">${ini}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.9rem;">${c.nome}</div><div style="font-size:0.7rem;color:var(--text-secondary);">${p.nome||'Sem plano'} · ${s.nome||'Sem servidor'}</div></div><span class="badge ${sc}">${st}</span></div><div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid var(--separator);font-size:0.75rem;color:var(--text-secondary);margin-bottom:6px;"><span>📅 ${new Date(c.vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</span><span>R$ ${((p.valor||0)-(c.desconto||0)).toFixed(2)}</span></div><div class="action-icons" style="justify-content:flex-end;"><button class="btn-icon whatsapp" onclick="window._wp('${c.id}')"><i data-lucide="messages-square" width="18" height="18"></i></button><button class="btn-icon notes ${c.anotacoes?'has-note':''}" onclick="window._note('${c.id}')"><i data-lucide="file-text" width="18" height="18"></i></button><button class="btn-icon" onclick="window._renovar('${c.id}')"><i data-lucide="rotate-cw" width="18" height="18"></i></button><button class="btn-icon" onclick="window._editar('${c.id}')"><i data-lucide="pencil" width="18" height="18"></i></button><button class="btn-icon danger" onclick="window._excluir('${c.id}')"><i data-lucide="trash" width="18" height="18"></i></button></div></div>`; }).join(''); lucide.createIcons(); }
       function renderClientes() { const hoje = new Date().toISOString().split('T')[0]; let cl = [...db.clientes]; let label = ''; if (clientesFilter === 'active') { cl = cl.filter(c => c.vencimento >= hoje); label = 'Ativos'; } else if (clientesFilter === 'expired') { cl = cl.filter(c => c.vencimento < hoje); label = 'Vencidos'; } else if (clientesFilter === 'today') { cl = cl.filter(c => c.vencimento === hoje); label = 'Hoje'; } else if (clientesFilter === 'all') { label = 'Todos'; } let html = `<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Clientes</h1><p class="section-subtitle">Seus clientes, seu patrimônio</p>`; if (!label && db.clientes.length === 0 && db.planos.length === 0 && db.servidores.length === 0) { html += `<div class="empty-state-card"><div class="empty-state-icon"><i data-lucide="users" width="32" height="32" style="color:var(--accent-dark)"></i></div><div class="empty-state-title">Nenhum cliente</div><div class="empty-state-desc">Cadastre primeiro <strong>Servidor</strong> e <strong>Plano</strong>.</div><button class="btn btn-primary" onclick="window.goBack()">Começar</button></div>`; } else { if (label) html += `<div class="active-filter-badge">🔍 ${label} (${cl.length}) <button onclick="window.clearFilter()"><i data-lucide="x" width="14" height="14"></i></button></div>`; html += `<div class="card-grid" id="clientesList"></div>`; } mainContent.innerHTML = html; if (cl.length > 0 || db.planos.length > 0 || db.servidores.length > 0) { renderCards('clientesList', cl, hoje); } clientesFilter = null; }
       window.clearFilter = function() { clientesFilter = null; renderClientes(); };
@@ -400,7 +506,7 @@
       function renderFinancas() { const hoje = new Date(); const m = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`; const ma = hoje.getMonth()===0?`${hoje.getFullYear()-1}-12`:`${hoje.getFullYear()}-${String(hoje.getMonth()).padStart(2,'0')}`; const ent = db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(m)).reduce((s,t)=>s+t.valor,0); const sai = db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(m)).reduce((s,t)=>s+t.valor,0); const luc = ent-sai; const ea = db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(ma)).reduce((s,t)=>s+t.valor,0); const sa = db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(ma)).reduce((s,t)=>s+t.valor,0); const la = ea-sa; const cresc = la!==0?((luc-la)/Math.abs(la))*100:(luc>0?100:0); const crescTxt = cresc>=0?'+'+cresc.toFixed(1)+'%':cresc.toFixed(1)+'%'; const clienteTransacoes = {}; db.clientes.forEach(c => { clienteTransacoes[c.id] = { nome: c.nome, entrada: 0, saida: 0 }; }); db.transacoes.forEach(t => { if (t.clienteId && clienteTransacoes[t.clienteId]) { if (t.tipo === 'entrada') clienteTransacoes[t.clienteId].entrada += t.valor; else clienteTransacoes[t.clienteId].saida += t.valor; } }); const clienteRows = Object.values(clienteTransacoes).map(ct => { const lucroCli = ct.entrada - ct.saida; return `<tr><td><strong>${ct.nome}</strong></td><td class="transaction-amount positive">+ R$ ${ct.entrada.toFixed(2)}</td><td class="transaction-amount negative">- R$ ${ct.saida.toFixed(2)}</td><td class="transaction-amount ${lucroCli>=0?'positive':'negative'}">${lucroCli>=0?'+':'-'} R$ ${Math.abs(lucroCli).toFixed(2)}</td></tr>`; }).join(''); mainContent.innerHTML=`<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Finanças</h1><p class="section-subtitle">Receitas e despesas do mês</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card lucro"><div class="stat-label"><i data-lucide="wallet" width="14" height="14" style="color:var(--success)"></i> Lucro</div><div class="stat-value positive">R$ ${luc.toFixed(2)}</div></div><div class="stat-card entrada"><div class="stat-label"><i data-lucide="trending-up" width="14" height="14" style="color:var(--info)"></i> Entradas</div><div class="stat-value info-color">R$ ${ent.toFixed(2)}</div></div><div class="stat-card saida"><div class="stat-label"><i data-lucide="trending-down" width="14" height="14" style="color:var(--danger)"></i> Saídas</div><div class="stat-value negative">R$ ${sai.toFixed(2)}</div></div><div class="stat-card crescimento"><div class="stat-label"><i data-lucide="activity" width="14" height="14" style="color:var(--teal)"></i> Crescimento</div><div class="stat-value teal-color">${crescTxt}</div></div></div><div class="stat-card" style="margin-bottom:20px;"><h3 style="margin-bottom:12px;font-weight:600;">📊 Este Mês</h3><div class="chart-container"><canvas id="finChart"></canvas></div></div><div class="stat-card"><h3 style="margin-bottom:12px;font-weight:600;">Resumo por Cliente</h3><div class="table-wrapper"><table class="transaction-table"><thead><tr><th>Cliente</th><th>Entrada</th><th>Saída</th><th>Lucro</th></tr></thead><tbody>${clienteRows||'<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma transação</td></tr>'}</tbody></table></div></div>`;lucide.createIcons();setTimeout(()=>{if(chartInstance)chartInstance.destroy();const ctx=document.getElementById('finChart');if(ctx){chartInstance=new Chart(ctx,{type:'bar',data:{labels:['Este Mês'],datasets:[{label:'Entradas',data:[ent],backgroundColor:'#8BA4C2',borderRadius:8,borderSkipped:false},{label:'Saídas',data:[sai],backgroundColor:'#D9756B',borderRadius:8,borderSkipped:false},{label:'Lucro',data:[luc],backgroundColor:'#8DC98F',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:18,font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});}},200);}
       function renderMensagens() { mainContent.innerHTML = `<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Mensagens</h1><p class="section-subtitle">Comunique-se com seus clientes</p><div class="stat-card" style="margin-bottom:16px;"><h3>📋 Cobrança</h3><p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px;">Tags: {nome}, {sobrenome}, {vencimento}, {valor}, {plano}</p><textarea class="textarea-input" id="tplCobranca" style="min-height:140px;">${db.templates.cobranca}</textarea></div><div class="stat-card" style="margin-bottom:20px;"><h3>📋 Renovação</h3><p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px;">Tags: {nome}, {sobrenome}, {vencimento}</p><textarea class="textarea-input" id="tplRenovacao" style="min-height:100px;">${db.templates.renovacao}</textarea></div><div style="display:flex;gap:10px;"><button class="btn btn-ghost" style="flex:1;" id="resetTpl">Restaurar Padrão</button><button class="btn btn-primary" style="flex:1;" id="saveTpl">Salvar Templates</button></div>`; lucide.createIcons(); document.getElementById('saveTpl').onclick = () => { db.templates.cobranca = document.getElementById('tplCobranca').value; db.templates.renovacao = document.getElementById('tplRenovacao').value; saveDB(); addLog('Templates atualizados'); showToast('Templates salvos!'); }; document.getElementById('resetTpl').onclick = () => { db.templates.cobranca = defaultTemplates.cobranca; db.templates.renovacao = defaultTemplates.renovacao; saveDB(); renderMensagens(); showToast('Restaurado!','info'); }; }
 
-      initTrial();
+      initTeste();
       sincronizarTransacoes(); renderSection('dashboard');
       function checkMobile() { if (window.innerWidth >= 1024 && sidebar) closeSidebar(); updateFab(); }
       window.addEventListener('resize', checkMobile); checkMobile();
