@@ -243,10 +243,6 @@
         <button class="sidebar-action pro-item" id="sidebarMensagens"><i data-lucide="message-square"></i> Mensagens <span class="pro-badge-lock">⭐ PRO</span></button>
         <button class="sidebar-action" id="sidebarPlanoPRO"><i data-lucide="crown"></i> <span id="proBadgeText" style="color:#DCC89B;">Plano FREE</span></button>
       </div>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-section"><div class="sidebar-section-title">Testes</div>
-        <button class="sidebar-action" id="sidebarModoFree" style="font-size:0.7rem;color:var(--danger);"><i data-lucide="refresh-cw" width="14" height="14"></i> Modo FREE (sem teste)</button>
-      </div>
     </aside>
     <main class="main-content" id="mainContent"></main>
     <div class="toast-container" id="toastContainer"></div>
@@ -298,27 +294,20 @@
         if (diasRestantes > 0) { planoPro = true; } else { planoPro = false; }
         savePro();
       }
+      
       function ativarTeste() {
         testeAtivadoPeloUsuario = true;
-        localStorage.setItem('owerplay_teste_ativado', 'true');
+        localStorage.setItem('owerplay_teste_ativado', JSON.stringify(true));
         testeStart = new Date().toISOString();
         localStorage.setItem('owerplay_teste', testeStart);
         planoPro = true;
+        localStorage.setItem('owerplay_pro', JSON.stringify(true));
         savePro();
-        renderSection(currentSection);
-        try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } }); } catch(e) {}
-        setTimeout(() => {
-          showToast(`<div style="text-align:center;"><div style="font-size:1.5rem;margin-bottom:4px;">🎁</div><strong>Teste PRO ativado!</strong><br><span style="font-size:0.8rem;">7 dias com todas as funções liberadas</span></div>`, 'info', true);
-        }, 300);
+        renderSection('dashboard');
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } });
+        showToast('🎁 Teste PRO ativado! 7 dias liberados!', 'info', true);
       }
-      function resetModoFree() {
-        localStorage.removeItem('owerplay_pro');
-        localStorage.removeItem('owerplay_teste');
-        localStorage.removeItem('owerplay_teste_ativado');
-        planoPro = false; testeStart = null; testeAtivadoPeloUsuario = false;
-        savePro(); atualizarBadgePro(); atualizarIconesPro();
-        renderSection(currentSection); showToast('Modo FREE ativado! 🔒', 'info');
-      }
+
       function getTesteDiasRestantes() {
         if (!testeStart) return 0;
         const start = new Date(testeStart); const now = new Date();
@@ -430,11 +419,10 @@
       }
       
       document.getElementById('sidebarPlanoPRO').addEventListener('click', () => { if (planoPro) { showToast('Você já é PRO! ⭐', 'info'); } else { showBannerPRO(); } });
-      document.getElementById('sidebarModoFree').addEventListener('click', () => { closeSidebar(); resetModoFree(); });
 
       function saveDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); if (currentSection === 'dashboard') renderDashboard(); else if (currentSection === 'financas') renderFinancas(); atualizarNotificacoes(); atualizarDarkModeText(); }
       function addLog(m) { db.log.unshift({ msg: m, data: new Date().toLocaleString('pt-BR') }); if (db.log.length > 50) db.log.pop(); saveDB(); }
-      function showToast(m, t, grande) { t = t || 'success'; const c = document.getElementById('toastContainer'); if (!c) return; const icons = { success: 'check-circle', error: 'alert-circle', warning: 'alert-triangle', info: 'info' }; const toast = document.createElement('div'); toast.className = 'toast' + (grande ? ' toast-grande' : ''); toast.innerHTML = `<span>${m}</span>`; c.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-8px) scale(0.95)'; toast.style.transition = 'all 0.25s ease'; setTimeout(() => toast.remove(), 250); }, grande ? 3500 : 2000); }
+      function showToast(m, t, grande) { t = t || 'success'; const c = document.getElementById('toastContainer'); if (!c) return; const toast = document.createElement('div'); toast.className = 'toast' + (grande ? ' toast-grande' : ''); toast.innerHTML = `<span>${m}</span>`; c.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-8px) scale(0.95)'; toast.style.transition = 'all 0.25s ease'; setTimeout(() => toast.remove(), 250); }, grande ? 3500 : 2000); }
 
       function backupArquivo() { if (!exigePRO()) return; const blob = new Blob([JSON.stringify(db, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'owerplay_backup_' + new Date().toISOString().split('T')[0] + '.json'; a.click(); URL.revokeObjectURL(url); addLog('Backup exportado (.json)'); showToast('Backup salvo! 📁'); }
       function restaurarArquivo() { if (!exigePRO()) return; const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.onchange = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const data = JSON.parse(ev.target.result); if (!data.clientes) throw new Error('Inválido'); db = data; if (!db.transacoes) db.transacoes = []; if (!db.templates) db.templates = defaultTemplates; if (!db.log) db.log = []; saveDB(); renderSection(currentSection); showToast('Backup restaurado! ✅'); addLog('Backup restaurado via arquivo'); } catch(err) { showToast('Arquivo inválido', 'error'); } }; reader.readAsText(file); }; input.click(); }
@@ -535,12 +523,6 @@
               e.stopPropagation();
               e.preventDefault();
               ativarTeste();
-            });
-          }
-          const conviteBanner = document.getElementById('conviteTesteBanner');
-          if (conviteBanner) {
-            conviteBanner.addEventListener('click', function(e) {
-              if (e.target.tagName !== 'BUTTON') ativarTeste();
             });
           }
         }, 150);
