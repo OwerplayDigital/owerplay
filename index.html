@@ -161,8 +161,6 @@
     .toast { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 12px 22px; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.85rem; pointer-events: auto; animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); white-space: nowrap; }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-16px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    .toast-grande { padding: 16px 24px !important; font-size: 1rem !important; border-radius: var(--radius-xl) !important; border: 2px solid var(--accent) !important; background: var(--bg-secondary) !important; }
-
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-tertiary); }
     .empty-state-card { text-align: center; padding: 48px 24px; background: var(--bg-secondary); border-radius: var(--radius-2xl); border: 1px solid var(--separator); box-shadow: var(--shadow-sm); max-width: 440px; margin: 0 auto; }
     .empty-state-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
@@ -194,20 +192,6 @@
 
     .pro-badge-lock { font-size: 0.6rem; background: var(--accent-light); color: var(--accent-dark); padding: 2px 6px; border-radius: 8px; margin-left: auto; font-weight: 600; }
     .pro-item { display: flex; align-items: center; gap: 10px; }
-
-    .teste-banner-dash {
-      background: linear-gradient(135deg, #1C1B1A 0%, #2A2725 100%);
-      border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
-      border: 1px solid #3D3936; color: white; font-size: 0.75rem; font-weight: 600;
-    }
-    .teste-barra { height: 4px; background: #3D3936; border-radius: 4px; overflow: hidden; margin-top: 6px; }
-    .teste-barra-preenchida { height: 100%; background: linear-gradient(90deg, #DCC89B, #B8A67A); border-radius: 4px; transition: width 0.5s ease; }
-
-    .convite-banner {
-      background: linear-gradient(135deg, #DCC89B 0%, #CBB888 100%);
-      border-radius: 14px; padding: 16px 18px; margin-bottom: 16px;
-      color: white; text-align: center; box-shadow: 0 4px 20px rgba(220,200,155,0.3);
-    }
 
     @media (max-width: 1024px) {
       .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: var(--shadow-xl); }
@@ -261,7 +245,6 @@
   <script>
     (function() {
       const STORAGE_KEY = 'owerplay_v5';
-      const TESTE_DIAS = 7;
       const KIWIFY_LINK = 'https://pay.kiwify.com.br/a26pAg3';
       const WHATSAPP_LINK = 'https://wa.me/553284911522?text=Ol%C3%A1!%20Quero%20assinar%20o%20Owerplay%20PRO';
       const JSONBIN_BIN_ID = '69ec4032aaba882197361318';
@@ -274,56 +257,13 @@
       };
       let db = { clientes: [], planos: [], servidores: [], transacoes: [], templates: defaultTemplates, log: [] };
       let planoPro = false;
-      let testeStart = null;
-      let testeAtivadoPeloUsuario = false;
       try { const s = localStorage.getItem(STORAGE_KEY); if (s) { db = JSON.parse(s); if (!db.transacoes) db.transacoes = []; if (!db.templates) db.templates = defaultTemplates; if (!db.log) db.log = []; } } catch(e) { localStorage.removeItem(STORAGE_KEY); }
       try { planoPro = JSON.parse(localStorage.getItem('owerplay_pro') || 'false'); } catch(e) {}
-      try { testeStart = localStorage.getItem('owerplay_teste'); } catch(e) {}
-      try { testeAtivadoPeloUsuario = JSON.parse(localStorage.getItem('owerplay_teste_ativado') || 'false'); } catch(e) {}
 
-      function initTeste() {
-        if (planoPro) return;
-        if (!testeStart && !testeAtivadoPeloUsuario) return;
-        if (!testeStart) {
-          testeStart = new Date().toISOString();
-          localStorage.setItem('owerplay_teste', testeStart);
-        }
-        const start = new Date(testeStart);
-        const now = new Date();
-        const diasRestantes = TESTE_DIAS - Math.floor((now - start) / (1000 * 60 * 60 * 24));
-        if (diasRestantes > 0) { planoPro = true; } else { planoPro = false; }
-        savePro();
-      }
-      
-      function ativarTeste() {
-        testeAtivadoPeloUsuario = true;
-        localStorage.setItem('owerplay_teste_ativado', JSON.stringify(true));
-        testeStart = new Date().toISOString();
-        localStorage.setItem('owerplay_teste', testeStart);
-        planoPro = true;
-        localStorage.setItem('owerplay_pro', JSON.stringify(true));
-        savePro();
-        renderSection('dashboard');
-        confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } });
-        showToast('🎁 Teste PRO ativado! 7 dias liberados!', 'info', true);
-      }
-
-      function getTesteDiasRestantes() {
-        if (!testeStart) return 0;
-        const start = new Date(testeStart); const now = new Date();
-        return Math.max(0, TESTE_DIAS - Math.floor((now - start) / (1000 * 60 * 60 * 24)));
-      }
-      function getTesteDiaAtual() {
-        if (!testeStart) return 1;
-        const start = new Date(testeStart); const now = new Date();
-        return Math.min(TESTE_DIAS, Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1);
-      }
-      function isTesteAtivo() { return !JSON.parse(localStorage.getItem('owerplay_pro') || 'false') && getTesteDiasRestantes() > 0; }
       function savePro() { localStorage.setItem('owerplay_pro', JSON.stringify(planoPro)); atualizarBadgePro(); atualizarIconesPro(); }
       function atualizarBadgePro() {
         const badge = document.getElementById('proBadgeText'); if (!badge) return;
-        if (isTesteAtivo()) { const d = getTesteDiasRestantes(); badge.textContent = 'Teste PRO ⭐ ' + d + ' dia' + (d > 1 ? 's' : ''); badge.style.color = '#DCC89B'; }
-        else if (planoPro) { badge.textContent = 'Plano PRO ⭐'; badge.style.color = '#DCC89B'; }
+        if (planoPro) { badge.textContent = 'Plano PRO ⭐'; badge.style.color = '#DCC89B'; }
         else { badge.textContent = 'Plano FREE'; badge.style.color = ''; }
       }
       function atualizarIconesPro() {
@@ -356,8 +296,6 @@
       }
 
       function showBannerPRO() {
-        const dias = getTesteDiasRestantes();
-        const testeMsg = dias > 0 ? `<p style="color:#DCC89B;font-size:0.75rem;margin-bottom:12px;">🎁 Teste: ${dias} dia${dias>1?'s':''} restante${dias>1?'s':''}</p>` : '';
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const bg = isDark ? 'linear-gradient(135deg, #1C1B1A 0%, #2A2725 100%)' : '#FFFFFF';
         const cardBg = isDark ? '#2A2725' : '#FFFEF5';
@@ -380,7 +318,6 @@
               <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:${textSec};font-weight:600;margin-bottom:4px;">Plano PRO</div>
               <div style="font-size:1.8rem;font-weight:800;color:${textColor};">R$ 19,90<span style="font-size:0.85rem;color:${textSec};font-weight:500;"> /mês</span></div>
             </div>
-            ${testeMsg}
             <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;padding:0 4px;">
               <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Clientes ilimitados</div>
               <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:${listColor};">⭐ Servidores ilimitados</div>
@@ -422,7 +359,7 @@
 
       function saveDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); if (currentSection === 'dashboard') renderDashboard(); else if (currentSection === 'financas') renderFinancas(); atualizarNotificacoes(); atualizarDarkModeText(); }
       function addLog(m) { db.log.unshift({ msg: m, data: new Date().toLocaleString('pt-BR') }); if (db.log.length > 50) db.log.pop(); saveDB(); }
-      function showToast(m, t, grande) { t = t || 'success'; const c = document.getElementById('toastContainer'); if (!c) return; const toast = document.createElement('div'); toast.className = 'toast' + (grande ? ' toast-grande' : ''); toast.innerHTML = `<span>${m}</span>`; c.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-8px) scale(0.95)'; toast.style.transition = 'all 0.25s ease'; setTimeout(() => toast.remove(), 250); }, grande ? 3500 : 2000); }
+      function showToast(m, t) { t = t || 'success'; const c = document.getElementById('toastContainer'); if (!c) return; const icons = { success: 'check-circle', error: 'alert-circle', warning: 'alert-triangle', info: 'info' }; const toast = document.createElement('div'); toast.className = 'toast'; toast.innerHTML = `<i data-lucide="${icons[t]}" width="18" height="18" style="color:var(--${t==='success'?'success':t==='error'?'danger':'warning'})"></i><span>${m}</span>`; c.appendChild(toast); lucide.createIcons(); setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-8px) scale(0.95)'; toast.style.transition = 'all 0.25s ease'; setTimeout(() => toast.remove(), 250); }, 2000); }
 
       function backupArquivo() { if (!exigePRO()) return; const blob = new Blob([JSON.stringify(db, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'owerplay_backup_' + new Date().toISOString().split('T')[0] + '.json'; a.click(); URL.revokeObjectURL(url); addLog('Backup exportado (.json)'); showToast('Backup salvo! 📁'); }
       function restaurarArquivo() { if (!exigePRO()) return; const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.onchange = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const data = JSON.parse(ev.target.result); if (!data.clientes) throw new Error('Inválido'); db = data; if (!db.transacoes) db.transacoes = []; if (!db.templates) db.templates = defaultTemplates; if (!db.log) db.log = []; saveDB(); renderSection(currentSection); showToast('Backup restaurado! ✅'); addLog('Backup restaurado via arquivo'); } catch(err) { showToast('Arquivo inválido', 'error'); } }; reader.readAsText(file); }; input.click(); }
@@ -478,54 +415,9 @@
         const ent = db.transacoes.filter(t => t.tipo==='entrada').reduce((s,t) => s+t.valor, 0); 
         const sai = db.transacoes.filter(t => t.tipo==='saida').reduce((s,t) => s+t.valor, 0); 
         const luc = ent - sai;
-        const diasTeste = getTesteDiasRestantes();
-        const diaAtual = getTesteDiaAtual();
-        const testeAtivo = isTesteAtivo();
-        const pct = Math.round((diaAtual / TESTE_DIAS) * 100);
         
-        let statusBanner = '';
-        
-        if (!planoPro && !testeAtivadoPeloUsuario && !testeStart) {
-          statusBanner = `<div class="convite-banner" id="conviteTesteBanner">
-            <span style="font-size:1.8rem;">🎁</span>
-            <div style="font-size:1rem;font-weight:700;margin:6px 0;">Teste grátis de 7 dias PRO!</div>
-            <div style="font-size:0.8rem;opacity:0.9;margin-bottom:12px;">Todas as funções liberadas</div>
-            <button style="background:white;color:#1C1B1A;border:none;padding:10px 22px;border-radius:10px;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);" id="btnAtivarTeste">✨ Ativar teste grátis</button>
-          </div>`;
-        } else if (testeAtivo && diasTeste > 0) {
-          statusBanner = `<div class="teste-banner-dash">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span>⭐</span>
-              <div style="flex:1;font-size:0.75rem;font-weight:600;">Teste PRO · 7 dias grátis</div>
-              <span style="font-size:0.7rem;color:#DCC89B;font-weight:700;">Dia ${diaAtual}/7</span>
-            </div>
-            <div class="teste-barra"><div class="teste-barra-preenchida" style="width:${pct}%;"></div></div>
-            <div style="font-size:0.65rem;color:#8E8278;margin-top:4px;">Todas as funções liberadas durante o teste</div>
-          </div>`;
-        } else if (!planoPro && testeAtivadoPeloUsuario) {
-          statusBanner = `<div class="teste-banner-dash" style="border-color:var(--danger);">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="font-size:1rem;">⏰</span>
-              <div style="flex:1;font-size:0.75rem;font-weight:600;">Teste expirado · Assine o PRO</div>
-              <button style="background:var(--accent-gradient);border:none;color:white;padding:6px 12px;border-radius:8px;font-weight:600;font-size:0.7rem;cursor:pointer;" onclick="document.getElementById('sidebarPlanoPRO').click()">Quero PRO 🚀</button>
-            </div>
-            <div style="font-size:0.65rem;color:#8E8278;margin-top:4px;">Sua conta está no modo FREE. Assine para liberar tudo.</div>
-          </div>`;
-        }
-        
-        mainContent.innerHTML = `<h1 class="section-title">Owerplay Gestor</h1><p class="section-subtitle">Conectando você ao lucro</p>${statusBanner}<div style="max-width:400px;margin:0 auto 24px;"><div class="stat-card lucro-dashboard lucro-destaque clickable" onclick="window.navigateToFinancas()"><i data-lucide="arrow-up-right" class="card-arrow" width="18" height="18"></i><div class="stat-label">💰 Lucro do Mês</div><div class="stat-value">R$ ${luc.toFixed(2)}</div></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card clickable" onclick="window.navigateWithFilter('active')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">✅ Ativos</div><div class="stat-value">${db.clientes.filter(c=>c.vencimento>=hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('expired')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">⚠️ Vencidos</div><div class="stat-value" style="color:var(--danger)">${db.clientes.filter(c=>c.vencimento<hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('today')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">📅 Hoje</div><div class="stat-value warning-color">${db.clientes.filter(c=>c.vencimento===hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('all')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">👥 Total</div><div class="stat-value neutral">${db.clientes.length}</div></div></div><input type="text" class="search-input" placeholder="🔍 Buscar cliente..." id="searchDash" style="margin-bottom:16px;"><div class="card-grid" id="dashboardClients"></div>`; 
+        mainContent.innerHTML = `<h1 class="section-title">Owerplay Gestor</h1><p class="section-subtitle">Conectando você ao lucro</p><div style="max-width:400px;margin:0 auto 24px;"><div class="stat-card lucro-dashboard lucro-destaque clickable" onclick="window.navigateToFinancas()"><i data-lucide="arrow-up-right" class="card-arrow" width="18" height="18"></i><div class="stat-label">💰 Lucro do Mês</div><div class="stat-value">R$ ${luc.toFixed(2)}</div></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card clickable" onclick="window.navigateWithFilter('active')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">✅ Ativos</div><div class="stat-value">${db.clientes.filter(c=>c.vencimento>=hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('expired')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">⚠️ Vencidos</div><div class="stat-value" style="color:var(--danger)">${db.clientes.filter(c=>c.vencimento<hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('today')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">📅 Hoje</div><div class="stat-value warning-color">${db.clientes.filter(c=>c.vencimento===hoje).length}</div></div><div class="stat-card clickable" onclick="window.navigateWithFilter('all')"><i data-lucide="arrow-up-right" class="card-arrow" width="16" height="16"></i><div class="stat-label">👥 Total</div><div class="stat-value neutral">${db.clientes.length}</div></div></div><input type="text" class="search-input" placeholder="🔍 Buscar cliente..." id="searchDash" style="margin-bottom:16px;"><div class="card-grid" id="dashboardClients"></div>`; 
         renderCards('dashboardClients', db.clientes, hoje);
-        
-        setTimeout(() => {
-          const btnAtivar = document.getElementById('btnAtivarTeste');
-          if (btnAtivar) {
-            btnAtivar.addEventListener('click', function(e) {
-              e.stopPropagation();
-              e.preventDefault();
-              ativarTeste();
-            });
-          }
-        }, 150);
       }
       function renderCards(contId, clientes, hoje) { const cont = document.getElementById(contId); if (!cont) return; if (clientes.length === 0) { cont.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i data-lucide="user-round" width="48" height="48"></i><p style="font-size:1.1rem;font-weight:500;">Nenhum cliente encontrado</p></div>`; lucide.createIcons(); return; } cont.innerHTML = clientes.sort((a,b)=>a.vencimento.localeCompare(b.vencimento)).map((c,i) => { const p = db.planos.find(x=>x.id===c.planoId) || {}; const s = db.servidores.find(x=>x.id===c.servidorId) || {}; const ini = c.nome.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase(); let sc='badge-success', st='Ativo'; if (c.vencimento < hoje) { sc='badge-danger'; st='Vencido'; } else if (c.vencimento === hoje) { sc='badge-warning'; st='Hoje'; } return `<div class="client-card" style="animation-delay:${i*0.04}s"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div class="avatar">${ini}</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.9rem;">${c.nome}</div><div style="font-size:0.7rem;color:var(--text-secondary);">${p.nome||'Sem plano'} · ${s.nome||'Sem servidor'}</div></div><span class="badge ${sc}">${st}</span></div><div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid var(--separator);font-size:0.75rem;color:var(--text-secondary);margin-bottom:6px;"><span>📅 ${new Date(c.vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</span><span>R$ ${((p.valor||0)-(c.desconto||0)).toFixed(2)}</span></div><div class="action-icons" style="justify-content:flex-end;"><button class="btn-icon whatsapp" onclick="window._wp('${c.id}')"><i data-lucide="messages-square" width="18" height="18"></i></button><button class="btn-icon notes ${c.anotacoes?'has-note':''}" onclick="window._note('${c.id}')"><i data-lucide="file-text" width="18" height="18"></i></button><button class="btn-icon" onclick="window._renovar('${c.id}')"><i data-lucide="rotate-cw" width="18" height="18"></i></button><button class="btn-icon" onclick="window._editar('${c.id}')"><i data-lucide="pencil" width="18" height="18"></i></button><button class="btn-icon danger" onclick="window._excluir('${c.id}')"><i data-lucide="trash" width="18" height="18"></i></button></div></div>`; }).join(''); lucide.createIcons(); }
       function renderClientes() { const hoje = new Date().toISOString().split('T')[0]; let cl = [...db.clientes]; let label = ''; if (clientesFilter === 'active') { cl = cl.filter(c => c.vencimento >= hoje); label = 'Ativos'; } else if (clientesFilter === 'expired') { cl = cl.filter(c => c.vencimento < hoje); label = 'Vencidos'; } else if (clientesFilter === 'today') { cl = cl.filter(c => c.vencimento === hoje); label = 'Hoje'; } else if (clientesFilter === 'all') { label = 'Todos'; } let html = `<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Clientes</h1><p class="section-subtitle">Seus clientes, seu patrimônio</p>`; if (!label && db.clientes.length === 0 && db.planos.length === 0 && db.servidores.length === 0) { html += `<div class="empty-state-card"><div class="empty-state-icon"><i data-lucide="users" width="32" height="32" style="color:var(--accent-dark)"></i></div><div class="empty-state-title">Nenhum cliente</div><div class="empty-state-desc">Cadastre primeiro <strong>Servidor</strong> e <strong>Plano</strong>.</div><button class="btn btn-primary" onclick="window.goBack()">Começar</button></div>`; } else { if (label) html += `<div class="active-filter-badge">🔍 ${label} (${cl.length}) <button onclick="window.clearFilter()"><i data-lucide="x" width="14" height="14"></i></button></div>`; html += `<div class="card-grid" id="clientesList"></div>`; } mainContent.innerHTML = html; if (cl.length > 0 || db.planos.length > 0 || db.servidores.length > 0) { renderCards('clientesList', cl, hoje); } clientesFilter = null; }
@@ -549,10 +441,9 @@
       window._delServ = (id) => { const s = db.servidores.find(x => x.id===id); if (!s) return; showConfirmModal('Tem certeza?', 'Esta ação é <strong>irreversível</strong>.', 'delete', 'Sim, excluir', 'btn-danger', () => { db.servidores = db.servidores.filter(x => x.id!==id); sincronizarTransacoes(); addLog('Servidor ' + s.nome + ' excluído'); renderSection('servidores'); showToast('Excluído!'); }); };
       function abrirModalServidor(id = null) { const s = id ? db.servidores.find(x => x.id === id) : null; const h = `<div class="modal-overlay" id="modalServ"><div class="modal-content"><h2 style="margin-bottom:14px;">${id?'Editar':'Novo'} Servidor</h2><div style="display:flex;flex-direction:column;gap:12px;"><div><label class="field-label">Nome</label><input class="search-input" id="nomeServ" value="${s?.nome||''}"></div><div><label class="field-label">Custo (R$)</label><input type="number" class="search-input" id="custoServ" value="${s?.custo||''}"></div></div><div style="display:flex;gap:10px;margin-top:20px;"><button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('modalServ').remove()">Cancelar</button><button class="btn btn-primary" style="flex:1;" id="saveServ">Salvar</button></div></div></div>`; document.body.insertAdjacentHTML('beforeend', h); document.getElementById('saveServ').addEventListener('click', () => { const n = document.getElementById('nomeServ').value.trim(); const c = parseFloat(document.getElementById('custoServ').value)||0; if (!n||c<=0) { showToast('Inválido', 'error'); return; } if (id) db.servidores = db.servidores.map(x => x.id===id ? {id,nome:n,custo:c} : x); else db.servidores.push({id:'s'+Date.now(),nome:n,custo:c}); if (id) sincronizarTransacoes(); saveDB(); addLog(id ? ('Servidor ' + n + ' atualizado') : ('Servidor ' + n + ' criado')); document.getElementById('modalServ').remove(); renderSection('servidores'); showToast('Servidor salvo!'); }); document.getElementById('modalServ').addEventListener('click', (e) => { if (e.target.id==='modalServ') e.target.remove(); }); }
 
-      function renderFinancas() { const hoje = new Date(); const m = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`; const ma = hoje.getMonth()===0?`${hoje.getFullYear()-1}-12`:`${hoje.getFullYear()}-${String(hoje.getMonth()).padStart(2,'0')}`; const ent = db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(m)).reduce((s,t)=>s+t.valor,0); const sai = db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(m)).reduce((s,t)=>s+t.valor,0); const luc = ent-sai; const ea = db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(ma)).reduce((s,t)=>s+t.valor,0); const sa = db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(ma)).reduce((s,t)=>s+t.valor,0); const la = ea-sa; const cresc = la!==0?((luc-la)/Math.abs(la))*100:(luc>0?100:0); const crescTxt = cresc>=0?'+'+cresc.toFixed(1)+'%':cresc.toFixed(1)+'%'; const clienteTransacoes = {}; db.clientes.forEach(c => { clienteTransacoes[c.id] = { nome: c.nome, entrada: 0, saida: 0 }; }); db.transacoes.forEach(t => { if (t.clienteId && clienteTransacoes[t.clienteId]) { if (t.tipo === 'entrada') clienteTransacoes[t.clienteId].entrada += t.valor; else clienteTransacoes[t.clienteId].saida += t.valor; } }); const clienteRows = Object.values(clienteTransacoes).map(ct => { const lucroCli = ct.entrada - ct.saida; return `<tr><td><strong>${ct.nome}</strong></td><td class="transaction-amount positive">+ R$ ${ct.entrada.toFixed(2)}</td><td class="transaction-amount negative">- R$ ${ct.saida.toFixed(2)}</td><td class="transaction-amount ${lucroCli>=0?'positive':'negative'}">${lucroCli>=0?'+':'-'} R$ ${Math.abs(lucroCli).toFixed(2)}</td></tr>`; }).join(''); mainContent.innerHTML=`<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Finanças</h1><p class="section-subtitle">Receitas e despesas do mês</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card lucro"><div class="stat-label"><i data-lucide="wallet" width="14" height="14" style="color:var(--success)"></i> Lucro</div><div class="stat-value positive">R$ ${luc.toFixed(2)}</div></div><div class="stat-card entrada"><div class="stat-label"><i data-lucide="trending-up" width="14" height="14" style="color:var(--info)"></i> Entradas</div><div class="stat-value info-color">R$ ${ent.toFixed(2)}</div></div><div class="stat-card saida"><div class="stat-label"><i data-lucide="trending-down" width="14" height="14" style="color:var(--danger)"></i> Saídas</div><div class="stat-value negative">R$ ${sai.toFixed(2)}</div></div><div class="stat-card crescimento"><div class="stat-label"><i data-lucide="activity" width="14" height="14" style="color:var(--teal)"></i> Crescimento</div><div class="stat-value teal-color">${crescTxt}</div></div></div><div class="stat-card" style="margin-bottom:20px;"><h3 style="margin-bottom:12px;font-weight:600;">📊 Este Mês</h3><div class="chart-container"><canvas id="finChart"></canvas></div></div><div class="stat-card"><h3 style="margin-bottom:12px;font-weight:600;">Resumo por Cliente</h3><div class="table-wrapper"><table class="transaction-table"><thead><tr><th>Cliente</th><th>Entrada</th><th>Saída</th><th>Lucro</th></tr></thead><tbody>${clienteRows||'<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma transação</td></tr>'}</tbody></table></div></div>`;lucide.createIcons();setTimeout(()=>{if(chartInstance)chartInstance.destroy();const ctx=document.getElementById('finChart');if(ctx){chartInstance=new Chart(ctx,{type:'bar',data:{labels:['Este Mês'],datasets:[{label:'Entradas',data:[ent],backgroundColor:'#8BA4C2',borderRadius:8,borderSkipped:false},{label:'Saídas',data:[sai],backgroundColor:'#D9756B',borderRadius:8,borderSkipped:false},{label:'Lucro',data:[luc],backgroundColor:'#8DC98F',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:18,font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});}},200);}
+      function renderFinancas() { const hoje = new Date(); const m = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`; const ma = hoje.getMonth()===0?`${hoje.getFullYear()-1}-12`:`${hoje.getFullYear()}-${String(hoje.getMonth()).padStart(2,'0')}`; const ent = db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(m)).reduce((s,t)=>s+t.valor,0); const sai = db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(m)).reduce((s,t)=>s+t.valor,0); const luc = ent-sai; const ea = db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(ma)).reduce((s,t)=>s+t.valor,0); const sa = db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(ma)).reduce((s,t)=>s+t.valor,0); const la = ea-sa; const cresc = la!==0?((luc-la)/Math.abs(la))*100:(luc>0?100:0); const crescTxt = cresc>=0?'+'+cresc.toFixed(1)+'%':cresc.toFixed(1)+'%'; const clienteTransacoes = {}; db.clientes.forEach(c => { clienteTransacoes[c.id] = { nome: c.nome, entrada: 0, saida: 0 }; }); db.transacoes.forEach(t => { if (t.clienteId && clienteTransacoes[t.clienteId]) { if (t.tipo === 'entrada') clienteTransacoes[t.clienteId].entrada += t.valor; else clienteTransacoes[t.clienteId].saida += t.valor; } }); const clienteRows = Object.values(clienteTransacoes).slice(0, planoPro ? undefined : 10).map(ct => { const lucroCli = ct.entrada - ct.saida; return `<tr><td><strong>${ct.nome}</strong></td><td class="transaction-amount positive">+ R$ ${ct.entrada.toFixed(2)}</td><td class="transaction-amount negative">- R$ ${ct.saida.toFixed(2)}</td><td class="transaction-amount ${lucroCli>=0?'positive':'negative'}">${lucroCli>=0?'+':'-'} R$ ${Math.abs(lucroCli).toFixed(2)}</td></tr>`; }).join(''); mainContent.innerHTML=`<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Finanças</h1><p class="section-subtitle">Receitas e despesas do mês${!planoPro?' · <small style="color:var(--warning);">Limitado a 10 transações</small>':''}</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:24px;"><div class="stat-card lucro"><div class="stat-label"><i data-lucide="wallet" width="14" height="14" style="color:var(--success)"></i> Lucro</div><div class="stat-value positive">R$ ${luc.toFixed(2)}</div></div><div class="stat-card entrada"><div class="stat-label"><i data-lucide="trending-up" width="14" height="14" style="color:var(--info)"></i> Entradas</div><div class="stat-value info-color">R$ ${ent.toFixed(2)}</div></div><div class="stat-card saida"><div class="stat-label"><i data-lucide="trending-down" width="14" height="14" style="color:var(--danger)"></i> Saídas</div><div class="stat-value negative">R$ ${sai.toFixed(2)}</div></div><div class="stat-card crescimento"><div class="stat-label"><i data-lucide="activity" width="14" height="14" style="color:var(--teal)"></i> Crescimento</div><div class="stat-value teal-color">${crescTxt}</div></div></div><div class="stat-card" style="margin-bottom:20px;"><h3 style="margin-bottom:12px;font-weight:600;">📊 Este Mês</h3><div class="chart-container"><canvas id="finChart"></canvas></div></div><div class="stat-card"><h3 style="margin-bottom:12px;font-weight:600;">Resumo por Cliente</h3><div class="table-wrapper"><table class="transaction-table"><thead><tr><th>Cliente</th><th>Entrada</th><th>Saída</th><th>Lucro</th></tr></thead><tbody>${clienteRows||'<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma transação</td></tr>'}</tbody></table></div></div>`;lucide.createIcons();setTimeout(()=>{if(chartInstance)chartInstance.destroy();const ctx=document.getElementById('finChart');if(ctx){chartInstance=new Chart(ctx,{type:'bar',data:{labels:['Este Mês'],datasets:[{label:'Entradas',data:[ent],backgroundColor:'#8BA4C2',borderRadius:8,borderSkipped:false},{label:'Saídas',data:[sai],backgroundColor:'#D9756B',borderRadius:8,borderSkipped:false},{label:'Lucro',data:[luc],backgroundColor:'#8DC98F',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:18,font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});}},200);}
       function renderMensagens() { mainContent.innerHTML = `<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Mensagens</h1><p class="section-subtitle">Comunique-se com seus clientes</p><div class="stat-card" style="margin-bottom:16px;"><h3>📋 Cobrança</h3><p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px;">Tags: {nome}, {sobrenome}, {vencimento}, {valor}, {plano}</p><textarea class="textarea-input" id="tplCobranca" style="min-height:140px;">${db.templates.cobranca}</textarea></div><div class="stat-card" style="margin-bottom:20px;"><h3>📋 Renovação</h3><p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px;">Tags: {nome}, {sobrenome}, {vencimento}</p><textarea class="textarea-input" id="tplRenovacao" style="min-height:100px;">${db.templates.renovacao}</textarea></div><div style="display:flex;gap:10px;"><button class="btn btn-ghost" style="flex:1;" id="resetTpl">Restaurar Padrão</button><button class="btn btn-primary" style="flex:1;" id="saveTpl">Salvar Templates</button></div>`; lucide.createIcons(); document.getElementById('saveTpl').onclick = () => { db.templates.cobranca = document.getElementById('tplCobranca').value; db.templates.renovacao = document.getElementById('tplRenovacao').value; saveDB(); addLog('Templates atualizados'); showToast('Templates salvos!'); }; document.getElementById('resetTpl').onclick = () => { db.templates.cobranca = defaultTemplates.cobranca; db.templates.renovacao = defaultTemplates.renovacao; saveDB(); renderMensagens(); showToast('Restaurado!','info'); }; }
 
-      initTeste();
       sincronizarTransacoes(); renderSection('dashboard');
       function checkMobile() { if (window.innerWidth >= 1024 && sidebar) closeSidebar(); updateFab(); }
       window.addEventListener('resize', checkMobile); checkMobile();
