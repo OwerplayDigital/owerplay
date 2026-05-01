@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0288D1">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A1929">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Owerplay Gestor">
   <meta name="description" content="Gestor de clientes IPTV">
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk93ZXJwbGF5IEdlc3RvciIsCiAgInNob3J0X25hbWUiOiAiT3dlcnBsYXkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI0YwRjhGRiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjg4RDEiLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0b3IgZGUgY2xpZW50ZXMgSVBUViIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmclMjB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnJTIwdmlld0JveD0nMCAwJTIwMTAwJTIwMTAwJyUzRSUzQ2NpcmNsZSUyMGN4PSc1MCclMjBjeT0nNTAlMjByPSc1MCclMjBmaWxsPSclMjMwMjg4RDEnLyUzRSUzQ3RleHQlMjB4PSc1MCUnMjB5PSc1MCUnMjBkb21pbmFudC1iYXNlbGluZT0nY2VudHJhbCclMjB0ZXh0LWFuY2hvcj0nbWlkZGxlJyUyMGZpbGw9J3doaXRlJyUyMGZvbnQtc2l6ZT0nNTAnMjBmb250LWZhbWlseT0nc2Fucy1zZXJpZiclMjBmb250LXdlaWdodD0nYm9sZCclM0UlRTIlOUMlQTYlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9">
@@ -177,52 +177,6 @@
     .btn-delete-row i { width:16px; height:16px; stroke-width:1.8; }
     .active-filter-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:20px; background:var(--accent-light); color:var(--accent-dark); font-size:0.8rem; font-weight:600; margin-bottom:16px; }
     .active-filter-badge button { background:none; border:none; color:var(--accent-dark); cursor:pointer; padding:0; display:flex; align-items:center; }
-
-    /* Exit popup personalizado */
-    .exit-popup-overlay {
-      position: fixed; inset: 0; background: rgba(10,25,41,0.5);
-      backdrop-filter: blur(12px); z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
-      animation: fadeIn 0.2s ease;
-    }
-    .exit-popup {
-      background: var(--bg-secondary); border-radius: 24px;
-      padding: 28px 24px 24px; width: 90%; max-width: 340px;
-      text-align: center; box-shadow: 0 24px 64px rgba(10,25,41,0.2);
-      border: 1px solid var(--separator);
-      animation: slideUp 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
-    }
-    .exit-popup-icon {
-      width: 60px; height: 60px; border-radius: 50%;
-      background: var(--accent-light); margin: 0 auto 16px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .exit-popup h3 {
-      font-size: 1.1rem; font-weight: 700; margin-bottom: 6px;
-      color: var(--text-primary);
-    }
-    .exit-popup p {
-      font-size: 0.85rem; color: var(--text-secondary);
-      margin-bottom: 20px; line-height: 1.4;
-    }
-    .exit-popup-buttons {
-      display: flex; gap: 10px;
-    }
-    .exit-popup-buttons button {
-      flex: 1; padding: 12px; border-radius: 14px;
-      font-weight: 600; font-size: 0.85rem; border: none;
-      cursor: pointer; transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
-    }
-    .exit-btn-no {
-      background: var(--bg-tertiary); color: var(--text-primary);
-    }
-    .exit-btn-no:active { transform: scale(0.96); }
-    .exit-btn-yes {
-      background: var(--accent-gradient); color: white;
-      box-shadow: 0 4px 16px rgba(2,136,209,0.3);
-    }
-    .exit-btn-yes:active { transform: scale(0.96); }
 
     @media (max-width:1024px) {
       .sidebar { transform:translateX(-100%); }
@@ -478,7 +432,33 @@
       function toggleDarkMode() { const h = document.documentElement; const t = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; h.setAttribute('data-theme', t); localStorage.setItem('theme', t); atualizarDarkModeText(); showToast('Tema '+(t==='dark'?'escuro':'claro')+' ativado', 'info'); }
       function atualizarDarkModeText() { const span = document.getElementById('darkModeText'); const isDark = document.documentElement.getAttribute('data-theme') === 'dark'; if(span) span.textContent = isDark ? 'Modo Claro' : 'Modo Escuro'; const icon = document.querySelector('#sidebarDarkMode i'); if(icon) { icon.setAttribute('data-lucide', isDark?'sun':'moon'); lucide.createIcons(); } }
       function atualizarNotificacoes() { const hoje = new Date().toISOString().split('T')[0]; const v = db.clientes.filter(c => c.vencimento < hoje).length; const badge = document.getElementById('notifBadge'); if(badge) { if(v>0) { badge.style.display = 'inline'; badge.textContent = v; } else { badge.style.display = 'none'; } } }
-      function backupArquivo() { if(!exigePRO()) return; const blob = new Blob([JSON.stringify(db,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'owerplay_backup_'+new Date().toISOString().split('T')[0]+'.json'; a.click(); URL.revokeObjectURL(url); addLog('Backup exportado (.json)'); showToast('Backup salvo! 📁'); }
+
+      // Backup - Funciona no APK (abre no navegador) e no navegador (download direto)
+      function backupArquivo() {
+        if(!exigePRO()) return;
+        const jsonStr = JSON.stringify(db, null, 2);
+        const isWebView = navigator.userAgent.includes('wv') || navigator.userAgent.includes('WebView');
+        
+        if (isWebView) {
+          // No APK: abre o JSON em uma nova aba para download
+          const blob = new Blob([jsonStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank');
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+        } else {
+          // No navegador: download direto
+          const blob = new Blob([jsonStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'owerplay_backup_' + new Date().toISOString().split('T')[0] + '.json';
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+        addLog('Backup exportado (.json)');
+        showToast('Backup salvo! 📁');
+      }
+
       function restaurarArquivo() { if(!exigePRO()) return; const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.onchange = (e) => { const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = (ev) => { try { const data = JSON.parse(ev.target.result); if(!data.clientes) throw new Error('Inválido'); db = data; if(!db.transacoes) db.transacoes=[]; if(!db.templates) db.templates=defaultTemplates; if(!db.log) db.log=[]; if(!db.transacoesRemovidas) db.transacoesRemovidas=[]; saveDB(); renderSection(currentSection); showToast('Backup restaurado! ✅'); addLog('Backup restaurado via arquivo'); } catch(err) { showToast('Arquivo inválido', 'error'); } }; reader.readAsText(file); }; input.click(); }
       document.getElementById('sidebarBackup').addEventListener('click', () => { closeSidebar(); backupArquivo(); });
       document.getElementById('sidebarRestore').addEventListener('click', () => { closeSidebar(); restaurarArquivo(); });
@@ -520,89 +500,6 @@
             }
           }
         }, { passive: false });
-      })();
-
-      // Exit popup personalizado (funciona no WebView)
-      (function() {
-        let exitPopupVisible = false;
-        let backPressCount = 0;
-        
-        function showExitPopup() {
-          if (exitPopupVisible) return;
-          exitPopupVisible = true;
-          
-          const html = `<div class="exit-popup-overlay" id="exitPopupOverlay">
-            <div class="exit-popup">
-              <div class="exit-popup-icon">
-                <i data-lucide="log-out" width="28" height="28" style="color:var(--accent-dark)"></i>
-              </div>
-              <h3>Sair do Owerplay Gestor?</h3>
-              <p>Tem certeza que deseja fechar o aplicativo?</p>
-              <div class="exit-popup-buttons">
-                <button class="exit-btn-no" id="exitBtnNo">Ficar</button>
-                <button class="exit-btn-yes" id="exitBtnYes">Sair</button>
-              </div>
-            </div>
-          </div>`;
-          
-          document.body.insertAdjacentHTML('beforeend', html);
-          lucide.createIcons();
-          
-          document.getElementById('exitBtnNo').addEventListener('click', () => {
-            document.getElementById('exitPopupOverlay').remove();
-            exitPopupVisible = false;
-            backPressCount = 0;
-          });
-          
-          document.getElementById('exitBtnYes').addEventListener('click', () => {
-            document.getElementById('exitPopupOverlay').remove();
-            exitPopupVisible = false;
-            // Tenta várias formas de fechar o app
-            try {
-              if (navigator.app && navigator.app.exitApp) {
-                navigator.app.exitApp();
-              } else if (window.Android && window.Android.exit) {
-                window.Android.exit();
-              } else {
-                window.close();
-                window.history.go(-(window.history.length));
-                // Último recurso
-                setTimeout(() => {
-                  window.location.href = 'about:blank';
-                }, 300);
-              }
-            } catch(e) {
-              window.close();
-            }
-          });
-          
-          document.getElementById('exitPopupOverlay').addEventListener('click', (e) => {
-            if (e.target.id === 'exitPopupOverlay') {
-              document.getElementById('exitPopupOverlay').remove();
-              exitPopupVisible = false;
-              backPressCount = 0;
-            }
-          });
-        }
-        
-        window.addEventListener('popstate', (e) => {
-          e.preventDefault();
-          backPressCount++;
-          if (backPressCount === 1) {
-            showExitPopup();
-          }
-          history.pushState(null, null, location.href);
-        });
-        
-        history.pushState(null, null, location.href);
-        
-        document.addEventListener('backbutton', (e) => {
-          e.preventDefault();
-          backPressCount++;
-          if (backPressCount === 1) {
-            showExitPopup();
-          }
-        }, false);
       })();
 
     })();
