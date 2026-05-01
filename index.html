@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0288D1">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A1929">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Owerplay Gestor">
   <meta name="description" content="Gestor de clientes IPTV">
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk93ZXJwbGF5IEdlc3RvciIsCiAgInNob3J0X25hbWUiOiAiT3dlcnBsYXkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI0YwRjhGRiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjg4RDEiLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0b3IgZGUgY2xpZW50ZXMgSVBUViIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmclMjB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnJTIwdmlld0JveD0nMCAwJTIwMTAwJTIwMTAwJyUzRSUzQ2NpcmNsZSUyMGN4PSc1MCclMjBjeT0nNTAlMjByPSc1MCclMjBmaWxsPSclMjMwMjg4RDEnLyUzRSUzQ3RleHQlMjB4PSc1MCUnMjB5PSc1MCUnMjBkb21pbmFudC1iYXNlbGluZT0nY2VudHJhbCclMjB0ZXh0LWFuY2hvcj0nbWlkZGxlJyUyMGZpbGw9J3doaXRlJyUyMGZvbnQtc2l6ZT0nNTAnMjBmb250LWZhbWlseT0nc2Fucy1zZXJpZiclMjBmb250LXdlaWdodD0nYm9sZCclM0UlRTIlOUMlQTYlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9">
@@ -280,6 +280,16 @@
   </div>
 
   <script>
+    // Modo Full Screen (esconde barra de status no WebView)
+    if (window.Android || navigator.userAgent.includes('wv') || navigator.userAgent.includes('WebView')) {
+      document.addEventListener('DOMContentLoaded', function() {
+        document.documentElement.style.backgroundColor = '#0288D1';
+        if (window.Android && window.Android.setFullscreen) {
+          window.Android.setFullscreen(true);
+        }
+      });
+    }
+
     if('serviceWorker' in navigator) {
       const swBlob = new Blob([`const CACHE_NAME='owerplay-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(['/','https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap','https://unpkg.com/lucide@latest','https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js','https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js'])));self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(r&&r.status===200){let cl=r.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,cl))}return r})).catch(()=>caches.match(e.request)))})`], {type:'application/javascript'});
       navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
