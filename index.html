@@ -51,12 +51,13 @@
       --glass-bg: rgba(16,42,67,0.85); --glass-border: rgba(255,255,255,0.06);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height: 100%; overflow: auto !important; -webkit-overflow-scrolling: touch !important; }
     body {
       font-family:'Inter',-apple-system,sans-serif; background:var(--bg-primary);
       color:var(--text-primary); display:flex; min-height:100vh; line-height:1.47;
       font-weight:400; -webkit-font-smoothing:antialiased;
-      overflow-x:hidden; transition:background var(--transition-smooth),color var(--transition-smooth);
-      touch-action:pan-y;
+      transition:background var(--transition-smooth),color var(--transition-smooth);
+      touch-action:pan-y; position: relative;
     }
     .app-container { display:flex; width:100%; min-height:100vh; position:relative; }
     .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(10,25,41,0.3); backdrop-filter:blur(8px); z-index:95; opacity:0; transition:opacity var(--transition-smooth); pointer-events:none; }
@@ -77,7 +78,7 @@
     .nav-item:hover,.sidebar-action:hover { background:var(--bg-tertiary); color:var(--text-primary); }
     .nav-item.active { background:var(--accent-light); color:var(--accent-dark); font-weight:600; }
     .nav-item.active i { opacity:1; stroke-width:2; }
-    .main-content { flex:1; margin-left:var(--sidebar-width); padding:32px 28px 100px; width:100%; min-height:100vh; transition:margin-left var(--transition-spring); touch-action:pan-y; }
+    .main-content { flex:1; margin-left:var(--sidebar-width); padding:32px 28px 100px; width:100%; min-height:100vh; transition:margin-left var(--transition-spring); overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; }
     .bottom-nav { display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); width:calc(100% - 24px); max-width:520px; background:var(--glass-bg); backdrop-filter:var(--glass-blur); border-radius:var(--radius-2xl); padding:8px; box-shadow:var(--shadow-xl); z-index:100; border:1px solid var(--separator); }
     .bottom-nav.dock-hidden { opacity:0; transform:translateX(-50%) translateY(20px); pointer-events:none; }
     .bottom-nav-inner { display:flex; justify-content:space-around; align-items:center; }
@@ -177,7 +178,7 @@
     @media (max-width:1024px) {
       .sidebar { transform:translateX(-100%); }
       .sidebar.open { transform:translateX(0); box-shadow:var(--shadow-xl); }
-      .main-content { margin-left:0; padding:24px 16px 140px; }
+      .main-content { margin-left:0; padding:24px 16px 140px; overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; }
       .hamburger-btn { display:flex; }
       .bottom-nav { display:block; }
       .fab { display:flex; }
@@ -287,8 +288,12 @@
         const valor = ((p?.valor||0)-(c.desconto||0)).toFixed(2);
         let msg = tpl.replace(/{nome}/g, c.nome.split(' ')[0]).replace(/{sobrenome}/g, c.nome.split(' ').slice(1).join(' ')).replace(/{nome_completo}/g, c.nome).replace(/{vencimento}/g, venc).replace(/{valor}/g, valor).replace(/{plano}/g, p?.nome||'');
         const waWeb = 'https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent(msg);
-        if(navigator.userAgent.includes('wv')||navigator.userAgent.includes('WebView')) { try { window.location.href = 'intent://send?phone='+c.whatsapp+'&text='+encodeURIComponent(msg)+'#Intent;scheme=whatsapp;package=com.whatsapp;end'; setTimeout(() => { window.open(waWeb, '_blank'); }, 1500); } catch(e) { window.open(waWeb, '_blank'); } }
-        else { window.open(waWeb, '_blank'); }
+        const isWebView = navigator.userAgent.includes('wv')||navigator.userAgent.includes('WebView');
+        if(isWebView) {
+          const waApp = 'whatsapp://send?phone='+c.whatsapp+'&text='+encodeURIComponent(msg);
+          window.location.href = waApp;
+          setTimeout(() => { window.open(waWeb, '_blank'); }, 2000);
+        } else { window.open(waWeb, '_blank'); }
       }
 
       let currentSection = 'dashboard', clientesFilter = null, chartInstance = null, lastScrollY = 0;
@@ -390,7 +395,7 @@
         setTimeout(() => { if(chartInstance) chartInstance.destroy(); const ctx = document.getElementById('finChart'); if(ctx) { chartInstance = new Chart(ctx, { type:'bar', data:{ labels:['Este Mês'], datasets:[{ label:'Entradas', data:[ent], backgroundColor:'#0288D1', borderRadius:8, borderSkipped:false },{ label:'Saídas', data:[sai], backgroundColor:'#EF5350', borderRadius:8, borderSkipped:false },{ label:'Lucro', data:[luc], backgroundColor:'#43A047', borderRadius:8, borderSkipped:false }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, padding:18, font:{ size:11 } } } }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(0,0,0,0.04)' } }, x:{ grid:{ display:false } } } } }); } }, 200);
       }
 
-      // Funções auxiliares mantidas compactas
+      // Funções auxiliares compactas
       function showNotif() { const hoje = new Date().toISOString().split('T')[0]; const venc = db.clientes.filter(c => c.vencimento < hoje); const av = db.clientes.filter(c => c.vencimento >= hoje && c.vencimento <= new Date(Date.now()+3*86400000).toISOString().split('T')[0]); const h = `<div class="modal-overlay" id="notifOverlay"><div class="modal-content" style="max-width:440px;"><h3>🔔 Notificações</h3>${venc.length===0&&av.length===0?'<p style="color:var(--text-tertiary);text-align:center;">Nenhuma notificação</p>':''}${venc.length>0?`<div style="margin-bottom:12px;"><strong style="color:var(--danger);">⚠️ ${venc.length} vencido(s):</strong>${venc.map(c=>`<div style="font-size:0.8rem;">• ${c.nome} - ${new Date(c.vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</div>`).join('')}</div>`:''}${av.length>0?`<div><strong style="color:var(--warning);">📅 ${av.length} vence(m) em até 3 dias:</strong>${av.map(c=>`<div style="font-size:0.8rem;">• ${c.nome} - ${new Date(c.vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</div>`).join('')}</div>`:''}<button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="document.getElementById('notifOverlay').remove()">Fechar</button></div></div>`; document.body.insertAdjacentHTML('beforeend', h); document.getElementById('notifOverlay').addEventListener('click', (e) => { if(e.target.id === 'notifOverlay') e.target.remove(); }); }
       function showLog() { const h = `<div class="modal-overlay" id="logOverlay"><div class="modal-content" style="max-width:440px;"><h3>📋 Log de Atividades</h3><div style="max-height:400px;overflow-y:auto;">${db.log.length===0?'<p style="color:var(--text-tertiary);text-align:center;">Nenhuma atividade</p>':db.log.map(l=>`<div style="padding:8px 0;border-bottom:1px solid var(--separator);"><div style="font-size:0.8rem;">${l.msg}</div><div style="font-size:0.65rem;color:var(--text-tertiary);">${l.data}</div></div>`).join('')}</div><button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="document.getElementById('logOverlay').remove()">Fechar</button></div></div>`; document.body.insertAdjacentHTML('beforeend', h); document.getElementById('logOverlay').addEventListener('click', (e) => { if(e.target.id === 'logOverlay') e.target.remove(); }); }
       function showRelatorio() { const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']; const hoje = new Date(); const lb=[], ed=[], sd=[], ld=[]; for(let i=5;i>=0;i--) { const mes=new Date(hoje.getFullYear(),hoje.getMonth()-i,1); const ms=`${mes.getFullYear()}-${String(mes.getMonth()+1).padStart(2,'0')}`; lb.push(meses[mes.getMonth()]); ed.push(db.transacoes.filter(t=>t.tipo==='entrada'&&t.data.startsWith(ms)).reduce((s,t)=>s+t.valor,0)); sd.push(db.transacoes.filter(t=>t.tipo==='saida'&&t.data.startsWith(ms)).reduce((s,t)=>s+t.valor,0)); ld.push(ed[ed.length-1]-sd[sd.length-1]); } const h=`<div class="modal-overlay" id="relatorioOverlay"><div class="modal-content" style="max-width:520px;"><h3>📊 Relatório 6 Meses</h3><div class="chart-modal-container"><canvas id="relatorioChart"></canvas></div><button class="btn btn-ghost" style="width:100%;margin-top:16px;" onclick="document.getElementById('relatorioOverlay').remove()">Fechar</button></div></div>`; document.body.insertAdjacentHTML('beforeend',h); setTimeout(()=>{const ctx=document.getElementById('relatorioChart');if(ctx){new Chart(ctx,{type:'bar',data:{labels:lb,datasets:[{label:'Entradas',data:ed,backgroundColor:'#0288D1',borderRadius:8,borderSkipped:false},{label:'Saídas',data:sd,backgroundColor:'#EF5350',borderRadius:8,borderSkipped:false},{label:'Lucro',data:ld,backgroundColor:'#43A047',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:18,font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});}},200);document.getElementById('relatorioOverlay').addEventListener('click',(e)=>{if(e.target.id==='relatorioOverlay')e.target.remove();}); }
