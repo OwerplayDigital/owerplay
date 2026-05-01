@@ -280,16 +280,6 @@
   </div>
 
   <script>
-    // Modo Full Screen (esconde barra de status no WebView)
-    if (window.Android || navigator.userAgent.includes('wv') || navigator.userAgent.includes('WebView')) {
-      document.addEventListener('DOMContentLoaded', function() {
-        document.documentElement.style.backgroundColor = '#0288D1';
-        if (window.Android && window.Android.setFullscreen) {
-          window.Android.setFullscreen(true);
-        }
-      });
-    }
-
     if('serviceWorker' in navigator) {
       const swBlob = new Blob([`const CACHE_NAME='owerplay-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(['/','https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap','https://unpkg.com/lucide@latest','https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js','https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js'])));self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(r&&r.status===200){let cl=r.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,cl))}return r})).catch(()=>caches.match(e.request)))})`], {type:'application/javascript'});
       navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
@@ -535,6 +525,7 @@
       // Exit popup personalizado (funciona no WebView)
       (function() {
         let exitPopupVisible = false;
+        let backPressCount = 0;
         
         function showExitPopup() {
           if (exitPopupVisible) return;
@@ -560,15 +551,28 @@
           document.getElementById('exitBtnNo').addEventListener('click', () => {
             document.getElementById('exitPopupOverlay').remove();
             exitPopupVisible = false;
+            backPressCount = 0;
           });
           
           document.getElementById('exitBtnYes').addEventListener('click', () => {
-            if (navigator.app && navigator.app.exitApp) {
-              navigator.app.exitApp();
-            } else {
+            document.getElementById('exitPopupOverlay').remove();
+            exitPopupVisible = false;
+            // Tenta várias formas de fechar o app
+            try {
+              if (navigator.app && navigator.app.exitApp) {
+                navigator.app.exitApp();
+              } else if (window.Android && window.Android.exit) {
+                window.Android.exit();
+              } else {
+                window.close();
+                window.history.go(-(window.history.length));
+                // Último recurso
+                setTimeout(() => {
+                  window.location.href = 'about:blank';
+                }, 300);
+              }
+            } catch(e) {
               window.close();
-              document.getElementById('exitPopupOverlay').remove();
-              exitPopupVisible = false;
             }
           });
           
@@ -576,13 +580,17 @@
             if (e.target.id === 'exitPopupOverlay') {
               document.getElementById('exitPopupOverlay').remove();
               exitPopupVisible = false;
+              backPressCount = 0;
             }
           });
         }
         
         window.addEventListener('popstate', (e) => {
           e.preventDefault();
-          showExitPopup();
+          backPressCount++;
+          if (backPressCount === 1) {
+            showExitPopup();
+          }
           history.pushState(null, null, location.href);
         });
         
@@ -590,7 +598,10 @@
         
         document.addEventListener('backbutton', (e) => {
           e.preventDefault();
-          showExitPopup();
+          backPressCount++;
+          if (backPressCount === 1) {
+            showExitPopup();
+          }
         }, false);
       })();
 
