@@ -1090,103 +1090,6 @@
       gap: 10px;
     }
 
-    .dropdown-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: var(--bg-secondary);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--separator);
-      z-index: 50;
-      min-width: 180px;
-      padding: 6px;
-      display: none;
-      animation: fadeIn 0.15s ease;
-      margin-top: 4px;
-    }
-
-    .dropdown-menu.show {
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      .dropdown-menu {
-        right: auto;
-        left: 0;
-      }
-    }
-
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      background: none;
-      border: none;
-      width: 100%;
-      text-align: left;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .dropdown-item:hover {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
-
-    .dropdown-item i {
-      width: 16px;
-      height: 16px;
-      stroke-width: 1.6;
-    }
-
-    .ajustes-lista {
-      margin-top: 12px;
-    }
-
-    .ajuste-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-tertiary);
-      margin-bottom: 4px;
-      font-size: 0.8rem;
-    }
-
-    .ajuste-item .ajuste-desc {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ajuste-item .ajuste-valor {
-      font-weight: 600;
-      margin: 0 10px;
-    }
-
-    .ajuste-item .ajuste-remove {
-      background: none;
-      border: none;
-      color: var(--danger);
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-    }
-
     .header-flex {
       display: flex;
       align-items: center;
@@ -1212,6 +1115,30 @@
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
+    }
+
+    .btn-delete-row {
+      background: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-delete-row:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .btn-delete-row i {
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.8;
     }
 
     @media (max-width: 1024px) {
@@ -1287,7 +1214,6 @@
       <div class="sidebar-section"><div class="sidebar-section-title">Preferências</div>
         <button class="sidebar-action" id="sidebarDarkMode"><i data-lucide="moon"></i> <span id="darkModeText">Modo Escuro</span></button>
         <button class="sidebar-action pro-item" id="sidebarMensagens"><i data-lucide="message-square"></i> Mensagens <span class="pro-badge-lock">⭐ PRO</span></button>
-        <button class="sidebar-action" id="sidebarAlterarSenha" style="display:none;"><i data-lucide="key"></i> Alterar Senha</button>
         <button class="sidebar-action" id="sidebarPlanoPRO"><i data-lucide="crown"></i> <span id="proBadgeText" style="color:var(--accent);">Plano FREE</span></button>
       </div>
     </aside>
@@ -1369,7 +1295,6 @@
       const JSONBIN_BIN_ID = '69ec4032aaba882197361318';
       const JSONBIN_MASTER_KEY = '$2a$10$hPThmNbRFc4LJU8Lb39N0ufogEbkwasTJJJV4m3CCTq0DEzgcP.y2';
       const JSONBIN_API_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
-      const BACKUPS_KEY = 'owerplay_backups';
 
       const defaultTemplates = {
         cobranca: "Olá {nome}, Bom dia!\nSeu plano de tv vence hoje *{vencimento}*\n\n⚠️ *Na data do vencimento, o sistema poderá bloquear automaticamente a qualquer momento, renove assim que possível!*\n\nDADOS PARA PAGAMENTO:\nValor: *R${valor}*\nPix:\nBanco:\n\n✅ *Favor enviar comprovante*",
@@ -1403,7 +1328,6 @@
         localStorage.setItem('owerplay_pro', JSON.stringify(planoPro));
         atualizarBadgePro();
         atualizarIconesPro();
-        atualizarSidebarSenha();
       }
 
       function atualizarBadgePro() {
@@ -1423,161 +1347,6 @@
       function exigePRO() {
         if (!planoPro) { showBannerPRO(); return false; }
         return true;
-      }
-
-      // ========== SISTEMA DE SENHA ==========
-      function getSenhaHash() { return localStorage.getItem('owerplay_senha'); }
-
-      function setSenhaHash(hash) { localStorage.setItem('owerplay_senha', hash); }
-
-      function getTentativasSenha() {
-        const t = localStorage.getItem('owerplay_senha_tentativas');
-        return t ? JSON.parse(t) : { erros: 0, bloqueadoAte: null };
-      }
-
-      function setTentativasSenha(t) { localStorage.setItem('owerplay_senha_tentativas', JSON.stringify(t)); }
-
-      function simpleHash(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash |= 0;
-        }
-        return 'h_' + Math.abs(hash).toString(36);
-      }
-
-      function verificarSenha(senha) {
-        const hash = getSenhaHash();
-        if (!hash) return true;
-        const tentativas = getTentativasSenha();
-        if (tentativas.bloqueadoAte && Date.now() < tentativas.bloqueadoAte) {
-          const minutos = Math.ceil((tentativas.bloqueadoAte - Date.now()) / 60000);
-          showToast(`Bloqueado por ${minutos} min. Tente novamente depois.`, 'error');
-          return false;
-        }
-        if (simpleHash(senha) === hash) {
-          setTentativasSenha({ erros: 0, bloqueadoAte: null });
-          return true;
-        }
-        tentativas.erros++;
-        if (tentativas.erros >= 3) {
-          tentativas.bloqueadoAte = Date.now() + 5 * 60 * 1000;
-          tentativas.erros = 0;
-          setTentativasSenha(tentativas);
-          showToast('Senha bloqueada por 5 minutos!', 'error');
-        } else {
-          setTentativasSenha(tentativas);
-          showToast(`Senha incorreta! Tentativas: ${tentativas.erros}/3`, 'error');
-        }
-        return false;
-      }
-
-      function atualizarSidebarSenha() {
-        const btn = document.getElementById('sidebarAlterarSenha');
-        if (!btn) return;
-        btn.style.display = getSenhaHash() ? 'flex' : 'none';
-      }
-
-      function abrirModalCriarSenha() {
-        const h = `
-        <div class="modal-overlay" id="modalCriarSenha">
-          <div class="modal-content confirm-modal" style="max-width:440px;">
-            <div class="confirm-icon delete" style="background:var(--warning);opacity:0.2;">
-              <i data-lucide="shield-alert" width="32" height="32" style="color:var(--warning)"></i>
-            </div>
-            <h3 style="margin-bottom:6px;font-weight:700;">🔒 Criar Senha de Segurança</h3>
-            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:6px;">
-              Esta senha será exigida para <strong>resetar o mês financeiro</strong>.
-            </p>
-            <p style="color:var(--danger);font-size:0.75rem;margin-bottom:14px;font-weight:600;">
-              ⚠️ NÃO COMPARTILHE esta senha. Se perdê-la, será necessário resetar os dados do app.
-            </p>
-            <div style="text-align:left;margin-bottom:6px;">
-              <label class="field-label">Nova senha</label>
-              <input type="password" class="search-input" id="novaSenhaInput" placeholder="Digite uma senha forte" style="margin-bottom:8px;">
-              <label class="field-label">Confirmar senha</label>
-              <input type="password" class="search-input" id="confirmarSenhaInput" placeholder="Repita a senha">
-            </div>
-            <div style="display:flex;gap:10px;margin-top:16px;">
-              <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('modalCriarSenha').remove()">Cancelar</button>
-              <button class="btn btn-primary" style="flex:1;" id="btnSalvarSenha">Salvar Senha</button>
-            </div>
-          </div>
-        </div>`;
-        document.body.insertAdjacentHTML('beforeend', h);
-        lucide.createIcons();
-        document.getElementById('btnSalvarSenha').addEventListener('click', () => {
-          const s1 = document.getElementById('novaSenhaInput').value;
-          const s2 = document.getElementById('confirmarSenhaInput').value;
-          if (!s1 || s1.length < 4) { showToast('Senha deve ter no mínimo 4 caracteres', 'error'); return; }
-          if (s1 !== s2) { showToast('Senhas não conferem!', 'error'); return; }
-          setSenhaHash(simpleHash(s1));
-          setTentativasSenha({ erros: 0, bloqueadoAte: null });
-          document.getElementById('modalCriarSenha').remove();
-          atualizarSidebarSenha();
-          showToast('Senha de segurança criada! 🔒');
-          addLog('Senha de segurança definida');
-        });
-        document.getElementById('modalCriarSenha').addEventListener('click', (e) => {
-          if (e.target.id === 'modalCriarSenha') e.target.remove();
-        });
-      }
-
-      function abrirModalAlterarSenha() {
-        const h = `
-        <div class="modal-overlay" id="modalAlterarSenha">
-          <div class="modal-content confirm-modal" style="max-width:440px;">
-            <div class="confirm-icon" style="background:var(--accent-light);">
-              <i data-lucide="key" width="28" height="28" style="color:var(--accent-dark)"></i>
-            </div>
-            <h3 style="margin-bottom:14px;font-weight:700;">Alterar Senha</h3>
-            <div style="text-align:left;margin-bottom:6px;">
-              <label class="field-label">Senha atual</label>
-              <input type="password" class="search-input" id="senhaAtualInput" placeholder="Digite a senha atual" style="margin-bottom:8px;">
-              <label class="field-label">Nova senha</label>
-              <input type="password" class="search-input" id="novaSenhaAltInput" placeholder="Digite a nova senha" style="margin-bottom:8px;">
-              <label class="field-label">Confirmar nova senha</label>
-              <input type="password" class="search-input" id="confirmarSenhaAltInput" placeholder="Repita a nova senha">
-            </div>
-            <div style="display:flex;gap:10px;margin-top:16px;">
-              <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('modalAlterarSenha').remove()">Cancelar</button>
-              <button class="btn btn-primary" style="flex:1;" id="btnAlterarSenha">Alterar</button>
-            </div>
-          </div>
-        </div>`;
-        document.body.insertAdjacentHTML('beforeend', h);
-        lucide.createIcons();
-        document.getElementById('btnAlterarSenha').addEventListener('click', () => {
-          const atual = document.getElementById('senhaAtualInput').value;
-          if (!verificarSenha(atual)) return;
-          const s1 = document.getElementById('novaSenhaAltInput').value;
-          const s2 = document.getElementById('confirmarSenhaAltInput').value;
-          if (!s1 || s1.length < 4) { showToast('Senha deve ter no mínimo 4 caracteres', 'error'); return; }
-          if (s1 !== s2) { showToast('Senhas não conferem!', 'error'); return; }
-          setSenhaHash(simpleHash(s1));
-          setTentativasSenha({ erros: 0, bloqueadoAte: null });
-          document.getElementById('modalAlterarSenha').remove();
-          showToast('Senha alterada com sucesso! 🔒');
-          addLog('Senha de segurança alterada');
-        });
-        document.getElementById('modalAlterarSenha').addEventListener('click', (e) => {
-          if (e.target.id === 'modalAlterarSenha') e.target.remove();
-        });
-      }
-
-      // ========== BACKUP AUTOMÁTICO ==========
-      function salvarBackupAutomatico() {
-        const backups = JSON.parse(localStorage.getItem(BACKUPS_KEY) || '[]');
-        const snapshot = {
-          data: new Date().toISOString(),
-          db: JSON.parse(JSON.stringify(db))
-        };
-        backups.push(snapshot);
-        const limite = Date.now() - 30 * 24 * 60 * 60 * 1000;
-        const filtrados = backups.filter(b => new Date(b.data).getTime() > limite);
-        if (filtrados.length > 20) filtrados.splice(0, filtrados.length - 20);
-        localStorage.setItem(BACKUPS_KEY, JSON.stringify(filtrados));
       }
 
       async function ativarCodigoPremium(codigoDigitado) {
@@ -1669,8 +1438,6 @@
 
       document.getElementById('sidebarPlanoPRO').addEventListener('click', () => { if (planoPro) { showToast(
           'Você já é PRO! ⭐', 'info'); } else { showBannerPRO(); } });
-      document.getElementById('sidebarAlterarSenha').addEventListener('click', () => { closeSidebar();
-        abrirModalAlterarSenha(); });
 
       function saveDB() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
@@ -2045,16 +1812,6 @@
         }
         lastHeight = h;
       });
-
-      window.addEventListener('click', (e) => {
-        const dd = document.getElementById('finDropdown');
-        if (dd && !e.target.closest('.dropdown-wrapper')) { dd.classList.remove('show'); }
-      });
-
-      function toggleFinDropdown() {
-        const dd = document.getElementById('finDropdown');
-        if (dd) dd.classList.toggle('show');
-      }
 
       function renderSection(s) {
         switch (s) {
@@ -2439,89 +2196,34 @@
             .target.remove(); });
       }
 
-      // ========== AJUSTE MANUAL ==========
-      function abrirModalAjuste() {
-        const hoje = new Date().toISOString().split('T')[0];
-        const h =
-          `<div class="modal-overlay" id="modalAjuste"><div class="modal-content"><h2 style="margin-bottom:14px;">➕ Ajuste Manual</h2><div style="display:flex;flex-direction:column;gap:12px;"><div><label class="field-label">Descrição</label><input class="search-input" id="descAjuste" placeholder="Ex: Taxa extra, estorno..."></div><div><label class="field-label">Tipo</label><select class="search-input" id="tipoAjuste"><option value="entrada">+ Entrada</option><option value="saida">- Saída</option></select></div><div><label class="field-label">Valor (R$)</label><input type="number" class="search-input" id="valorAjuste" placeholder="0.00"></div><div><label class="field-label">Data</label><input type="date" class="search-input" id="dataAjuste" value="${hoje}"></div></div><div style="display:flex;gap:10px;margin-top:20px;"><button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('modalAjuste').remove()">Cancelar</button><button class="btn btn-primary" style="flex:1;" id="saveAjuste">Adicionar</button></div></div></div>`;
-        document.body.insertAdjacentHTML('beforeend', h);
-        document.getElementById('saveAjuste').addEventListener('click', () => {
-          const desc = document.getElementById('descAjuste').value.trim();
-          const tipo = document.getElementById('tipoAjuste').value;
-          const valor = parseFloat(document.getElementById('valorAjuste').value) || 0;
-          const data = document.getElementById('dataAjuste').value;
-          if (!desc || valor <= 0) { showToast('Preencha descrição e valor', 'error'); return; }
-          db.ajustesManuais.push({
-            id: 'aj_' + Date.now(),
-            descricao: desc,
-            tipo: tipo,
-            valor: valor,
-            data: data
-          });
-          saveDB();
-          addLog('Ajuste manual: ' + desc + ' R$' + valor.toFixed(2));
-          document.getElementById('modalAjuste').remove();
-          renderSection('financas');
-          showToast('Ajuste adicionado!');
-        });
-        document.getElementById('modalAjuste').addEventListener('click', (e) => { if (e.target.id === 'modalAjuste') e
-            .target.remove(); });
-      }
-
-      window._removerAjuste = function(id) {
-        db.ajustesManuais = db.ajustesManuais.filter(a => a.id !== id);
-        saveDB();
-        addLog('Ajuste manual removido');
-        renderSection('financas');
-        showToast('Ajuste removido!');
-      };
-
-      // ========== RESETAR MÊS ==========
-      function abrirModalResetarMes() {
-        if (!getSenhaHash()) {
-          abrirModalCriarSenha();
+      // ========== REMOVER TRANSAÇÕES DO CLIENTE ==========
+      window._removerTransacoesCliente = function(cid) {
+        const c = db.clientes.find(x => x.id === cid);
+        if (!c) return;
+        const hoje = new Date();
+        const m = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+        const transacoesCliente = db.transacoes.filter(t => t.clienteId === cid && t.data.startsWith(m));
+        if (transacoesCliente.length === 0) {
+          showToast('Nenhuma transação para remover este mês', 'warning');
           return;
         }
-        const h =
-          `<div class="modal-overlay" id="modalResetMes"><div class="modal-content confirm-modal" style="max-width:460px;"><div class="confirm-icon delete" style="background:var(--danger-light);"><i data-lucide="alert-triangle" width="32" height="32" style="color:var(--danger)"></i></div><h3 style="margin-bottom:6px;font-weight:700;">🔄 Resetar Mês Financeiro</h3><p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:6px;">Isso irá <strong style="color:var(--danger);">remover todas as transações</strong> do mês atual e recalculá-las com base nos clientes atuais.</p><p style="color:var(--text-secondary);font-size:0.75rem;margin-bottom:14px;">Um backup automático será salvo antes.</p><div style="text-align:left;margin-bottom:12px;"><label class="field-label">Digite <strong>RESETAR</strong> para confirmar</label><input type="text" class="search-input" id="confirmResetText" placeholder="RESETAR" autocomplete="off" style="text-transform:uppercase;"></div><div style="text-align:left;margin-bottom:6px;"><label class="field-label">Senha de segurança</label><input type="password" class="search-input" id="senhaResetInput" placeholder="Digite sua senha"></div><div style="display:flex;gap:10px;margin-top:16px;"><button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('modalResetMes').remove()">Cancelar</button><button class="btn btn-danger" style="flex:1;" id="btnResetConfirm" disabled>Resetar Mês</button></div></div></div>`;
-        document.body.insertAdjacentHTML('beforeend', h);
-        lucide.createIcons();
-
-        const txtConfirm = document.getElementById('confirmResetText');
-        const senhaInput = document.getElementById('senhaResetInput');
-        const btnReset = document.getElementById('btnResetConfirm');
-
-        function verificarCampos() {
-          const textoOk = txtConfirm.value.trim().toUpperCase() === 'RESETAR';
-          const senhaOk = senhaInput.value.length > 0;
-          btnReset.disabled = !(textoOk && senhaOk);
-        }
-        txtConfirm.addEventListener('input', verificarCampos);
-        senhaInput.addEventListener('input', verificarCampos);
-
-        btnReset.addEventListener('click', () => {
-          if (txtConfirm.value.trim().toUpperCase() !== 'RESETAR') {
-            showToast('Digite RESETAR corretamente', 'error');
-            return;
+        const totalEnt = transacoesCliente.filter(t => t.tipo === 'entrada').reduce((s, t) => s + t.valor, 0);
+        const totalSai = transacoesCliente.filter(t => t.tipo === 'saida').reduce((s, t) => s + t.valor, 0);
+        showConfirmModal(
+          'Remover transações?',
+          `Isso irá remover <strong>todas as movimentações</strong> de <strong>${c.nome}</strong> no mês atual.<br><br>➕ Entradas: R$ ${totalEnt.toFixed(2)}<br>➖ Saídas: R$ ${totalSai.toFixed(2)}`,
+          'delete',
+          'Sim, remover',
+          'btn-danger',
+          () => {
+            db.transacoes = db.transacoes.filter(t => !(t.clienteId === cid && t.data.startsWith(m)));
+            sincronizarTransacoes();
+            addLog('Transações de ' + c.nome + ' removidas');
+            renderSection('financas');
+            showToast('Transações removidas!');
           }
-          if (!verificarSenha(senhaInput.value)) return;
-          
-          salvarBackupAutomatico();
-          const hoje = new Date();
-          const m = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-          db.transacoes = db.transacoes.filter(t => !t.data.startsWith(m));
-          db.ajustesManuais = [];
-          sincronizarTransacoes();
-          addLog('Mês financeiro resetado');
-          document.getElementById('modalResetMes').remove();
-          renderSection('financas');
-          showToast('Mês resetado com sucesso! Backup salvo.');
-        });
-
-        document.getElementById('modalResetMes').addEventListener('click', (e) => {
-          if (e.target.id === 'modalResetMes') e.target.remove();
-        });
-      }
+        );
+      };
 
       function renderFinancas() {
         const hoje = new Date();
@@ -2530,21 +2232,11 @@
         const ma = hoje.getMonth() === 0 ?
           `${hoje.getFullYear() - 1}-12` :
           `${hoje.getFullYear()}-${String(hoje.getMonth()).padStart(2, '0')}`;
-        const ent = db.transacoes.filter(t => t.tipo === 'entrada' && t.data.startsWith(m)).reduce((s, t) => s + t.valor,
-          0);
-        const sai = db.transacoes.filter(t => t.tipo === 'saida' && t.data.startsWith(m)).reduce((s, t) => s + t.valor,
-          0);
-        const ajustesEnt = db.ajustesManuais.filter(a => a.tipo === 'entrada' && a.data.startsWith(m)).reduce((s, a) => s +
-          a.valor, 0);
-        const ajustesSai = db.ajustesManuais.filter(a => a.tipo === 'saida' && a.data.startsWith(m)).reduce((s, a) => s + a
-          .valor, 0);
-        const entTotal = ent + ajustesEnt;
-        const saiTotal = sai + ajustesSai;
-        const luc = entTotal - saiTotal;
-        const ea = db.transacoes.filter(t => t.tipo === 'entrada' && t.data.startsWith(ma)).reduce((s, t) => s + t.valor,
-          0);
-        const sa = db.transacoes.filter(t => t.tipo === 'saida' && t.data.startsWith(ma)).reduce((s, t) => s + t.valor,
-          0);
+        const ent = db.transacoes.filter(t => t.tipo === 'entrada' && t.data.startsWith(m)).reduce((s, t) => s + t.valor, 0);
+        const sai = db.transacoes.filter(t => t.tipo === 'saida' && t.data.startsWith(m)).reduce((s, t) => s + t.valor, 0);
+        const luc = ent - sai;
+        const ea = db.transacoes.filter(t => t.tipo === 'entrada' && t.data.startsWith(ma)).reduce((s, t) => s + t.valor, 0);
+        const sa = db.transacoes.filter(t => t.tipo === 'saida' && t.data.startsWith(ma)).reduce((s, t) => s + t.valor, 0);
         const la = ea - sa;
         const cresc = la !== 0 ? ((luc - la) / Math.abs(la)) * 100 : (luc > 0 ? 100 : 0);
         const crescTxt = cresc >= 0 ? '+' + cresc.toFixed(1) + '%' : cresc.toFixed(1) + '%';
@@ -2555,60 +2247,35 @@
             else clienteTransacoes[t.clienteId].saida += t.valor; } });
         const clienteRows = Object.values(clienteTransacoes).slice(0, planoPro ? undefined : 10).map(ct => {
           const lucroCli = ct.entrada - ct.saida;
-          return `<tr><td><strong>${ct.nome}</strong></td><td class="transaction-amount entrada">+ R$ ${ct.entrada.toFixed(2)}</td><td class="transaction-amount negative">- R$ ${ct.saida.toFixed(2)}</td><td class="transaction-amount ${lucroCli>=0?'positive':'negative'}">${lucroCli>=0?'+':'-'} R$ ${Math.abs(lucroCli).toFixed(2)}</td></tr>`;
+          const c = db.clientes.find(x => x.nome === ct.nome);
+          const cid = c ? c.id : '';
+          return `<tr><td><strong>${ct.nome}</strong></td><td class="transaction-amount entrada">+ R$ ${ct.entrada.toFixed(2)}</td><td class="transaction-amount negative">- R$ ${ct.saida.toFixed(2)}</td><td class="transaction-amount ${lucroCli>=0?'positive':'negative'}">${lucroCli>=0?'+':'-'} R$ ${Math.abs(lucroCli).toFixed(2)}</td><td style="text-align:center;"><button class="btn-delete-row" onclick="window._removerTransacoesCliente('${cid}')" title="Remover transações deste cliente"><i data-lucide="trash-2"></i></button></td></tr>`;
         }).join('');
-
-        const ajustesDoMes = db.ajustesManuais.filter(a => a.data.startsWith(m));
-        const ajustesHtml = ajustesDoMes.length > 0 ? `
-        <div class="stat-card" style="margin-bottom:20px;">
-          <h3 style="margin-bottom:8px;font-weight:600;">✏️ Ajustes Manuais do Mês</h3>
-          <div class="ajustes-lista">
-            ${ajustesDoMes.map(a => `
-              <div class="ajuste-item">
-                <span class="ajuste-desc">${a.descricao}</span>
-                <span class="ajuste-valor transaction-amount ${a.tipo==='entrada'?'entrada':'negative'}">${a.tipo==='entrada'?'+':'-'} R$ ${a.valor.toFixed(2)}</span>
-                <button class="ajuste-remove" onclick="window._removerAjuste('${a.id}')"><i data-lucide="x" width="14" height="14"></i></button>
-              </div>
-            `).join('')}
-          </div>
-        </div>` : '';
 
         mainContent.innerHTML =
           `<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button>
-        <div class="header-flex">
-          <div><h1 class="section-title" style="margin-bottom:4px;">Finanças</h1><p class="section-subtitle" style="margin-bottom:0;">Receitas e despesas do mês${!planoPro?' · <small style="color:var(--warning);">Limitado a 10 transações</small>':''}</p></div>
-          <div class="dropdown-wrapper">
-            <button class="btn btn-ghost" onclick="window._toggleFinDropdown()" style="padding:6px 10px;font-size:0.8rem;gap:3px;">Ações <i data-lucide="chevron-down" width="14" height="14"></i></button>
-            <div class="dropdown-menu" id="finDropdown">
-              <button class="dropdown-item" onclick="document.getElementById('finDropdown').classList.remove('show');window._abrirAjuste()"><i data-lucide="plus-circle"></i> Ajuste manual</button>
-              <button class="dropdown-item" style="color:var(--danger);" onclick="document.getElementById('finDropdown').classList.remove('show');window._resetarMes()"><i data-lucide="refresh-cw"></i> Resetar mês</button>
-            </div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:24px;margin-top:20px;">
+        <h1 class="section-title">Finanças</h1>
+        <p class="section-subtitle">Receitas e despesas do mês${!planoPro?' · <small style="color:var(--warning);">Limitado a 10 transações</small>':''}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:24px;">
           <div class="stat-card lucro"><div class="stat-label"><i data-lucide="wallet" width="14" height="14" style="color:var(--success)"></i> Lucro</div><div class="stat-value positive">R$ ${luc.toFixed(2)}</div></div>
-          <div class="stat-card entrada"><div class="stat-label"><i data-lucide="trending-up" width="14" height="14" style="color:var(--entrada)"></i> Entradas</div><div class="stat-value info-color">R$ ${entTotal.toFixed(2)}</div></div>
-          <div class="stat-card saida"><div class="stat-label"><i data-lucide="trending-down" width="14" height="14" style="color:var(--danger)"></i> Saídas</div><div class="stat-value negative">R$ ${saiTotal.toFixed(2)}</div></div>
+          <div class="stat-card entrada"><div class="stat-label"><i data-lucide="trending-up" width="14" height="14" style="color:var(--entrada)"></i> Entradas</div><div class="stat-value info-color">R$ ${ent.toFixed(2)}</div></div>
+          <div class="stat-card saida"><div class="stat-label"><i data-lucide="trending-down" width="14" height="14" style="color:var(--danger)"></i> Saídas</div><div class="stat-value negative">R$ ${sai.toFixed(2)}</div></div>
           <div class="stat-card crescimento"><div class="stat-label"><i data-lucide="activity" width="14" height="14" style="color:var(--crescimento)"></i> Crescimento</div><div class="stat-value teal-color">${crescTxt}</div></div>
         </div>
-        ${ajustesHtml}
         <div class="stat-card" style="margin-bottom:20px;"><h3 style="margin-bottom:12px;font-weight:600;">📊 Este Mês</h3><div class="chart-container"><canvas id="finChart"></canvas></div></div>
-        <div class="stat-card"><h3 style="margin-bottom:12px;font-weight:600;">Resumo por Cliente</h3><div class="table-wrapper"><table class="transaction-table"><thead><tr><th>Cliente</th><th>Entrada</th><th>Saída</th><th>Lucro</th></tr></thead><tbody>${clienteRows||'<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma transação</td></tr>'}</tbody></table></div></div>`;
+        <div class="stat-card"><h3 style="margin-bottom:12px;font-weight:600;">Resumo por Cliente</h3><div class="table-wrapper"><table class="transaction-table"><thead><tr><th>Cliente</th><th>Entrada</th><th>Saída</th><th>Lucro</th><th style="width:50px;text-align:center;"></th></tr></thead><tbody>${clienteRows||'<tr><td colspan="5" style="text-align:center;padding:40px;">Nenhuma transação</td></tr>'}</tbody></table></div></div>`;
         lucide.createIcons();
         setTimeout(() => { if (chartInstance) chartInstance.destroy();
           const ctx = document.getElementById('finChart'); if (ctx) { chartInstance = new Chart(ctx, { type: 'bar',
-              data: { labels: ['Este Mês'], datasets: [{ label: 'Entradas', data: [entTotal],
+              data: { labels: ['Este Mês'], datasets: [{ label: 'Entradas', data: [ent],
                   backgroundColor: '#0288D1', borderRadius: 8, borderSkipped: false }, { label: 'Saídas',
-                  data: [saiTotal], backgroundColor: '#EF5350', borderRadius: 8, borderSkipped: false },
+                  data: [sai], backgroundColor: '#EF5350', borderRadius: 8, borderSkipped: false },
                 { label: 'Lucro', data: [luc], backgroundColor: '#43A047', borderRadius: 8,
                   borderSkipped: false }] }, options: { responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 18,
                       font: { size: 11 } } } }, scales: { y: { beginAtZero: true, grid: { color:
                       'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } } }); } }, 200);
       }
-      window._toggleFinDropdown = function() { toggleFinDropdown(); };
-      window._abrirAjuste = function() { abrirModalAjuste(); };
-      window._resetarMes = function() { abrirModalResetarMes(); };
 
       function renderMensagens() {
         mainContent.innerHTML =
@@ -2633,7 +2300,6 @@
 
       sincronizarTransacoes();
       renderSection('dashboard');
-      atualizarSidebarSenha();
 
       function checkMobile() { if (window.innerWidth >= 1024 && sidebar) closeSidebar();
         updateFab(); }
