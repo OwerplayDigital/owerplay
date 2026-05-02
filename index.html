@@ -175,6 +175,37 @@
     .active-filter-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:20px; background:var(--accent-light); color:var(--accent-dark); font-size:0.8rem; font-weight:600; margin-bottom:16px; }
     .active-filter-badge button { background:none; border:none; color:var(--accent-dark); cursor:pointer; padding:0; display:flex; align-items:center; }
 
+    /* Tela de Login */
+    .login-container {
+      position: fixed; inset: 0; background: var(--bg-primary);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; padding: 20px;
+    }
+    .login-card {
+      background: var(--bg-secondary); border-radius: 24px;
+      padding: 32px 24px; width: 100%; max-width: 360px;
+      box-shadow: 0 24px 64px rgba(10,25,41,0.15);
+      border: 1px solid var(--separator); text-align: center;
+    }
+    .login-icon {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: var(--accent-gradient); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.8rem; margin: 0 auto 16px;
+      box-shadow: 0 8px 24px rgba(2,136,209,0.3);
+    }
+    .login-card h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; color: var(--text-primary); }
+    .login-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 24px; }
+    .login-card input {
+      width: 100%; padding: 14px 16px; border-radius: 14px;
+      border: 1px solid var(--separator-strong); background: var(--bg-tertiary);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none;
+      margin-bottom: 12px; color: var(--text-primary);
+    }
+    .login-card input:focus { border-color: var(--accent); }
+    .login-card .btn { width: 100%; padding: 14px; border-radius: 14px; font-size: 0.9rem; }
+    .login-error { color: var(--danger); font-size: 0.8rem; margin-top: 8px; display: none; }
+
     @media (max-width:1024px) {
       .sidebar { transform:translateX(-100%); }
       .sidebar.open { transform:translateX(0); box-shadow:var(--shadow-xl); }
@@ -193,7 +224,20 @@
   </style>
 </head>
 <body>
-  <div class="app-container" id="appContainer">
+  <!-- Tela de Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="login-card">
+      <div class="login-icon">✦</div>
+      <h2>Owerplay Gestor</h2>
+      <p>Faça login para acessar seus dados</p>
+      <input type="email" id="loginEmail" placeholder="Email" value="owertech82@gmail.com">
+      <input type="password" id="loginSenha" placeholder="Senha">
+      <button class="btn btn-primary" id="btnLogin">Entrar</button>
+      <p class="login-error" id="loginError">Email ou senha incorretos</p>
+    </div>
+  </div>
+
+  <div class="app-container" id="appContainer" style="display:none;">
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="hamburger-btn" id="hamburgerBtn"><i data-lucide="menu" width="20" height="20"></i></button>
     <aside class="sidebar" id="sidebar">
@@ -213,7 +257,7 @@
       <div class="sidebar-section"><div class="sidebar-section-title">Preferências</div>
         <button class="sidebar-action" id="sidebarDarkMode"><i data-lucide="moon"></i> <span id="darkModeText">Modo Escuro</span></button>
         <button class="sidebar-action pro-item" id="sidebarMensagens"><i data-lucide="message-square"></i> Mensagens <span class="pro-badge-lock">⭐ PRO</span></button>
-        <button class="sidebar-action" id="sidebarPlanoPRO"><i data-lucide="crown"></i> <span id="proBadgeText" style="color:var(--accent);">Plano FREE</span></button>
+        <button class="sidebar-action" id="sidebarLogout"><i data-lucide="log-out"></i> Sair</button>
       </div>
     </aside>
     <main class="main-content" id="mainContent"></main>
@@ -236,11 +280,39 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1ZXBudGJ3dWVrbHJucWF6a2hzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NjgzNjcsImV4cCI6MjA5MzI0NDM2N30.3Ux5eLRu2i6_tVDMxREUtcag4coGP6l29RHPippto3Q';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // Login
+    const LOGIN_EMAIL = 'owertech82@gmail.com';
+    const LOGIN_SENHA = 'owerplay2026';
+
+    document.getElementById('btnLogin').addEventListener('click', () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const senha = document.getElementById('loginSenha').value.trim();
+      if (email === LOGIN_EMAIL && senha === LOGIN_SENHA) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'flex';
+        localStorage.setItem('owerplay_logado', 'true');
+        iniciarApp();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    });
+
+    document.getElementById('sidebarLogout').addEventListener('click', () => {
+      localStorage.removeItem('owerplay_logado');
+      location.reload();
+    });
+
+    if (localStorage.getItem('owerplay_logado') === 'true') {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'flex';
+    }
+
     if('serviceWorker' in navigator) {
       const swBlob = new Blob([`const CACHE_NAME='owerplay-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(['/','https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap','https://unpkg.com/lucide@latest','https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js','https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js'])));self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(r&&r.status===200){let cl=r.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,cl))}return r})).catch(()=>caches.match(e.request)))})`], {type:'application/javascript'});
       navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
     }
 
+    function iniciarApp() {
     (function() {
       const STORAGE_KEY = 'owerplay_v5';
       const KIWIFY_LINK = 'https://pay.kiwify.com.br/a26pAg3';
@@ -255,7 +327,6 @@
       };
       let db = { clientes:[], planos:[], servidores:[], transacoes:[], templates:defaultTemplates, log:[], transacoesRemovidas:[] };
       let planoPro = false;
-      
       try { const s = localStorage.getItem(STORAGE_KEY); if(s) { db = JSON.parse(s); if(!db.transacoes) db.transacoes=[]; if(!db.templates) db.templates=defaultTemplates; if(!db.log) db.log=[]; if(!db.transacoesRemovidas) db.transacoesRemovidas=[]; } } catch(e) { localStorage.removeItem(STORAGE_KEY); }
       try { planoPro = JSON.parse(localStorage.getItem('owerplay_pro') || 'false'); } catch(e) {}
 
@@ -264,13 +335,13 @@
       function atualizarIconesPro() { document.querySelectorAll('.pro-badge-lock').forEach(el => { el.style.display = planoPro ? 'none' : 'inline'; }); }
       function exigePRO() { if(!planoPro) { showBannerPRO(); return false; } return true; }
 
-      async function saveDB() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-        atualizarNotificacoes();
+      async function saveDB() { 
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); 
+        atualizarNotificacoes(); 
         atualizarDarkModeText();
         try { await supabase.from('app_data').upsert({ id: 'default', dados: db, updated_at: new Date().toISOString() }); } catch(e) {}
       }
-
+      
       async function carregarDaNuvem() {
         try {
           const { data, error } = await supabase.from('app_data').select('dados').eq('id', 'default').single();
@@ -484,11 +555,8 @@
       document.getElementById('sidebarRestore').addEventListener('click', () => { closeSidebar(); restaurarArquivo(); });
       async function ativarCodigoPremium(codigoDigitado) { try { const resp = await fetch(JSONBIN_API_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_MASTER_KEY}}); const data = await resp.json(); const codigos = data.record.codigos; const encontrado = codigos.find(c => c.codigo === codigoDigitado.trim()); if(!encontrado) { showToast('Código inválido! ❌', 'error'); return false; } if(encontrado.usado) { showToast('Código já utilizado! ❌', 'error'); return false; } if(encontrado.expiracao && new Date(encontrado.expiracao) < new Date()) { showToast('Código expirado! ❌', 'error'); return false; } encontrado.usado = true; encontrado.data_ativacao = new Date().toISOString(); await fetch(JSONBIN_API_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_MASTER_KEY},body:JSON.stringify({codigos:codigos})}); planoPro = true; savePro(); showToast('Código ativado! Bem-vindo ao PRO! 🎉'); try { confetti({particleCount:100,spread:80,origin:{y:0.5}}); } catch(e) {} return true; } catch(e) { showToast('Erro ao validar código. Tente novamente.', 'error'); return false; } }
       function showBannerPRO() { const isDark = document.documentElement.getAttribute('data-theme') === 'dark'; const bg = isDark?'linear-gradient(135deg, #0A1929 0%, #102A43 100%)':'#FFFFFF'; const cardBg = isDark?'#102A43':'#F5FAFF'; const textColor = isDark?'#E3F2FD':'#0A1929'; const textSec = isDark?'#90CAF9':'#4A7A9E'; const borderColor = isDark?'#1A3A5C':'#D8E8F5'; const dashBorder = isDark?'#243B53':'#B8D0E8'; const inputBg = isDark?'#0A1929':'#FFFFFF'; const inputBorder = isDark?'#243B53':'#D8E8F5'; const listColor = isDark?'#90CAF9':'#0A1929'; const sectionTitle = isDark?'#64B5F6':'#64B5F6'; const html = `<div class="modal-overlay" id="bannerProOverlay"><div class="modal-content banner-pro-wrapper" style="max-width:90vw;padding:0;background:transparent;border:none;box-shadow:none;animation:none;"><div style="background:${bg};border-radius:18px;padding:20px 18px;max-width:100%;margin:20px auto;border:1px solid ${borderColor};box-shadow:0 4px 24px rgba(10,25,41,0.08);"><div style="text-align:center;margin-bottom:14px;"><div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);font-weight:600;margin-bottom:2px;">Owerplay PRO</div><p style="color:${textSec};font-size:0.85rem;margin:0;">Desbloqueie todo o poder do seu gestor</p></div><div style="background:${cardBg};border-radius:14px;padding:14px;text-align:center;margin-bottom:14px;border:1px solid ${borderColor};"><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.04em;color:${textSec};font-weight:600;margin-bottom:2px;">Plano PRO</div><div style="font-size:1.7rem;font-weight:800;color:${textColor};">R$ 19,90<span style="font-size:0.8rem;color:${textSec};font-weight:500;"> /mês</span></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:${listColor};">⭐ Clientes ilimitados</div><div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:${listColor};">⭐ Servidores ilimitados</div><div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:${listColor};">⭐ Backup e restauração</div><div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:${listColor};">⭐ Múltiplas mensagens</div><div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:${listColor};">⭐ Gráficos e relatórios</div><div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:${listColor};">⭐ Histórico financeiro</div></div><div style="background:${cardBg};border-radius:12px;padding:10px;margin-bottom:14px;border:1px dashed ${dashBorder};"><div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.04em;color:${sectionTitle};font-weight:600;margin-bottom:6px;">Já tem um código PRO?</div><div style="display:flex;gap:6px;"><input type="text" class="search-input" id="codigoPremiumInput" placeholder="Digite o código" style="flex:1;background:${inputBg};border-color:${inputBorder};color:${textColor};font-size:0.8rem;padding:8px 12px;"><button class="btn btn-primary" id="ativarCodigoBtn" style="white-space:nowrap;font-size:0.8rem;padding:8px 14px;">Ativar</button></div></div><button class="btn btn-primary" id="btnAssinarPRO" style="width:100%;margin-bottom:6px;padding:10px;font-size:0.85rem;">Quero ser PRO</button><button id="btnWhatsApp" style="width:100%;padding:10px;border-radius:12px;border:1px solid #25D366;background:transparent;color:#25D366;font-weight:600;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:8px;">💬 Assinar via WhatsApp</button><button id="btnTalvezDepois" style="width:100%;padding:8px;border-radius:12px;border:none;background:transparent;color:${textSec};font-weight:500;font-size:0.8rem;cursor:pointer;">Talvez depois</button></div></div></div>`; document.body.insertAdjacentHTML('beforeend', html); document.getElementById('btnAssinarPRO').addEventListener('click', () => window.open(KIWIFY_LINK, '_blank')); document.getElementById('btnWhatsApp').addEventListener('click', () => window.open(WHATSAPP_LINK, '_blank')); document.getElementById('btnTalvezDepois').addEventListener('click', () => document.getElementById('bannerProOverlay').remove()); document.getElementById('ativarCodigoBtn').addEventListener('click', async () => { const codigo = document.getElementById('codigoPremiumInput').value.trim(); if(!codigo) { showToast('Digite um código!', 'warning'); return; } document.getElementById('ativarCodigoBtn').disabled = true; document.getElementById('ativarCodigoBtn').textContent = 'Verificando...'; const ok = await ativarCodigoPremium(codigo); if(ok) { document.getElementById('bannerProOverlay').remove(); renderSection(currentSection); } else { document.getElementById('ativarCodigoBtn').disabled = false; document.getElementById('ativarCodigoBtn').textContent = 'Ativar'; } }); document.getElementById('bannerProOverlay').addEventListener('click', (e) => { if(e.target.id === 'bannerProOverlay') e.target.remove(); }); }
-      document.getElementById('sidebarPlanoPRO').addEventListener('click', () => { if(planoPro) { showToast('Você já é PRO! ⭐', 'info'); } else { showBannerPRO(); } });
-      document.documentElement.setAttribute('data-theme', localStorage.getItem('theme')||'light');
-      function renderMensagens() { mainContent.innerHTML = `<button class="back-btn" onclick="window.goBack()"><i data-lucide="chevron-left"></i> Voltar</button><h1 class="section-title">Mensagens</h1><p class="section-subtitle">Comunique-se com seus clientes</p><div class="stat-card" style="margin-bottom:16px;"><h3>📋 Cobrança</h3><p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px;">Tags: {nome}, {sobrenome}, {vencimento}, {valor}, {plano}</p><textarea class="textarea-input" id="tplCobranca" style="min-height:140px;">${db.templates.cobranca}</textarea></div><div class="stat-card" style="margin-bottom:20px;"><h3>📋 Renovação</h3><p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px;">Tags: {nome}, {sobrenome}, {vencimento}</p><textarea class="textarea-input" id="tplRenovacao" style="min-height:100px;">${db.templates.renovacao}</textarea></div><div style="display:flex;gap:10px;"><button class="btn btn-ghost" style="flex:1;" id="resetTpl">Restaurar Padrão</button><button class="btn btn-primary" style="flex:1;" id="saveTpl">Salvar Templates</button></div>`; lucide.createIcons(); document.getElementById('saveTpl').onclick = () => { db.templates.cobranca = document.getElementById('tplCobranca').value; db.templates.renovacao = document.getElementById('tplRenovacao').value; saveDB(); addLog('Templates atualizados'); showToast('Templates salvos!'); }; document.getElementById('resetTpl').onclick = () => { db.templates.cobranca = defaultTemplates.cobranca; db.templates.renovacao = defaultTemplates.renovacao; saveDB(); renderMensagens(); showToast('Restaurado!', 'info'); }; }
 
-      async function iniciarApp() {
+      async function iniciar() {
         await carregarDaNuvem();
         sincronizarTransacoes();
         renderSection('dashboard');
@@ -500,7 +568,7 @@
 
       function checkMobile() { if(window.innerWidth >= 1024 && sidebar) closeSidebar(); updateFab(); }
       window.addEventListener('resize', checkMobile);
-      iniciarApp();
+      iniciar();
 
       // Swipe navigation
       (function() {
@@ -520,6 +588,7 @@
       })();
 
     })();
+    }
   </script>
 </body>
 </html>
