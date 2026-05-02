@@ -433,28 +433,18 @@
       function atualizarDarkModeText() { const span = document.getElementById('darkModeText'); const isDark = document.documentElement.getAttribute('data-theme') === 'dark'; if(span) span.textContent = isDark ? 'Modo Claro' : 'Modo Escuro'; const icon = document.querySelector('#sidebarDarkMode i'); if(icon) { icon.setAttribute('data-lucide', isDark?'sun':'moon'); lucide.createIcons(); } }
       function atualizarNotificacoes() { const hoje = new Date().toISOString().split('T')[0]; const v = db.clientes.filter(c => c.vencimento < hoje).length; const badge = document.getElementById('notifBadge'); if(badge) { if(v>0) { badge.style.display = 'inline'; badge.textContent = v; } else { badge.style.display = 'none'; } } }
 
-      // Backup - Funciona no APK (abre no navegador) e no navegador (download direto)
+      // Backup via WhatsApp (funciona no APK e navegador)
       function backupArquivo() {
         if(!exigePRO()) return;
         const jsonStr = JSON.stringify(db, null, 2);
-        const isWebView = navigator.userAgent.includes('wv') || navigator.userAgent.includes('WebView');
-        
-        if (isWebView) {
-          // No APK: abre o JSON em uma nova aba para download
-          const blob = new Blob([jsonStr], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          window.open(url, '_blank');
-          setTimeout(() => URL.revokeObjectURL(url), 5000);
-        } else {
-          // No navegador: download direto
-          const blob = new Blob([jsonStr], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'owerplay_backup_' + new Date().toISOString().split('T')[0] + '.json';
-          a.click();
-          URL.revokeObjectURL(url);
-        }
+        const fileName = 'owerplay_backup_' + new Date().toISOString().split('T')[0] + '.json';
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
         addLog('Backup exportado (.json)');
         showToast('Backup salvo! 📁');
       }
