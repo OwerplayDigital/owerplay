@@ -878,7 +878,7 @@
         }
 
         window.clearFilter = function() { clientesFilter = null; renderClientes(); };
-        window._wp = function(id) { sendWhatsApp(id, 'cobranca'); }; 
+        window._wp = function(id) { showMensagemModal(id); };
         window._note = function(id) { showNotesModal(id); }; 
         window._renovar = function(id) { showRenewModal(id); }; 
         window._editar = function(id) { abrirModalCliente(id); };
@@ -1077,7 +1077,24 @@
           }); 
           document.getElementById('posRenovacaoOverlay').addEventListener('click', function(e) { if(e.target.id === 'posRenovacaoOverlay') e.target.remove(); }); 
         }
-
+        function showMensagemModal(cid) {
+          var c = db.clientes.find(function(x) { return x.id === cid; });
+          if(!c) return;
+          var h = '<div class="modal-overlay" id="msgModalOverlay"><div class="modal-content"><h3>Enviar Mensagem</h3><p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:16px;">' + c.nome + '</p><button class="btn btn-primary" style="width:100%;margin-bottom:8px;" id="btnCobranca">Cobranca</button><button class="btn btn-success" style="width:100%;" id="btnRenovacao">Renovacao</button><button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="document.getElementById(\'msgModalOverlay\').remove()">Cancelar</button></div></div>';
+          document.body.insertAdjacentHTML('beforeend', h);
+          lucide.createIcons();
+          document.getElementById('btnCobranca').addEventListener('click', function() {
+            document.getElementById('msgModalOverlay').remove();
+            sendWhatsApp(cid, 'cobranca');
+          });
+          document.getElementById('btnRenovacao').addEventListener('click', function() {
+            document.getElementById('msgModalOverlay').remove();
+            sendWhatsApp(cid, 'renovacao');
+          });
+          document.getElementById('msgModalOverlay').addEventListener('click', function(e) {
+            if(e.target.id === 'msgModalOverlay') e.target.remove();
+          });
+        }
         function showNotesModal(cid) { 
           var c = db.clientes.find(function(x) { return x.id === cid; }); 
           if(!c) return; 
