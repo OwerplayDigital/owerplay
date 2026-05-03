@@ -62,7 +62,7 @@
       color:var(--text-primary); display:flex; line-height:1.47;
       font-weight:400; -webkit-font-smoothing:antialiased;
       transition:background var(--transition-smooth),color var(--transition-smooth);
-      touch-action:pan-y; position: relative;
+      touch-action:manipulation; position: relative;
     }
     .app-container { display:flex; width:100%; min-height:100vh; position:relative; }
     .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(10,25,41,0.3); backdrop-filter:blur(8px); z-index:95; opacity:0; transition:opacity var(--transition-smooth); pointer-events:none; }
@@ -1660,10 +1660,38 @@
 
         function aplicarTema(nome) {
           var t = temas[nome] || temas.azul;
-          document.documentElement.style.setProperty('--accent', t.accent);
-          document.documentElement.style.setProperty('--accent-light', t.light);
-          document.documentElement.style.setProperty('--accent-dark', t.dark);
-          document.documentElement.style.setProperty('--accent-gradient', t.grad);
+          var root = document.documentElement;
+          root.style.setProperty('--accent', t.accent);
+          root.style.setProperty('--accent-light', t.light);
+          root.style.setProperty('--accent-dark', t.dark);
+          root.style.setProperty('--accent-gradient', t.grad);
+          // Atualiza tema-color meta para navegadores
+          var metaTheme = document.querySelector('meta[name="theme-color"]:not([media])');
+          if (metaTheme) metaTheme.setAttribute('content', t.accent);
+          // Injeta/atualiza estilo dinâmico para elementos com cores hardcoded
+          var styleId = 'owerplay-tema-dinamico';
+          var existing = document.getElementById(styleId);
+          if (existing) existing.remove();
+          var css = [
+            '.btn-primary { background: ' + t.grad + ' !important; box-shadow: 0 4px 16px ' + t.accent + '55 !important; }',
+            '.btn-primary:hover { box-shadow: 0 6px 20px ' + t.accent + '66 !important; }',
+            '.lucro-destaque { background: ' + t.grad + ' !important; box-shadow: 0 8px 32px ' + t.accent + '55 !important; }',
+            '.logo-icon { background: ' + t.grad + ' !important; box-shadow: 0 4px 16px ' + t.accent + '55 !important; }',
+            '.fab { background: ' + t.grad + ' !important; box-shadow: 0 6px 24px ' + t.accent + '4D !important; }',
+            '.stat-card { border-left-color: ' + t.accent + ' !important; }',
+            '.nav-item.active { background: ' + t.light + ' !important; color: ' + t.dark + ' !important; }',
+            '.bottom-nav-item.active { color: ' + t.dark + ' !important; background: ' + t.light + ' !important; }',
+            '.search-input:focus { border-color: ' + t.accent + ' !important; box-shadow: 0 0 0 4px ' + t.accent + '26 !important; }',
+            '.btn-icon { color: ' + t.accent + ' !important; border-color: ' + t.accent + '40 !important; }',
+            '.btn-icon:hover { background: ' + t.light + ' !important; border-color: ' + t.accent + ' !important; }',
+            '.active-filter-badge { background: ' + t.light + ' !important; color: ' + t.dark + ' !important; }',
+            '.badge-success { }',
+            'a, .link-color { color: ' + t.accent + ' !important; }'
+          ].join('\n');
+          var style = document.createElement('style');
+          style.id = styleId;
+          style.textContent = css;
+          document.head.appendChild(style);
           localStorage.setItem('owerplay_tema', nome);
         }
 
@@ -1722,20 +1750,35 @@
           var sections = ['dashboard', 'clientes', 'planos', 'servidores', 'financas'];
           var touchStartX = 0;
           var touchStartY = 0;
-          
+          var swipeLocked = false;
+
           document.addEventListener('touchstart', function(e) {
+            // Ignora swipe se vier de dentro de um modal
+            if (e.target.closest('.modal-overlay') || e.target.closest('.sidebar')) return;
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
-          }, { passive: false });
-          
+            swipeLocked = false;
+          }, { passive: true });
+
+          document.addEventListener('touchmove', function(e) {
+            if (swipeLocked) return;
+            var diffX = touchStartX - e.touches[0].clientX;
+            var diffY = touchStartY - e.touches[0].clientY;
+            // Se movimento for mais vertical que horizontal, trava o swipe para não atrapalhar o scroll
+            if (Math.abs(diffY) > Math.abs(diffX)) {
+              swipeLocked = true;
+            }
+          }, { passive: true });
+
           document.addEventListener('touchend', function(e) {
+            if (swipeLocked) return;
+            if (e.target.closest('.modal-overlay') || e.target.closest('.sidebar')) return;
             var touchEndX = e.changedTouches[0].clientX;
             var touchEndY = e.changedTouches[0].clientY;
             var diffX = touchStartX - touchEndX;
             var diffY = touchStartY - touchEndY;
-            
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
-              e.preventDefault();
+
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
               var currentIndex = sections.indexOf(currentSection);
               if (diffX > 0 && currentIndex < sections.length - 1) {
                 navigateTo(sections[currentIndex + 1]);
@@ -1743,7 +1786,7 @@
                 navigateTo(sections[currentIndex - 1]);
               }
             }
-          }, { passive: false });
+          }, { passive: true });
         })();
 
       })();
