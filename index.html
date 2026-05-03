@@ -602,7 +602,72 @@
           document.getElementById('wpModalOverlay').addEventListener('click', function(e) { if(e.target.id === 'wpModalOverlay') e.target.remove(); });
         }
 
-        var currentSection = 'dashboard', clientesFilter = null, chartInstance = null, lastScrollY = 0;
+        // ========== COBRANÇA EM MASSA (clientes que vencem hoje) ==========
+        function showCobrancaMassaModal() {
+          var hoje = new Date().toISOString().split('T')[0];
+          var clientesHoje = db.clientes.filter(function(c) { return c.vencimento === hoje && c.whatsapp; });
+          var semWhats = db.clientes.filter(function(c) { return c.vencimento === hoje && !c.whatsapp; });
+
+          if(!clientesHoje.length && !semWhats.length) {
+            showToast('Nenhum cliente vence hoje!', 'info');
+            return;
+          }
+
+          var listaHtml = clientesHoje.map(function(c, i) {
+            var ini = escHtml(c.nome).split(' ').map(function(n){return n[0];}).join('').substring(0,2).toUpperCase();
+            return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--separator);">' +
+              '<input type="checkbox" id="chk_' + escHtml(c.id) + '" value="' + escHtml(c.id) + '" checked style="width:18px;height:18px;accent-color:var(--accent-dark);cursor:pointer;flex-shrink:0;">' +
+              '<div class="avatar" style="width:34px;height:34px;font-size:0.8rem;">' + ini + '</div>' +
+              '<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.88rem;">' + escHtml(c.nome) + '</div>' +
+              '<div style="font-size:0.75rem;color:var(--text-secondary);">📱 ' + escHtml(c.whatsapp) + '</div></div>' +
+              '<button onclick="window._enviarMassa(\'' + escHtml(c.id) + '\', this)" style="background:#25D366;color:white;border:none;border-radius:8px;padding:6px 12px;font-size:0.78rem;cursor:pointer;white-space:nowrap;">Enviar</button>' +
+              '</div>';
+          }).join('');
+
+          if(semWhats.length) {
+            listaHtml += '<div style="margin-top:10px;padding:8px 12px;background:var(--warning-bg,rgba(239,159,39,0.1));border-radius:8px;font-size:0.78rem;color:var(--text-secondary);">⚠️ ' + semWhats.length + ' cliente(s) sem WhatsApp cadastrado não aparecem aqui.</div>';
+          }
+
+          var h = '<div class="modal-overlay" id="massaModalOverlay">' +
+            '<div class="modal-content" style="max-width:420px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">' +
+            '<h3 style="margin:0;">💰 Cobrança em Massa</h3>' +
+            '<span style="background:var(--danger);color:white;border-radius:20px;padding:2px 10px;font-size:0.8rem;font-weight:700;">' + clientesHoje.length + ' hoje</span>' +
+            '</div>' +
+            '<p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:14px;">Clique em <strong>Enviar</strong> em cada cliente para abrir o WhatsApp com a mensagem de cobrança.</p>' +
+            '<div style="max-height:50vh;overflow-y:auto;">' + listaHtml + '</div>' +
+            '<div style="display:flex;gap:8px;margin-top:16px;">' +
+            '<button class="btn btn-primary" id="btnEnviarTodos" style="flex:1;">📤 Enviar para todos</button>' +
+            '<button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById(\'massaModalOverlay\').remove()">Fechar</button>' +
+            '</div></div></div>';
+
+          document.body.insertAdjacentHTML('beforeend', h);
+          lucide.createIcons();
+
+          // Enviar um por um com delay
+          document.getElementById('btnEnviarTodos').addEventListener('click', function() {
+            var checked = Array.from(document.querySelectorAll('#massaModalOverlay input[type=checkbox]:checked')).map(function(el) { return el.value; });
+            if(!checked.length) { showToast('Selecione ao menos um cliente', 'warning'); return; }
+            document.getElementById('massaModalOverlay').remove();
+            var delay = 0;
+            checked.forEach(function(id) {
+              setTimeout(function() { sendWhatsApp(id, 'cobranca'); }, delay);
+              delay += 2500;
+            });
+            showToast('Abrindo WhatsApp para ' + checked.length + ' cliente(s)...', 'info');
+          });
+
+          document.getElementById('massaModalOverlay').addEventListener('click', function(e) {
+            if(e.target.id === 'massaModalOverlay') e.target.remove();
+          });
+        }
+
+        window._enviarMassa = function(id, btn) {
+          sendWhatsApp(id, 'cobranca');
+          btn.textContent = '✅ Enviado';
+          btn.style.background = 'var(--success, #22c55e)';
+          btn.disabled = true;
+        };
         var mainContent = document.getElementById('mainContent'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('mobileOverlay'), fab = document.getElementById('fabAdd'), bottomNav = document.getElementById('bottomNav');
 
         function navigateTo(s, f) { 
@@ -1374,46 +1439,86 @@
         }
 
         // ========== SISTEMA DE NOTIFICAÇÕES ==========
-        function verificarVencimentosAmanha() {
-          var amanha = new Date();
-          amanha.setDate(amanha.getDate() + 1);
-          var amanhaStr = amanha.toISOString().split('T')[0];
-          return db.clientes.filter(function(c) { return c.vencimento === amanhaStr; });
+        function pluralCliente(n) {
+          if(n === 1) return '1 cliente vence hoje';
+          if(n === 2) return '2 clientes vencem hoje';
+          if(n === 3) return '3 clientes vencem hoje';
+          if(n === 4) return '4 clientes vencem hoje';
+          return n + ' clientes vencem hoje';
+        }
+
+        function verificarVencimentosHoje() {
+          var hoje = new Date().toISOString().split('T')[0];
+          return db.clientes.filter(function(c) { return c.vencimento === hoje; });
         }
 
         function mostrarAlertaVisual(clientes) {
           var existing = document.getElementById('notifBanner');
           if(existing) existing.remove();
           if(!clientes.length) return;
-          var nomes = clientes.slice(0,3).map(function(c) { return c.nome.split(' ')[0]; }).join(', ');
-          var extra = clientes.length > 3 ? ' e mais ' + (clientes.length - 3) : '';
+
+          var nomes = clientes.slice(0,2).map(function(c) { return c.nome.split(' ')[0]; }).join(', ');
+          var extra = clientes.length > 2 ? ' +' + (clientes.length - 2) : '';
+          var temWhats = clientes.filter(function(c){ return c.whatsapp; }).length;
+
           var banner = document.createElement('div');
           banner.id = 'notifBanner';
-          banner.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;padding:12px 20px;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.25);display:flex;align-items:center;gap:12px;max-width:90vw;animation:slideDown .3s ease;cursor:pointer;';
-          banner.innerHTML = '<span style="font-size:1.3rem;">⏰</span><div><div style="font-weight:700;font-size:0.9rem;">' + clientes.length + ' cliente(s) vencem amanhã!</div><div style="font-size:0.78rem;opacity:0.9;">' + nomes + extra + '</div></div><button onclick="document.getElementById(\'notifBanner\').remove()" style="background:rgba(255,255,255,0.25);border:none;color:white;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:1rem;margin-left:8px;flex-shrink:0;">×</button>';
+          banner.style.cssText = [
+            'position:fixed',
+            'top:16px',
+            'left:50%',
+            'transform:translateX(-50%)',
+            'z-index:9999',
+            'background:var(--bg-secondary)',
+            'border:1.5px solid var(--separator-strong)',
+            'border-left:4px solid var(--accent)',
+            'color:var(--text-primary)',
+            'padding:12px 16px',
+            'border-radius:var(--radius-md)',
+            'box-shadow:var(--shadow-lg)',
+            'display:flex',
+            'align-items:center',
+            'gap:12px',
+            'max-width:92vw',
+            'width:360px',
+            'animation:slideDown .3s cubic-bezier(0.175,0.885,0.32,1.275)'
+          ].join(';');
+
+          banner.innerHTML =
+            '<div style="width:38px;height:38px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;">📅</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-weight:700;font-size:0.88rem;color:var(--text-primary);">' + pluralCliente(clientes.length) + '</div>' +
+              '<div style="font-size:0.75rem;color:var(--text-secondary);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + nomes + extra + '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-shrink:0;">' +
+              (temWhats ? '<button id="btnBannerMassa" style="background:var(--accent);color:white;border:none;border-radius:8px;padding:6px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;white-space:nowrap;">💬 Cobrar</button>' : '') +
+              '<button id="btnBannerFechar" style="background:var(--bg-tertiary);border:1px solid var(--separator);color:var(--text-secondary);width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;">×</button>' +
+            '</div>';
+
           document.body.appendChild(banner);
-          setTimeout(function() { if(document.getElementById('notifBanner')) document.getElementById('notifBanner').remove(); }, 8000);
-          banner.addEventListener('click', function(e) {
-            if(e.target.tagName === 'BUTTON') return;
-            navigateTo('clientes', 'today');
-            banner.remove();
-          });
+
+          document.getElementById('btnBannerFechar').addEventListener('click', function() { banner.remove(); });
+          if(temWhats) {
+            document.getElementById('btnBannerMassa').addEventListener('click', function() {
+              banner.remove();
+              showCobrancaMassaModal();
+            });
+          }
+
+          setTimeout(function() { if(document.getElementById('notifBanner')) banner.remove(); }, 10000);
         }
 
         function dispararNotificacaoBrowser(clientes) {
-          if(!clientes.length) return;
-          if(Notification.permission !== 'granted') return;
-          var nomes = clientes.slice(0,2).map(function(c) { return c.nome.split(' ')[0]; }).join(', ');
-          var extra = clientes.length > 2 ? ' e outros' : '';
-          new Notification('⏰ Owerplay Gestor', {
-            body: clientes.length + ' cliente(s) vencem amanhã: ' + nomes + extra,
+          if(!clientes.length || Notification.permission !== 'granted') return;
+          new Notification('📅 Owerplay Gestor', {
+            body: pluralCliente(clientes.length) + '!',
             icon: document.querySelector('.login-logo') ? document.querySelector('.login-logo').src : '',
-            tag: 'vencimento-amanha'
+            tag: 'vencimento-hoje'
           });
         }
 
         function iniciarNotificacoes() {
-          var clientes = verificarVencimentosAmanha();
+          var clientes = verificarVencimentosHoje();
           mostrarAlertaVisual(clientes);
           if('Notification' in window) {
             if(Notification.permission === 'granted') {
@@ -1424,11 +1529,9 @@
               });
             }
           }
-          // Verifica novamente a cada hora
           setInterval(function() {
-            var c = verificarVencimentosAmanha();
+            var c = verificarVencimentosHoje();
             mostrarAlertaVisual(c);
-            dispararNotificacaoBrowser(c);
           }, 3600000);
         }
 
