@@ -321,12 +321,18 @@
       supabase.auth.signInWithPassword({ email: email, password: senha }).then(function(result) {
         if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
         if (result.error) {
-          if (errorEl) { errorEl.textContent = 'Email ou senha incorretos!'; errorEl.style.display = 'block'; }
+          if (errorEl) { 
+            errorEl.textContent = '❌ Erro: ' + result.error.message + ' (status: ' + result.error.status + ')';
+            errorEl.style.display = 'block'; 
+          }
         } else {
           document.getElementById('loginScreen').style.display = 'none';
           document.getElementById('appContainer').style.display = 'flex';
           iniciarApp();
         }
+      }).catch(function(err) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+        if (errorEl) { errorEl.textContent = '❌ Erro inesperado: ' + err.message; errorEl.style.display = 'block'; }
       });
     }
 
