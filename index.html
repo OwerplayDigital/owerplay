@@ -212,6 +212,8 @@
       display: block;
     }
 
+    @keyframes splashPulse { from { transform:scale(1); } to { transform:scale(1.08); } }
+    @keyframes splashBar { 0%{transform:translateX(-100%)} 100%{transform:translateX(250%)} }
     @keyframes slideDown { from { opacity:0; transform:translateX(-50%) translateY(-20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
 
     @media (max-width:1024px) {
@@ -271,8 +273,13 @@
       <div class="sidebar-divider"></div>
       <div class="sidebar-section"><div class="sidebar-section-title">Preferências</div>
         <button class="sidebar-action" id="sidebarDarkMode"><i data-lucide="moon"></i> <span id="darkModeText">Modo Escuro</span></button>
+        <button class="sidebar-action" id="sidebarTema"><i data-lucide="palette"></i> Tema de Cores</button>
         <button class="sidebar-action pro-item" id="sidebarMensagens"><i data-lucide="message-square"></i> Mensagens <span class="pro-badge-lock">⭐ PRO</span></button>
         <button class="sidebar-action" id="sidebarPlanoPRO"><i data-lucide="crown"></i> <span id="proBadgeText" style="color:var(--accent);">Plano FREE</span></button>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-section-title">Ferramentas</div>
+        <button class="sidebar-action" id="sidebarInadimplencia"><i data-lucide="alert-triangle"></i> Inadimplência</button>
+        <button class="sidebar-action" id="sidebarBackup"><i data-lucide="download"></i> Exportar Backup</button>
       </div>
       <div class="sidebar-divider"></div>
       <!-- BOTÃO SAIR (NOVO) -->
@@ -336,6 +343,7 @@
             errorEl.style.display = 'block'; 
           }
         } else {
+          window._currentUserId = result.data.user.id;
           document.getElementById('loginScreen').style.display = 'none';
           document.getElementById('appContainer').style.display = 'flex';
           iniciarApp();
@@ -367,6 +375,7 @@
     if (supabase) {
       supabase.auth.getSession().then(function(result) {
         if (result.data && result.data.session) {
+          window._currentUserId = result.data.session.user.id;
           document.getElementById('loginScreen').style.display = 'none';
           document.getElementById('appContainer').style.display = 'flex';
           iniciarApp();
@@ -422,11 +431,12 @@
         var _supabaseTimer = null;
         function sincronizarSupabase() {
           if (!supabase) return;
+          var uid = window._currentUserId || 'default';
           clearTimeout(_supabaseTimer);
           _supabaseTimer = setTimeout(function() {
             try {
               supabase.from('app_data').upsert({ 
-                id: 'default', 
+                id: uid, 
                 dados: db, 
                 updated_at: new Date().toISOString() 
               }).then(function(response) {
@@ -441,12 +451,10 @@
         }
 
         function carregarDadosSupabase(callback) {
-          if (!supabase) {
-            if (callback) callback();
-            return;
-          }
+          if (!supabase) { if (callback) callback(); return; }
+          var uid = window._currentUserId || 'default';
           try {
-            supabase.from('app_data').select('dados').eq('id', 'default').maybeSingle().then(function(response) {
+            supabase.from('app_data').select('dados').eq('id', uid).maybeSingle().then(function(response) {
               if (response.data && response.data.dados && response.data.dados.clientes) {
                 db = response.data.dados;
                 if (!db.transacoes) db.transacoes = [];
@@ -759,6 +767,21 @@
           closeSidebar(); 
           toggleDarkMode(); 
         });
+
+        document.getElementById('sidebarTema').addEventListener('click', function() {
+          closeSidebar();
+          showTemaModal();
+        });
+
+        document.getElementById('sidebarInadimplencia').addEventListener('click', function() {
+          closeSidebar();
+          showInadimplencia();
+        });
+
+        document.getElementById('sidebarBackup').addEventListener('click', function() {
+          closeSidebar();
+          exportarBackup();
+        });
         
         document.getElementById('sidebarMensagens').addEventListener('click', function() { 
           closeSidebar(); 
@@ -1042,9 +1065,11 @@
         window._excluir = function(id) { 
           var c = db.clientes.find(function(x) { return x.id === id; }); 
           if(!c) return; 
-          showConfirmModal('Tem certeza?', 'Esta ação é <strong>irreversível</strong>.', 'delete', 'Sim, excluir', 'btn-danger', function() { 
-            db.clientes = db.clientes.filter(function(x) { return x.id !== id; }); 
-            sincronizarTransacoes(); 
+          showConfirmModal('Tem certeza?', 'Esta ação é <strong>irreversível</strong>. O cliente e todas as suas transações serão removidos.', 'delete', 'Sim, excluir', 'btn-danger', function() { 
+            db.clientes = db.clientes.filter(function(x) { return x.id !== id; });
+            db.transacoes = db.transacoes.filter(function(t) { return t.clienteId !== id; });
+            db.transacoesRemovidas = db.transacoesRemovidas.filter(function(r) { return r.clienteId !== id; });
+            saveDB();
             addLog(c.nome + ' excluído'); 
             renderSection(currentSection); 
             showToast('Excluído!'); 
@@ -1071,7 +1096,9 @@
               servidorId:document.getElementById('servCli').value, 
               planoId:document.getElementById('planoCli').value, 
               desconto:parseFloat(document.getElementById('descCli').value)||0, 
-              anotacoes:c?.anotacoes||'' 
+              anotacoes:c?.anotacoes||'',
+              cadastradoEm: c?.cadastradoEm || new Date().toISOString().split('T')[0],
+              renovacoes: c?.renovacoes || []
             }; 
             if(id) { 
               db.clientes = db.clientes.map(function(x) { return x.id===id?novo:x; }); 
@@ -1209,9 +1236,11 @@
           document.getElementById('confirmRenewBtn').addEventListener('click', function() { 
             var nd = document.getElementById('renewDate').value; 
             if(!nd) { showToast('Selecione uma data', 'error'); return; } 
-            c.vencimento = nd; 
             var hoje = new Date(); 
-            var m = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0'); 
+            var m = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
+            if(!c.renovacoes) c.renovacoes = [];
+            c.renovacoes.unshift({ data: new Date().toISOString().split('T')[0], novoVencimento: nd, valor: vp });
+            c.vencimento = nd; 
             db.transacoes.push({ id:'t_renov_'+c.id+'_'+Date.now(), descricao:'Renovação '+c.nome, valor:vp, tipo:'entrada', data:m+'-01', clienteId:c.id }); 
             if(s) { db.transacoes.push({ id:'ts_renov_'+c.id+'_'+Date.now(), descricao:'Servidor ('+c.nome+')', valor:s.custo, tipo:'saida', data:m+'-01', clienteId:c.id, servidorId:s.id }); } 
             saveDB(); 
@@ -1239,8 +1268,19 @@
 
         function showNotesModal(cid) { 
           var c = db.clientes.find(function(x) { return x.id === cid; }); 
-          if(!c) return; 
-          var h = '<div class="modal-overlay" id="notesModalOverlay"><div class="modal-content"><h3>📝 Anotações</h3><p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:14px;">' + c.nome + '</p><textarea class="textarea-input" id="notesText">' + (c.anotacoes||'') + '</textarea><div style="display:flex;gap:10px;margin-top:16px;"><button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById(\'notesModalOverlay\').remove()">Cancelar</button><button class="btn btn-primary" style="flex:1;" id="saveNotesBtn">Salvar</button></div></div></div>'; 
+          if(!c) return;
+          var histHtml = '';
+          if(c.renovacoes && c.renovacoes.length) {
+            histHtml = '<div style="margin-top:14px;"><div style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">📋 Histórico de Renovações</div>' +
+              c.renovacoes.slice(0,5).map(function(r) {
+                return '<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:4px;font-size:0.78rem;">' +
+                  '<span style="color:var(--text-secondary);">📅 ' + new Date(r.data+'T00:00:00').toLocaleDateString('pt-BR') + '</span>' +
+                  '<span style="color:var(--accent-dark);font-weight:600;">→ ' + new Date(r.novoVencimento+'T00:00:00').toLocaleDateString('pt-BR') + '</span>' +
+                  '<span style="color:var(--success);font-weight:600;">R$ ' + (r.valor||0).toFixed(2) + '</span></div>';
+              }).join('') + '</div>';
+          }
+          var cadastroHtml = c.cadastradoEm ? '<div style="font-size:0.75rem;color:var(--text-tertiary);margin-bottom:12px;">📆 Cliente desde: ' + new Date(c.cadastradoEm+'T00:00:00').toLocaleDateString('pt-BR') + '</div>' : '';
+          var h = '<div class="modal-overlay" id="notesModalOverlay"><div class="modal-content"><h3>📝 Anotações</h3><p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:4px;">' + escHtml(c.nome) + '</p>' + cadastroHtml + '<textarea class="textarea-input" id="notesText">' + (c.anotacoes||'') + '</textarea>' + histHtml + '<div style="display:flex;gap:10px;margin-top:16px;"><button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById(\'notesModalOverlay\').remove()">Cancelar</button><button class="btn btn-primary" style="flex:1;" id="saveNotesBtn">Salvar</button></div></div></div>'; 
           document.body.insertAdjacentHTML('beforeend', h); 
           lucide.createIcons(); 
           document.getElementById('saveNotesBtn').addEventListener('click', function() { 
@@ -1535,8 +1575,131 @@
           }, 3600000);
         }
 
+        // ========== SPLASH SCREEN ==========
+        function mostrarSplash() {
+          var splash = document.createElement('div');
+          splash.id = 'splashScreen';
+          splash.style.cssText = 'position:fixed;inset:0;z-index:99999;background:var(--bg-primary);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s ease;';
+          var logoSrc = document.querySelector('.login-logo') ? document.querySelector('.login-logo').src : '';
+          splash.innerHTML = (logoSrc ? '<img src="' + logoSrc + '" style="width:80px;height:80px;object-fit:contain;animation:splashPulse 1s ease infinite alternate;">' : '<div style="width:80px;height:80px;border-radius:22px;background:var(--accent-gradient);"></div>') +
+            '<div style="font-size:1.4rem;font-weight:800;letter-spacing:-0.04em;color:var(--text-primary);">Owerplay Gestor</div>' +
+            '<div style="width:40px;height:3px;border-radius:2px;background:var(--separator);overflow:hidden;"><div style="height:100%;background:var(--accent);border-radius:2px;animation:splashBar 1.2s ease infinite;"></div></div>';
+          document.body.appendChild(splash);
+          return function() {
+            splash.style.opacity = '0';
+            setTimeout(function() { splash.remove(); }, 400);
+          };
+        }
+
+        // ========== BACKUP MANUAL ==========
+        function exportarBackup() {
+          try {
+            var dados = JSON.stringify(db, null, 2);
+            var blob = new Blob([dados], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'owerplay-backup-' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Backup exportado com sucesso!');
+          } catch(e) {
+            showToast('Erro ao exportar backup', 'error');
+          }
+        }
+
+        // ========== RELATÓRIO DE INADIMPLÊNCIA ==========
+        function showInadimplencia() {
+          var hoje = new Date().toISOString().split('T')[0];
+          var vencidos = db.clientes.filter(function(c) { return c.vencimento < hoje; })
+            .sort(function(a,b) { return a.vencimento.localeCompare(b.vencimento); });
+          if(!vencidos.length) { showToast('Nenhum cliente inadimplente! 🎉', 'success'); return; }
+          var listaHtml = vencidos.map(function(c) {
+            var p = db.planos.find(function(x) { return x.id === c.planoId; }) || {};
+            var diasVencido = Math.floor((new Date(hoje) - new Date(c.vencimento)) / 86400000);
+            var cor = diasVencido > 30 ? 'var(--danger)' : diasVencido > 7 ? '#F57C00' : 'var(--text-secondary)';
+            var ini = escHtml(c.nome).split(' ').map(function(n){return n[0];}).join('').substring(0,2).toUpperCase();
+            return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--separator);">' +
+              '<div class="avatar" style="width:36px;height:36px;font-size:0.8rem;flex-shrink:0;">' + ini + '</div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="font-weight:600;font-size:0.88rem;">' + escHtml(c.nome) + '</div>' +
+                '<div style="font-size:0.75rem;color:' + cor + ';font-weight:600;">⚠️ ' + diasVencido + ' dia(s) vencido</div>' +
+              '</div>' +
+              '<div style="text-align:right;flex-shrink:0;">' +
+                '<div style="font-size:0.78rem;color:var(--text-secondary);">' + new Date(c.vencimento+'T00:00:00').toLocaleDateString('pt-BR') + '</div>' +
+                '<div style="font-size:0.8rem;font-weight:700;color:var(--accent-dark);">R$ ' + ((p.valor||0)-(c.desconto||0)).toFixed(2) + '</div>' +
+              '</div>' +
+              (c.whatsapp ? '<button onclick="window._wp(\'' + escHtml(c.id) + '\');document.getElementById(\'inadimplenciaOverlay\').remove();" style="background:#25D366;color:white;border:none;border-radius:8px;padding:6px 10px;font-size:0.75rem;cursor:pointer;flex-shrink:0;">💬</button>' : '') +
+              '</div>';
+          }).join('');
+          var total = vencidos.reduce(function(s,c) { var p=db.planos.find(function(x){return x.id===c.planoId;})||{}; return s+((p.valor||0)-(c.desconto||0)); }, 0);
+          var h = '<div class="modal-overlay" id="inadimplenciaOverlay"><div class="modal-content" style="max-width:440px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">' +
+            '<h3 style="margin:0;">⚠️ Inadimplência</h3>' +
+            '<span style="background:var(--danger);color:white;border-radius:20px;padding:2px 10px;font-size:0.8rem;font-weight:700;">' + vencidos.length + ' clientes</span>' +
+            '</div>' +
+            '<div style="background:var(--danger-light);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;">' +
+            '<span style="font-size:0.85rem;color:var(--danger);font-weight:600;">💸 Total em aberto:</span>' +
+            '<span style="font-size:0.9rem;font-weight:800;color:var(--danger);">R$ ' + total.toFixed(2) + '</span></div>' +
+            '<div style="max-height:55vh;overflow-y:auto;">' + listaHtml + '</div>' +
+            '<button class="btn btn-ghost" style="width:100%;margin-top:14px;" onclick="document.getElementById(\'inadimplenciaOverlay\').remove()">Fechar</button>' +
+            '</div></div>';
+          document.body.insertAdjacentHTML('beforeend', h);
+          lucide.createIcons();
+          document.getElementById('inadimplenciaOverlay').addEventListener('click', function(e) { if(e.target.id==='inadimplenciaOverlay') e.target.remove(); });
+        }
+
+        // ========== TEMA DE CORES ==========
+        var temas = {
+          azul:   { accent:'#0288D1', light:'#E1F5FE', dark:'#01579B', grad:'linear-gradient(135deg,#03A9F4,#0288D1,#0277BD)' },
+          verde:  { accent:'#2E7D32', light:'#E8F5E9', dark:'#1B5E20', grad:'linear-gradient(135deg,#43A047,#2E7D32,#1B5E20)' },
+          roxo:   { accent:'#6A1B9A', light:'#F3E5F5', dark:'#4A148C', grad:'linear-gradient(135deg,#9C27B0,#6A1B9A,#4A148C)' },
+          laranja:{ accent:'#E65100', light:'#FFF3E0', dark:'#BF360C', grad:'linear-gradient(135deg,#FF9800,#E65100,#BF360C)' },
+          vermelho:{ accent:'#C62828', light:'#FFEBEE', dark:'#B71C1C', grad:'linear-gradient(135deg,#EF5350,#C62828,#B71C1C)' }
+        };
+
+        function aplicarTema(nome) {
+          var t = temas[nome] || temas.azul;
+          document.documentElement.style.setProperty('--accent', t.accent);
+          document.documentElement.style.setProperty('--accent-light', t.light);
+          document.documentElement.style.setProperty('--accent-dark', t.dark);
+          document.documentElement.style.setProperty('--accent-gradient', t.grad);
+          localStorage.setItem('owerplay_tema', nome);
+        }
+
+        function showTemaModal() {
+          var temaAtual = localStorage.getItem('owerplay_tema') || 'azul';
+          var cores = [
+            { id:'azul', label:'Azul', cor:'#0288D1' },
+            { id:'verde', label:'Verde', cor:'#2E7D32' },
+            { id:'roxo', label:'Roxo', cor:'#6A1B9A' },
+            { id:'laranja', label:'Laranja', cor:'#E65100' },
+            { id:'vermelho', label:'Vermelho', cor:'#C62828' }
+          ];
+          var opcoesHtml = cores.map(function(c) {
+            var ativo = c.id === temaAtual ? 'border:3px solid var(--text-primary);' : 'border:3px solid transparent;';
+            return '<button onclick="aplicarTema(\'' + c.id + '\');document.getElementById(\'temaModalOverlay\').remove();showToast(\'Tema ' + c.label + ' aplicado!\');" ' +
+              'style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;border-radius:12px;background:var(--bg-tertiary);cursor:pointer;' + ativo + '">' +
+              '<div style="width:36px;height:36px;border-radius:50%;background:' + c.cor + ';box-shadow:0 4px 12px ' + c.cor + '44;"></div>' +
+              '<span style="font-size:0.75rem;font-weight:600;color:var(--text-primary);">' + c.label + '</span></button>';
+          }).join('');
+          var h = '<div class="modal-overlay" id="temaModalOverlay"><div class="modal-content" style="max-width:360px;">' +
+            '<h3 style="margin-bottom:16px;">🎨 Tema de Cores</h3>' +
+            '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;">' + opcoesHtml + '</div>' +
+            '<button class="btn btn-ghost" style="width:100%;" onclick="document.getElementById(\'temaModalOverlay\').remove()">Fechar</button>' +
+            '</div></div>';
+          document.body.insertAdjacentHTML('beforeend', h);
+          document.getElementById('temaModalOverlay').addEventListener('click', function(e) { if(e.target.id==='temaModalOverlay') e.target.remove(); });
+        }
+
+        // Aplica tema salvo ao iniciar
+        var temaSalvo = localStorage.getItem('owerplay_tema');
+        if(temaSalvo) aplicarTema(temaSalvo);
+
         // Carrega dados do Supabase e inicia o app
+        var esconderSplash = mostrarSplash();
         carregarDadosSupabase(function() {
+          esconderSplash();
           sincronizarTransacoes(); 
           renderSection('dashboard');
           checkMobile();
