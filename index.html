@@ -1,66 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Owerplay Gestor</title>
-    <!-- Importando Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f2f7; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .app-container { background: white; width: 100%; max-width: 400px; height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #f2f2f7; margin: 0; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
+        .app-card { background: white; width: 100%; max-width: 400px; height: 100%; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         #loginScreen { padding: 40px 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; }
-        #mainApp { display: none; height: 100%; }
-        input { width: 90%; padding: 12px; margin: 10px auto; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; outline: none; }
-        button { width: 95%; padding: 15px; margin: 20px auto; border-radius: 12px; border: none; background-color: #007AFF; color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
-        button:active { opacity: 0.8; }
+        #mainApp { display: none; height: 100%; flex-direction: column; }
+        input { width: 90%; padding: 15px; margin: 10px auto; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background: #fafafa; }
+        button { width: 95%; padding: 16px; margin: 20px auto; border-radius: 14px; border: none; background-color: #007AFF; color: white; font-size: 17px; font-weight: 600; cursor: pointer; }
         header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .logout-btn { background: none; color: #FF3B30; width: auto; margin: 0; padding: 5px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-card">
         <!-- TELA DE LOGIN -->
         <div id="loginScreen">
-            <h1 style="color: #1c1c1e;">Owerplay</h1>
-            <p style="color: #8e8e93;">Gestão de Acessos</p>
-            <input type="email" id="loginEmail" placeholder="Seu e-mail">
-            <input type="password" id="loginPassword" placeholder="Sua senha">
-            <button onclick="handleLogin()">Entrar</button>
+            <h1 style="font-size: 32px; margin-bottom: 5px;">Owerplay</h1>
+            <p style="color: #8e8e93; margin-bottom: 30px;">Gestor de Acesso</p>
+            <input type="email" id="loginEmail" placeholder="E-mail cadastrado">
+            <input type="password" id="loginPassword" placeholder="Senha">
+            <button id="btnEntrar" onclick="handleLogin()">Entrar no Sistema</button>
         </div>
 
-        <!-- TELA PRINCIPAL (O SEU APP) -->
+        <!-- CONTEÚDO DO APP -->
         <div id="mainApp">
             <header>
-                <h2 style="margin:0; font-size: 18px;">Bem-vindo, <span id="userDisplay">Usuário</span></h2>
-                <button class="logout-btn" onclick="handleLogout()">Sair</button>
+                <span style="font-weight: 600;">Owerplay Ativo</span>
+                <button onclick="location.reload()" style="width:auto; margin:0; padding:8px 15px; background:#FF3B30; font-size: 13px;">Sair</button>
             </header>
-            
-            <div style="padding: 20px; text-align: center;">
-                <h3>Painel de Controle Ativo</h3>
-                <p>O seu conteúdo do Owerplay original deve ser colado aqui.</p>
-                <!-- O RESTANTE DO SEU CÓDIGO ORIGINAL ENTRA AQUI -->
+            <div style="padding: 30px; text-align: center;">
+                <div style="font-size: 50px; margin-bottom: 20px;">✅</div>
+                <h2>Acesso Confirmado!</h2>
+                <p id="msgSucesso" style="color: #666;"></p>
+                <p>O seu banco de dados Supabase está conectado corretamente.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÕES SUPABASE (LINHA ÚNICA PARA EVITAR ERROS)
+        // CONFIGURAÇÃO SUPABASE - LINHAS ÚNICAS SEM QUEBRA
         const SUPABASE_URL = 'https://auepntbwueklrnqazkhs.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1ZXBudGJ3dWVrbHJucWF6a2hzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NjgzNjcsImV4cCI6MjA5MzI0NDM2N30.3Ux5eLRu2i6_tVDMxREUtcag4coGP6l29RHPippto3Q';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // FUNÇÃO DE LOGIN
         async function handleLogin() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('btnEntrar');
 
-            if(!email || !password) {
-                alert("Preencha todos os campos!");
+            if (!email || !password) {
+                alert("Por favor, preencha o e-mail e a senha.");
                 return;
             }
+
+            btn.innerText = "Verificando...";
+            btn.disabled = true;
 
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
@@ -68,18 +68,14 @@
             });
 
             if (error) {
-                alert('Erro: ' + error.message);
+                alert("Erro: " + error.message);
+                btn.innerText = "Entrar no Sistema";
+                btn.disabled = false;
             } else {
-                document.getElementById('userDisplay').innerText = data.user.email;
+                document.getElementById('msgSucesso').innerText = "Usuário: " + data.user.email;
                 document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('mainApp').style.display = 'flex';
             }
-        }
-
-        // FUNÇÃO DE SAIR
-        async function handleLogout() {
-            await supabase.auth.signOut();
-            location.reload();
         }
     </script>
 </body>
