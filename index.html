@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0288D1">
   <title>Owerplay Gestor</title>
+  
+  <link rel="icon" type="image/png" href="IMG_20260501_113710.png">
+  <link rel="apple-touch-icon" href="IMG_20260501_113710.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#0288D1">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -24,7 +29,6 @@
     body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
     #app{display:flex;height:100dvh;overflow:hidden}
     
-    /* SIDEBAR REDESIGN - ESTILO GLASS iOS */
     .sidebar{position:fixed;inset:0;z-index:200;display:flex;pointer-events:none}
     .sidebar-backdrop{
       position:absolute;inset:0;
@@ -42,7 +46,7 @@
       backdrop-filter:blur(28px) saturate(180%);
       -webkit-backdrop-filter:blur(28px) saturate(180%);
       border-right:1px solid rgba(255,255,255,.5);
-      box-shadow:4px 0 40px rgba(0,0,0,.12),inset0 0 0 0 transparent;
+      box-shadow:4px 0 40px rgba(0,0,0,.12);
       display:flex;flex-direction:column;
       padding-bottom:env(safe-area-inset-bottom,16px);
       transform:translateX(-100%);
@@ -71,7 +75,7 @@
       margin-bottom:4px;
     }
     [data-theme="dark"] .sidebar-header{border-bottom-color:rgba(255,255,255,.06)}
-    .sidebar-logo{width:38px;height:38px;object-fit:contain;border-radius:10px}
+    .sidebar-logo{width:38px;height:38px;object-fit:cover;border-radius:10px}
     .sidebar-brand{font-size:.95rem;font-weight:800;color:var(--text)}
     .sidebar-close{
       margin-left:auto;background:rgba(0,0,0,.04);
@@ -108,16 +112,46 @@
     }
     [data-theme="dark"] .sidebar-divider{background:rgba(255,255,255,.06)}
     
-    /* SCROLLBAR DA SIDEBAR */
     .sidebar-panel::-webkit-scrollbar{width:3px}
     .sidebar-panel::-webkit-scrollbar-track{background:transparent}
     .sidebar-panel::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:2px}
     [data-theme="dark"] .sidebar-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1)}
 
-    .topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:56px;gap:12px}
-    .topbar-menu{background:none;border:none;color:var(--text2);cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center}
-    .topbar-title{font-size:1rem;font-weight:800;flex:1}.topbar-actions{display:flex;gap:6px}
-    .topbar-btn{background:none;border:none;color:var(--text2);cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center}
+    .topbar{
+      position:sticky;top:0;z-index:100;
+      background:var(--surface);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;padding:0 16px;
+      height:62px;gap:12px;
+    }
+    .topbar-menu{background:none;border:none;color:var(--text2);cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center;flex-shrink:0}
+    .topbar-center{
+      flex:1;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      text-align:center;
+    }
+    .topbar-brand{
+      font-family:'Poppins',sans-serif;
+      font-size:1.2rem;font-weight:800;
+      background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      line-height:1.15;
+      letter-spacing:-0.5px;
+    }
+    [data-theme="dark"] .topbar-brand{
+      background:linear-gradient(135deg,#38BDF8,#0EA5E9);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .topbar-slogan{
+      font-size:0.55rem;font-weight:500;
+      color:var(--text3);
+      letter-spacing:2.5px;
+      text-transform:uppercase;
+      margin-top:5px;
+    }
     .main-wrap{flex:1;display:flex;flex-direction:column;width:100%;overflow:hidden}
     #mainContent{flex:1;overflow-y:auto;padding:16px 16px 100px;-webkit-overflow-scrolling:touch}
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0)}
@@ -125,6 +159,7 @@
     .nav-btn.active{color:var(--accent)}.nav-btn i{transition:transform .15s}.nav-btn.active i{transform:scale(1.15)}
     #fab{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);z-index:150;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(2,136,209,.4);display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
     #fab:active{transform:scale(.93)}#fab.hidden{display:none}
+    
     .card{background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)}.card+.card{margin-top:10px}
     .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
     .stat-card{background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:transform .12s;position:relative;overflow:hidden}
@@ -133,17 +168,22 @@
     .lucro-card{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);border-radius:var(--radius);padding:20px;color:#fff;margin-bottom:14px;cursor:default;box-shadow:0 6px 24px rgba(2,136,209,.35);transition:transform .12s;position:relative}
     .lucro-label{font-size:.75rem;font-weight:600;opacity:.8;margin-bottom:4px}.lucro-value{font-size:2rem;font-weight:800}
     .lucro-eye{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px;cursor:pointer;display:flex}
-    .client-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);animation:fadeUp .2s ease both}
+    .client-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:12px;margin-bottom:10px;box-shadow:var(--shadow);animation:fadeUp .2s ease both}
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .client-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-light);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;flex-shrink:0}
-    .client-name{font-weight:700;font-size:.9rem}.client-sub{font-size:.72rem;color:var(--text3);margin-top:1px}
-    .badge{display:inline-flex;align-items:center;font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+    .avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-light);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0}
+    .client-name{font-weight:700;font-size:.85rem}.client-sub{font-size:.68rem;color:var(--text3);margin-top:1px}
+    .badge{display:inline-flex;align-items:center;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:99px;flex-shrink:0}
     .badge-ok{background:var(--success-bg);color:var(--success)}.badge-exp{background:var(--danger-bg);color:var(--danger)}.badge-today{background:var(--warning-bg);color:var(--warning)}
-    .client-footer{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:.74rem;color:var(--text3)}
-    .client-actions{display:flex;gap:6px;margin-top:10px}
-    .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;color:var(--text2);font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s}
+    .client-footer{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:.72rem;color:var(--text3)}
+    .client-actions{display:flex;gap:5px;margin-top:10px}
+    .action-btn{display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;color:var(--text2);font-size:.65rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap}
     .action-btn:active{background:var(--surface2)}.action-btn.green{border-color:var(--success-bg);color:var(--success)}.action-btn.blue{border-color:var(--accent-light);color:var(--accent)}
+    .action-btn.nota-destaque{border-color:#EF5350;background:var(--danger-bg);color:var(--danger);font-weight:700}
+    .action-btn.trash{border-color:#FFCDD2;color:var(--danger);min-width:30px;padding:7px 5px}
+    [data-theme="dark"] .action-btn.nota-destaque{background:rgba(198,40,40,.15);border-color:#EF5350;color:#EF5350}
+    [data-theme="dark"] .action-btn.trash{border-color:rgba(198,40,40,.3);color:#EF5350}
+    
     .input{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:.9rem;outline:none;transition:border-color .15s}
     .input:focus{border-color:var(--accent)}.input[type="date"]{color-scheme:light dark}select.input option{background:var(--surface);color:var(--text)}
     .field{margin-bottom:12px}.field-label{display:block;font-size:.75rem;font-weight:700;color:var(--text2);margin-bottom:5px}
@@ -218,7 +258,7 @@
 <div id="app">
   <div class="sidebar" id="sidebar"><div class="sidebar-panel">
     <div class="sidebar-header">
-      <img class="sidebar-logo" src="logo.png" alt="logo" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
+      <img class="sidebar-logo" src="IMG_20260501_113710.png" alt="Owerplay" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
       <span id="logoFallback" style="display:none;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#0288D1,#01579B);color:#fff;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;">✦</span>
       <span class="sidebar-brand">Owerplay Gestor</span>
       <button class="sidebar-close" id="sidebarClose"><i data-lucide="x" width="18" height="18"></i></button>
@@ -240,7 +280,14 @@
   </div><div class="sidebar-backdrop" id="sidebarBackdrop"></div></div>
 
   <div class="main-wrap">
-    <div class="topbar"><button class="topbar-menu" id="menuBtn"><i data-lucide="menu" width="22" height="22"></i></button><span class="topbar-title" id="topbarTitle">Início</span></div>
+    <div class="topbar">
+      <button class="topbar-menu" id="menuBtn"><i data-lucide="menu" width="22" height="22"></i></button>
+      <div class="topbar-center">
+        <div class="topbar-brand">Owerplay Gestor</div>
+        <div class="topbar-slogan">Conectando você ao lucro</div>
+      </div>
+      <button class="topbar-menu" style="opacity:0;pointer-events:none"><i data-lucide="menu" width="22" height="22"></i></button>
+    </div>
     <div id="mainContent"></div>
     <nav class="bottom-nav" id="bottomNav">
       <button class="nav-btn active" data-sec="dashboard"><i data-lucide="home" width="20" height="20"></i>Início</button>
@@ -269,8 +316,7 @@ function toast(msg,type){var el=document.getElementById('toast');if(!el)return;e
 function icons(){if(window.lucide)lucide.createIcons()}
 function openSidebar(){document.getElementById('sidebar').classList.add('open')}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open')}
-var SECTION_TITLES={dashboard:'Início',clientes:'Clientes',planos:'Planos',servidores:'Servidores',financas:'Finanças'};
-function navigateTo(sec,filter){currentSec=sec;cliFilter=filter||null;closeSidebar();document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.sec===sec)});var title=document.getElementById('topbarTitle');if(title)title.textContent=SECTION_TITLES[sec]||sec;var fab=document.getElementById('fab');if(fab)fab.className=(sec==='financas')?'hidden':'';render(sec)}
+function navigateTo(sec,filter){currentSec=sec;cliFilter=filter||null;closeSidebar();document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.sec===sec)});render(sec)}
 function render(sec){var mc=document.getElementById('mainContent');if(!mc)return;mc.scrollTop=0;if(sec==='dashboard')renderDashboard(mc);else if(sec==='clientes')renderClientes(mc);else if(sec==='planos')renderPlanos(mc);else if(sec==='servidores')renderServidores(mc);else if(sec==='financas')renderFinancas(mc);icons()}
 
 function verificarVencimentosHoje(){var hoje=today();var clientesHoje=db.clientes.filter(function(c){return c.vencimento===hoje});if(clientesHoje.length>0){mostrarAlertaDiario(clientesHoje)}}
@@ -278,10 +324,31 @@ function mostrarAlertaDiario(clientesHoje){var alertaAnterior=document.getElemen
 function fecharAlertaDiario(){var overlay=document.getElementById('dailyAlertOverlay');if(overlay){overlay.style.opacity='0';overlay.style.transition='opacity 0.2s';setTimeout(function(){overlay.remove()},200)}}
 function cobrarTodosAlerta(){var hoje=today();var clientesHoje=db.clientes.filter(function(c){return c.vencimento===hoje&&c.whatsapp});fecharAlertaDiario();if(clientesHoje.length===0){toast('Nenhum cliente com WhatsApp','warning');return}var delay=0;clientesHoje.forEach(function(c){setTimeout(function(){sendWA(c,'cobranca')},delay);delay+=2500});toast('Abrindo WhatsApp para '+clientesHoje.length+' cliente(s)...','success')}
 
-function renderDashboard(mc){var hoje=today(),mesAtual=hoje.slice(0,7);var ent=sumTrans('entrada',mesAtual),sai=sumTrans('saida',mesAtual),lucro=ent-sai;var ativos=db.clientes.filter(function(c){return c.vencimento>=hoje}).length;var venc=db.clientes.filter(function(c){return c.vencimento<hoje}).length;var hj=db.clientes.filter(function(c){return c.vencimento===hoje}).length;var lv=lucroOculto?'••••••':'R$ '+fmt(lucro);var eyeIcon=lucroOculto?'eye-off':'eye';mc.innerHTML='<div class="lucro-card"><button class="lucro-eye" onclick="window._toggleLucro()"><i data-lucide="'+eyeIcon+'" width="16" height="16"></i></button><div class="lucro-label">💰 Lucro do Mês</div><div class="lucro-value" id="lucroVal">'+lv+'</div></div><div class="stat-grid">'+statCard('✅ Ativos',ativos,'',"window._filter('active')")+statCard('⚠️ Vencidos',venc,'red',"window._filter('expired')")+statCard('📅 Hoje',hj,'orange',"window._filter('today')")+statCard('👥 Total',db.clientes.length,'',"window._filter('all')")+'</div><div style="margin-bottom:10px;"><div class="search-bar"><i data-lucide="search" width="16" height="16"></i><input id="dashSearch" placeholder="Buscar cliente..." autocomplete="off"></div><div id="dashCards"></div></div>';renderCards('dashCards',db.clientes,hoje);var inp=document.getElementById('dashSearch');if(inp)inp.addEventListener('input',function(){var q=this.value.trim().toLowerCase();var list=q?db.clientes.filter(function(c){return c.nome.toLowerCase().includes(q)||(c.whatsapp&&c.whatsapp.includes(q))}):db.clientes;renderCards('dashCards',list,today())})}
+function renderDashboard(mc){
+  var hoje=today(),mesAtual=hoje.slice(0,7);
+  var ent=sumTrans('entrada',mesAtual),sai=sumTrans('saida',mesAtual),lucro=ent-sai;
+  var ativos=db.clientes.filter(function(c){return c.vencimento>=hoje}).length;
+  var venc=db.clientes.filter(function(c){return c.vencimento<hoje}).length;
+  var hj=db.clientes.filter(function(c){return c.vencimento===hoje}).length;
+  var lv=lucroOculto?'••••••':'R$ '+fmt(lucro);
+  var eyeIcon=lucroOculto?'eye-off':'eye';
+  
+  mc.innerHTML=
+    '<div class="lucro-card"><button class="lucro-eye" onclick="window._toggleLucro()"><i data-lucide="'+eyeIcon+'" width="16" height="16"></i></button><div class="lucro-label">💰 Lucro do Mês</div><div class="lucro-value" id="lucroVal">'+lv+'</div></div>'+
+    '<div class="stat-grid">'+statCard('✅ Ativos',ativos,'',"window._filter('active')")+statCard('⚠️ Vencidos',venc,'red',"window._filter('expired')")+statCard('📅 Hoje',hj,'orange',"window._filter('today')")+statCard('👥 Total',db.clientes.length,'',"window._filter('all')")+'</div>'+
+    '<div style="margin-bottom:10px;"><div class="search-bar"><i data-lucide="search" width="16" height="16"></i><input id="dashSearch" placeholder="Buscar cliente..." autocomplete="off"></div><div id="dashCards"></div></div>';
+  
+  renderCards('dashCards',db.clientes,hoje);
+  var inp=document.getElementById('dashSearch');
+  if(inp)inp.addEventListener('input',function(){
+    var q=this.value.trim().toLowerCase();
+    var list=q?db.clientes.filter(function(c){return c.nome.toLowerCase().includes(q)||(c.whatsapp&&c.whatsapp.includes(q))}):db.clientes;
+    renderCards('dashCards',list,today())
+  })
+}
 function statCard(label,val,color,onclick){return'<div class="stat-card" onclick="'+onclick+'"><div class="stat-label">'+label+'</div><div class="stat-value'+(color?' '+color:'')+'">'+val+'</div></div>'}
 function renderClientes(mc){var hoje=today(),list=db.clientes.slice(),filterLabel='';if(cliFilter==='active'){list=list.filter(function(c){return c.vencimento>=hoje});filterLabel='Ativos'}if(cliFilter==='expired'){list=list.filter(function(c){return c.vencimento<hoje});filterLabel='Vencidos'}if(cliFilter==='today'){list=list.filter(function(c){return c.vencimento===hoje});filterLabel='Hoje'}if(cliFilter==='all'){filterLabel='Todos'}var filterHtml=filterLabel?'<div class="filter-badge">'+filterLabel+' ('+list.length+')<button onclick="window._clearFilter()"><i data-lucide="x" width="12" height="12"></i></button></div>':'';mc.innerHTML=filterHtml+'<div class="search-bar"><i data-lucide="search" width="16" height="16"></i><input id="cliSearch" placeholder="Buscar por nome ou WhatsApp..." autocomplete="off"></div><div id="cliCards"></div>';var snapshot=list.slice();renderCards('cliCards',snapshot,hoje);var inp=document.getElementById('cliSearch');if(inp)inp.addEventListener('input',function(){var q=this.value.trim().toLowerCase();var filtered=q?snapshot.filter(function(c){return c.nome.toLowerCase().includes(q)||(c.whatsapp&&c.whatsapp.includes(q))}):snapshot;renderCards('cliCards',filtered,today())})}
-function renderCards(containerId,list,hoje){var cont=document.getElementById(containerId);if(!cont)return;if(list.length===0){cont.innerHTML='<div class="empty-state"><i data-lucide="user-round" width="48" height="48"></i><p>Nenhum cliente encontrado</p></div>';icons();return}var sorted=list.slice().sort(function(a,b){return a.vencimento.localeCompare(b.vencimento)});cont.innerHTML=sorted.map(function(c,i){var plano=db.planos.find(function(p){return p.id===c.planoId})||{};var serv=db.servidores.find(function(s){return s.id===c.servidorId})||{};var partes=(c.nome||'?').trim().split(' ').filter(function(n){return n.length>0});var ini=(partes.length>=2?partes[0][0]+partes[partes.length-1][0]:(partes[0]||'?').substring(0,2)).toUpperCase();var badge=c.vencimento<hoje?'<span class="badge badge-exp">Vencido</span>':c.vencimento===hoje?'<span class="badge badge-today">Hoje</span>':'<span class="badge badge-ok">Ativo</span>';var valor=((plano.valor||0)-(c.desconto||0));var cid=esc(c.id);var notaIndicator=(c.anotacoes&&c.anotacoes.trim())?'<div style="position:absolute;top:12px;right:12px;width:8px;height:8px;background:#C62828;border-radius:50%;box-shadow:0 0 0 2px var(--surface);" title="Possui anotações"></div>':'';return'<div class="client-card" style="animation-delay:'+(i*0.035)+'s;position:relative;">'+notaIndicator+'<div class="client-card-header"><div class="avatar">'+ini+'</div><div style="flex:1;min-width:0"><div class="client-name">'+esc(c.nome)+'</div><div class="client-sub">'+esc(plano.nome||'Sem plano')+' · '+esc(serv.nome||'Sem servidor')+'</div></div>'+badge+'</div><div class="client-footer"><span>📅 '+fmtDate(c.vencimento)+'</span><span>R$ '+fmt(valor)+'</span></div><div class="client-actions">'+(c.whatsapp?'<button class="action-btn green" onclick="window._wp(\''+cid+'\')"><i data-lucide="message-circle" width="14" height="14"></i>WhatsApp</button>':'')+'<button class="action-btn blue" onclick="window._renovar(\''+cid+'\')"><i data-lucide="rotate-cw" width="14" height="14"></i>Renovar</button><button class="action-btn" onclick="window._nota(\''+cid+'\')"><i data-lucide="file-text" width="14" height="14"></i>Nota</button><button class="action-btn" onclick="window._editar(\''+cid+'\')"><i data-lucide="pencil" width="14" height="14"></i>Editar</button><button class="action-btn" onclick="window._excluir(\''+cid+'\')"><i data-lucide="trash-2" width="14" height="14"></i></button></div></div>'}).join('');icons()}
+function renderCards(containerId,list,hoje){var cont=document.getElementById(containerId);if(!cont)return;if(list.length===0){cont.innerHTML='<div class="empty-state"><i data-lucide="user-round" width="48" height="48"></i><p>Nenhum cliente encontrado</p></div>';icons();return}var sorted=list.slice().sort(function(a,b){return a.vencimento.localeCompare(b.vencimento)});cont.innerHTML=sorted.map(function(c,i){var plano=db.planos.find(function(p){return p.id===c.planoId})||{};var serv=db.servidores.find(function(s){return s.id===c.servidorId})||{};var partes=(c.nome||'?').trim().split(' ').filter(function(n){return n.length>0});var ini=(partes.length>=2?partes[0][0]+partes[partes.length-1][0]:(partes[0]||'?').substring(0,2)).toUpperCase();var badge=c.vencimento<hoje?'<span class="badge badge-exp">Vencido</span>':c.vencimento===hoje?'<span class="badge badge-today">Hoje</span>':'<span class="badge badge-ok">Ativo</span>';var valor=((plano.valor||0)-(c.desconto||0));var cid=esc(c.id);var temNota=(c.anotacoes&&c.anotacoes.trim())?' nota-destaque':'';return'<div class="client-card" style="animation-delay:'+(i*0.035)+'s"><div class="client-card-header"><div class="avatar">'+ini+'</div><div style="flex:1;min-width:0"><div class="client-name">'+esc(c.nome)+'</div><div class="client-sub">'+esc(plano.nome||'Sem plano')+' · '+esc(serv.nome||'Sem servidor')+'</div></div>'+badge+'</div><div class="client-footer"><span>📅 '+fmtDate(c.vencimento)+'</span><span>R$ '+fmt(valor)+'</span></div><div class="client-actions">'+(c.whatsapp?'<button class="action-btn green" onclick="window._wp(\''+cid+'\')"><i data-lucide="message-circle" width="13" height="13"></i>WhatsApp</button>':'')+'<button class="action-btn blue" onclick="window._renovar(\''+cid+'\')"><i data-lucide="rotate-cw" width="13" height="13"></i>Renovar</button><button class="action-btn'+temNota+'" onclick="window._nota(\''+cid+'\')"><i data-lucide="file-text" width="13" height="13"></i>Nota</button><button class="action-btn" onclick="window._editar(\''+cid+'\')"><i data-lucide="pencil" width="13" height="13"></i>Editar</button><button class="action-btn trash" onclick="window._excluir(\''+cid+'\')"><i data-lucide="trash-2" width="13" height="13"></i></button></div></div>'}).join('');icons()}
 function renderPlanos(mc){var html=db.planos.map(function(p){return'<div class="list-item"><div><div class="list-item-main">'+esc(p.nome)+'</div><div class="list-item-sub">R$ '+fmt(p.valor)+'</div></div><div class="list-item-actions"><button class="icon-btn" onclick="window._editPlano(\''+p.id+'\')"><i data-lucide="pencil" width="15" height="15"></i></button><button class="icon-btn" onclick="window._delPlano(\''+p.id+'\')"><i data-lucide="trash-2" width="15" height="15"></i></button></div></div>'}).join('');mc.innerHTML=(html||'<div class="empty-state"><i data-lucide="layers" width="48" height="48"></i><p>Nenhum plano cadastrado</p></div>')}
 function renderServidores(mc){var html=db.servidores.map(function(s){return'<div class="list-item"><div><div class="list-item-main">'+esc(s.nome)+'</div><div class="list-item-sub">'+(s.valor?'Custo: R$ '+fmt(s.valor):'Sem custo')+'</div></div><div class="list-item-actions"><button class="icon-btn" onclick="window._editServ(\''+s.id+'\')"><i data-lucide="pencil" width="15" height="15"></i></button><button class="icon-btn" onclick="window._delServ(\''+s.id+'\')"><i data-lucide="trash-2" width="15" height="15"></i></button></div></div>'}).join('');mc.innerHTML=(html||'<div class="empty-state"><i data-lucide="server" width="48" height="48"></i><p>Nenhum servidor cadastrado</p></div>')}
 function renderFinancas(mc){var m=monthStr(0),mant=monthStr(-1);var ent=sumTrans('entrada',m),sai=sumTrans('saida',m),luc=ent-sai;var entA=sumTrans('entrada',mant),saiA=sumTrans('saida',mant),lucA=entA-saiA;var cresc=lucA!==0?((luc-lucA)/Math.abs(lucA)*100):(luc>0?100:0);var crescTxt=(cresc>=0?'+':'')+cresc.toFixed(1)+'%';var recent=db.transacoes.slice().sort(function(a,b){if(a.data>b.data)return-1;if(a.data<b.data)return 1;if(a.id>b.id)return-1;if(a.id<b.id)return 1;return 0}).slice(0,20);var transHtml=recent.length?recent.map(function(t){var c=db.clientes.find(function(x){return x.id===t.clienteId});var nome=t.desc||(c?c.nome:'—');var cor=t.tipo==='entrada'?'#0288D1':'var(--danger)';return'<div class="trans-row"><div><div class="trans-desc">'+esc(nome)+'</div><div class="trans-date">'+fmtDate(t.data)+'</div></div><div class="trans-amount" style="color:'+cor+'">'+(t.tipo==='entrada'?'+':'-')+' R$ '+fmt(t.valor)+'</div></div>'}).join(''):'<p style="color:var(--text3);font-size:.85rem;padding:12px 0;">Nenhuma transação</p>';mc.innerHTML='<div class="finance-stat-row">'+finStat('Entradas','R$ '+fmt(ent),'var(--accent)')+finStat('Saídas','R$ '+fmt(sai),'var(--danger)')+finStat('Lucro','R$ '+fmt(luc),luc>=0?'var(--success)':'var(--danger)')+'</div><div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><div style="font-size:.8rem;font-weight:700;color:var(--text3);">vs mês anterior</div><div style="font-size:.85rem;font-weight:700;color:'+(cresc>=0?'var(--success)':'var(--danger)')+';">'+crescTxt+'</div></div><div style="position:relative;height:170px;"><canvas id="finChart"></canvas></div></div><div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div style="font-weight:700;">Transações Recentes</div><button onclick="window._addTrans()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;"><i data-lucide="plus" width="12" height="12"></i>Adicionar</button></div>'+transHtml+'</div><div style="display:flex;gap:8px;"><button class="btn btn-danger btn-full" onclick="window._resetFin()"><i data-lucide="trash-2" width="15" height="15"></i>Resetar Financeiro</button></div>';icons();renderChart()}
