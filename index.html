@@ -416,7 +416,34 @@ document.getElementById('btnMensagens').addEventListener('click',function(){clos
 document.getElementById('btnRestaurar').addEventListener('click',function(){document.getElementById('fileRestore').click()});
 document.getElementById('fileRestore').addEventListener('change',function(){restaurarBackup(this.files[0]);this.value=''});
 
-function exportarBackup(){try{var blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='owerplay-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},300);toast('Backup exportado!','success')}catch(e){toast('Erro ao exportar','error')}}
+// BACKUP: Tenta download primeiro; se falhar, abre o JSON em nova aba
+function exportarBackup(){
+  try{
+    var json=JSON.stringify(db,null,2);
+    var blob=new Blob([json],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='owerplay-backup-'+today()+'.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    },300);
+    toast('Backup exportado!','success');
+  }catch(e){
+    // Se falhar (ex: APK), abre em nova aba
+    try{
+      var json2=JSON.stringify(db,null,2);
+      var dataUri='data:application/json;charset=utf-8,'+encodeURIComponent(json2);
+      window.open(dataUri,'_blank');
+      toast('Backup aberto em nova aba!','success');
+    }catch(e2){
+      toast('Erro ao exportar','error');
+    }
+  }
+}
 function restaurarBackup(file){if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);if(!data.clientes)throw new Error();db=data;if(!db.templates)db.templates=Object.assign({},DEFAULT_TEMPLATES);if(!db.lembretes)db.lembretes=[];saveDB();render(currentSec);toast('Backup restaurado!','success')}catch(ex){toast('Arquivo inválido','error')}};reader.readAsText(file)}
 function ativarNotifs(){if(!('Notification' in window)){toast('Notificações não suportadas','warning');return}Notification.requestPermission().then(function(p){if(p==='granted'){toast('Notificações ativadas!','success')}else toast('Permissão negada','warning')})}
 
